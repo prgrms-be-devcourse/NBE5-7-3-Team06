@@ -3,6 +3,7 @@ package programmers.team6.domain.admin.utils;
 import jakarta.persistence.criteria.*;
 import jakarta.persistence.metamodel.SingularAttribute;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Sort;
 
@@ -11,7 +12,10 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-
+/**
+ * CriteriaCustomQueryBuilder는 쿼리 결과보다는 쿼리 생성에 목적이 있기 떄문에, 쿼리의 특정 메서드 실행했는가를 목적으로 테스트 진행하였음
+ * @author gunwoong
+ */
 class CriteriaCustomQueryBuilderTest {
     private CriteriaQuery cq;
     private CriteriaBuilder cb;
@@ -27,6 +31,7 @@ class CriteriaCustomQueryBuilderTest {
     }
 
     @Test
+    @DisplayName("dynamicPredicates 메서드 테스트")
     void applyDynamicPredicates() {
         // given
         List<Predicate> predicates = List.of(predicate);
@@ -41,6 +46,7 @@ class CriteriaCustomQueryBuilderTest {
     }
 
     @Test
+    @DisplayName("projection 메서드 테스트")
     void applyProjection() {
         // given
         CompoundSelection mockSelection = mock(CompoundSelection.class);
@@ -56,6 +62,7 @@ class CriteriaCustomQueryBuilderTest {
     }
 
     @Test
+    @DisplayName("groupby 메서드 테스트")
     void applyGroupBy() {
         // given
         Expression groupField = mock(Expression.class);
@@ -69,6 +76,7 @@ class CriteriaCustomQueryBuilderTest {
     }
 
     @Test
+    @DisplayName("orderByLatest 메서드 테스트")
     void orderByLatest() {
         // given
         From<?, ?> root = mock(From.class);
@@ -87,6 +95,7 @@ class CriteriaCustomQueryBuilderTest {
     }
 
     @Test
+    @DisplayName("order by 메서드 테스트")
     void applyOrderBy() {
         // given
         Sort sort = Sort.by(Sort.Order.desc("test1"), Sort.Order.desc("test2"), Sort.Order.asc("test3"));
