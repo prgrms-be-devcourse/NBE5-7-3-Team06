@@ -2,10 +2,13 @@ package programmers.team6.domain.vacation.entity;
 
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.params.provider.EnumSource.Mode.*;
 import static programmers.team6.domain.vacation.entity.util.ApprovalStepTestUtils.*;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import programmers.team6.domain.vacation.enums.ApprovalStatus;
 import programmers.team6.global.exception.customException.BadRequestException;
@@ -72,29 +75,15 @@ class ApprovalStepTests {
 		assertDoesNotThrow(approvalStep::validateApprovable);
 	}
 
-	@Test
+	@ParameterizedTest
+	@EnumSource(mode = EXCLUDE, names = "PENDING")
 	@DisplayName("상태가 PENDING이 아니면 승인검증 시 예외가 발생할 것이다.")
-	void un_approvable_test() throws Exception {
-		ApprovalStep approvalStep1 = genApprovalStep(ApprovalStatus.APPROVED);
-		ApprovalStep approvalStep2 = genApprovalStep(ApprovalStatus.REJECTED);
-		ApprovalStep approvalStep3 = genApprovalStep(ApprovalStatus.WAITING);
-		ApprovalStep approvalStep4 = genApprovalStep(ApprovalStatus.CANCELED);
+	void un_approvable_test(ApprovalStatus status) throws Exception {
+		ApprovalStep approvalStep = genApprovalStep(status);
 
 		assertThrows(
 			BadRequestException.class,
-			approvalStep1::validateApprovable
-		);
-		assertThrows(
-			BadRequestException.class,
-			approvalStep2::validateApprovable
-		);
-		assertThrows(
-			BadRequestException.class,
-			approvalStep3::validateApprovable
-		);
-		assertThrows(
-			BadRequestException.class,
-			approvalStep4::validateApprovable
+			approvalStep::validateApprovable
 		);
 
 	}
@@ -107,29 +96,15 @@ class ApprovalStepTests {
 		assertDoesNotThrow(approvalStep::validateRejectable);
 	}
 
-	@Test
+	@ParameterizedTest
+	@EnumSource(mode = EXCLUDE, names = "PENDING")
 	@DisplayName("상태가 PENDING이 아니면 반려검증 시 예외가 발생할 것이다.")
-	void un_rejectable_test() throws Exception {
-		ApprovalStep approvalStep1 = genApprovalStep(ApprovalStatus.APPROVED);
-		ApprovalStep approvalStep2 = genApprovalStep(ApprovalStatus.REJECTED);
-		ApprovalStep approvalStep3 = genApprovalStep(ApprovalStatus.WAITING);
-		ApprovalStep approvalStep4 = genApprovalStep(ApprovalStatus.CANCELED);
+	void un_rejectable_test(ApprovalStatus status) throws Exception {
+		ApprovalStep approvalStep = genApprovalStep(status);
 
 		assertThrows(
 			BadRequestException.class,
-			approvalStep1::validateRejectable
-		);
-		assertThrows(
-			BadRequestException.class,
-			approvalStep2::validateRejectable
-		);
-		assertThrows(
-			BadRequestException.class,
-			approvalStep3::validateRejectable
-		);
-		assertThrows(
-			BadRequestException.class,
-			approvalStep4::validateRejectable
+			approvalStep::validateRejectable
 		);
 
 	}
