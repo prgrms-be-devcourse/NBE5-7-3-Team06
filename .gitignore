@@ -1,0 +1,55 @@
+# === Java / Spring Boot ===
+/target/
+/build/
+*.class
+*.jar
+*.war
+*.log
+*.iml
+*.h2.db
+*.db
+*.sqlite
+
+# Gradle & Maven
+/.mvn/
+/.gradle/
+/out/
+**/dependency-reduced-pom.xml
+**/build/
+
+# IntelliJ / Eclipse / VSCode
+.idea/
+*.iws
+*.ipr
+*.iml
+.project
+.classpath
+.settings/
+.vscode/
+
+# === Spring 환경 설정 파일 무시 (YAML, Properties) ===
+*.yml
+*.yaml
+*.properties
+
+# 또는 특정 파일만 제외하고 공용 설정만 유지하고 싶다면 이렇게도 가능
+# src/main/resources/application-dev.yml
+# src/main/resources/application-local.yml
+# !src/main/resources/application.yml  # 공용만 포함하고 나머지는 무시
+
+# === React (frontend 폴더 기준) ===
+frontend/node_modules/
+frontend/build/
+frontend/.env*
+frontend/.eslintcache
+
+# React의 특정 캐시/환경 파일
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# === 시스템/기타 ===
+.DS_Store
+Thumbs.db
+.env
+*.log
