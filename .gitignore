@@ -30,7 +30,6 @@
 # === Spring 환경 설정 파일 무시 (YAML, Properties) ===
 *.yml
 *.yaml
-*.properties
 
 # 또는 특정 파일만 제외하고 공용 설정만 유지하고 싶다면 이렇게도 가능
 # src/main/resources/application-dev.yml
