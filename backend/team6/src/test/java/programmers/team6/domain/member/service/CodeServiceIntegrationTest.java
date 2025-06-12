@@ -2,6 +2,7 @@ package programmers.team6.domain.member.service;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -34,7 +35,7 @@ import programmers.team6.global.exception.customException.NotFoundException;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import(CodeService.class)
-class CodeServiceTest {
+class CodeServiceIntegrationTest {
 	@Autowired
 	private CodeRepository codeRepository;
 	@Autowired
@@ -50,9 +51,9 @@ class CodeServiceTest {
 
 		// when
 		codeService.createCode(codeCreateRequest);
-		List<Code> codes = codeRepository.findAll();
 
 		// then
+		List<Code> codes = codeRepository.findAll();
 		assertThat(codes).hasSize(1)
 			.first()
 			.extracting(Code::getGroupCode, Code::getCode, Code::getName)
@@ -73,33 +74,44 @@ class CodeServiceTest {
 			BadRequestException.class).hasMessage(BadRequestErrorCode.BAD_REQUEST_DUPLICATE_CODE.getMessage());
 	}
 
-	@ParameterizedTest
-	@CsvSource(value = {"2, 3, TEST_GROUP_CODE", "0, 4, null"}, nullValues = "null")
-	@DisplayName("groupCode가 주어질경우(null 일경우, 전체 검색), 해당 groupCode에 해당하는 code들 조회")
-	void should_readCodePage_when_givenGroupCode(int anotherCodeCnt, int targetCodeCnt, String targetGroupCode) {
+	@Test
+	@DisplayName("null이 아닌 groupCode가 주어질경우, 해당 groupCode에 해당하는 code들 조회")
+	void should_readCodePage_when_givenNotNullGroupCode() {
 		// given
-		for (int i = 0; i < targetCodeCnt; i++) {
-			codeRepository.save(Code.builder()
-				.groupCode("TEST_TARGET_GROUP_CODE")
-				.code(String.format("%02d", i))
-				.name(String.format("TEST_TARGET_NAME%d", i))
-				.build());
-		}
-		for (int i = 0; i < anotherCodeCnt; i++) {
-			codeRepository.save(Code.builder()
-				.groupCode("TEST_ANOTHER_GROUP_CODE")
-				.code(String.format("%02d", i))
-				.name(String.format("TEST_ANOTHER_NAME%d", i))
-				.build());
-		}
+		int anotherCodeCnt = 2;
+		int targetCodeCnt = 3;
+		String targetGroupCode = "TEST_TARGET_GROUP_CODE";
 
 		// when
-		AdminCodeResponse response = codeService.readCodePage(PageRequest.of(0, targetCodeCnt + anotherCodeCnt + 1),
-			targetGroupCode);
+		genCode(targetGroupCode, "TEST_TARGET_NAME", targetCodeCnt);
+		genCode("TEST_ANOTHER_GROUP_CODE", "TEST_ANOTHER_NAME", anotherCodeCnt);
 
 		// then
-		assertThat(response.codeReadResponse()).hasSize(targetCodeCnt);
-		assertThat(response.groupCodes()).hasSize(targetCodeCnt + anotherCodeCnt);
+		AdminCodeResponse response = codeService.readCodePage(PageRequest.of(0, targetCodeCnt + anotherCodeCnt + 1),
+			targetGroupCode);
+		assertThat(response.codeReadResponse().getTotalElements()).isEqualTo(targetCodeCnt);
+		assertThat(response.groupCodes()).hasSize(2);
+	}
+
+	@Test
+	@DisplayName("null인 groupCode가 주어질경우, 전체 groupCode에 해당하는 code들 조회")
+	void should_readTotalCodePage_when_givenNullGroupCode() {
+		// given
+		int anotherCodeCnt = 4;
+		int targetCodeCnt = 0;
+		String targetGroupCode = null;
+
+		// when
+		genCode(targetGroupCode, "TEST_TARGET_NAME", targetCodeCnt);
+		genCode("TEST_ANOTHER_GROUP_CODE", "TEST_ANOTHER_NAME", anotherCodeCnt);
+
+		// then
+		AdminCodeResponse response = codeService.readCodePage(PageRequest.of(0, targetCodeCnt + anotherCodeCnt + 1),
+			targetGroupCode);
+		assertThat(targetGroupCode).isNull();
+		assertThat(targetCodeCnt).isEqualTo(0);
+		assertThat(response.codeReadResponse().getTotalElements()).isEqualTo(targetCodeCnt + anotherCodeCnt);
+		assertThat(response.groupCodes()).hasSize(1);
 	}
 
 	@Test
@@ -108,8 +120,7 @@ class CodeServiceTest {
 		assertThatThrownBy(() -> {
 			codeService.updateCode(0L, new CodeCreateRequest(null, null, null));
 			codeService.deleteCode(0L);
-		}).isInstanceOf(
-			NotFoundException.class).hasMessage(NotFoundErrorCode.NOT_FOUND_CODE.getMessage());
+		}).isInstanceOf(NotFoundException.class).hasMessage(NotFoundErrorCode.NOT_FOUND_CODE.getMessage());
 	}
 
 	@Test
@@ -117,14 +128,13 @@ class CodeServiceTest {
 	void should_deleteCode_when_givenCodeId() {
 		// given
 		Code code = codeRepository.save(
-			Code.builder().groupCode("TEST_GROUP_CODE").code("TEST_CODE").name("TEST_NAME").build()
-		);
+			Code.builder().groupCode("TEST_GROUP_CODE").code("TEST_CODE").name("TEST_NAME").build());
 
 		// when
 		codeService.deleteCode(code.getId());
-		Optional<Code> result = codeRepository.findById(code.getId());
 
 		// then
+		Optional<Code> result = codeRepository.findById(code.getId());
 		assertThat(result).isEmpty();
 	}
 
@@ -134,20 +144,31 @@ class CodeServiceTest {
 	void should_ignoreDelete_when_givenBasicCodeId() {
 		// given
 		BasicCodeInfo basicCodeInfo = BasicCodeInfo.ANNUAL;
-		Code code = codeRepository.save(
-			Code.builder()
-				.groupCode(basicCodeInfo.getGroupCode())
-				.code(basicCodeInfo.getCode())
-				.name(basicCodeInfo.getName())
-				.build()
-		);
+		Code code = codeRepository.save(Code.builder()
+			.groupCode(basicCodeInfo.getGroupCode())
+			.code(basicCodeInfo.getCode())
+			.name(basicCodeInfo.getName())
+			.build());
 
 		// when
 		codeService.deleteCode(code.getId());
-		Optional<Code> result = codeRepository.findById(code.getId());
 
 		// then
+		Optional<Code> result = codeRepository.findById(code.getId());
 		assertThat(result).isPresent();
+	}
+
+	private void genCode(String groupCode, String prefixName, int cnt) {
+		if (groupCode == null) {
+			return;
+		}
+		for (int i = 0; i < cnt; i++) {
+			codeRepository.save(Code.builder()
+				.groupCode(groupCode)
+				.code(String.format("%02d", i))
+				.name(String.format("%s%d", prefixName, i))
+				.build());
+		}
 	}
 
 }
