@@ -1,0 +1,166 @@
+package programmers.team6.domain.auth.service;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import programmers.team6.domain.auth.dto.request.MemberSignUpRequest;
+import programmers.team6.domain.member.entity.Code;
+import programmers.team6.domain.member.entity.Dept;
+import programmers.team6.domain.member.entity.Member;
+import programmers.team6.domain.member.enums.Role;
+import programmers.team6.domain.member.repository.CodeRepository;
+import programmers.team6.domain.member.repository.DeptRepository;
+import programmers.team6.domain.member.repository.MemberInfoRepository;
+import programmers.team6.domain.member.repository.MemberRepository;
+import programmers.team6.global.exception.code.NotFoundErrorCode;
+import programmers.team6.global.exception.customException.NotFoundException;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
+public class AuthServiceUnitTests {
+
+    @Mock
+    private MemberRepository memberRepository;
+    @Mock
+    private MemberInfoRepository memberInfoRepository;
+    @Mock
+    private PasswordEncoder passwordEncoder;
+    @Mock
+    private DeptRepository deptRepository;
+    @Mock
+    private CodeRepository codeRepository;
+
+    @InjectMocks
+    private AuthService authService;
+
+
+    @Test
+    @DisplayName("회원가입 성공 테스트")
+    void signUp_success() {
+
+        String encodedPassword = "encoded1234";
+
+        Dept dept = Dept.builder()
+                .deptName("개발팀")
+                .build();
+
+        Code position = new Code("POSITION", "01", "사원");
+
+        MemberSignUpRequest memberReq = genMemberSignUpRequest();
+
+        when(deptRepository.findById(genMemberSignUpRequest().dept())).thenReturn(Optional.of(dept));
+        when(codeRepository.findByGroupCodeAndCode("POSITION", memberReq.position())).thenReturn(Optional.of(position));
+        when(memberInfoRepository.existsByEmail(memberReq.email())).thenReturn(false);
+        when(passwordEncoder.encode(memberReq.password())).thenReturn(encodedPassword);
+
+        authService.signUp(memberReq);
+
+        ArgumentCaptor<Member> captor = ArgumentCaptor.forClass(Member.class);
+
+        verify(memberRepository).save(captor.capture());
+
+        Member saved = captor.getValue();
+
+        assertThat(saved)
+                .extracting("name","joinDate","role")
+                .containsExactly(memberReq.name(),memberReq.joinDate(), Role.PENDING);
+
+        assertThat(saved.getMemberInfo())
+                .extracting("email","password","birth")
+                .containsExactly(memberReq.email(),encodedPassword,memberReq.birth());
+
+        assertThat(saved.getDept().getDeptName()).isEqualTo(dept.getDeptName());
+
+        assertThat(saved.getPosition().getCode()).isEqualTo(memberReq.position());
+    }
+
+    @Test
+    @DisplayName("회원가입 시 없는 부서정보가 들어오면 예외를 반환한다.")
+    void signUp_dept_exception()  {
+
+        MemberSignUpRequest memberReq = genMemberSignUpRequest();
+
+        when(deptRepository.findById(memberReq.dept())).thenReturn(Optional.empty());
+
+        assertThatThrownBy(
+                () -> {
+                    authService.signUp(memberReq);
+                }
+        ).isInstanceOf(NotFoundException.class)
+                .hasFieldOrPropertyWithValue("errorCode", NotFoundErrorCode.NOT_FOUND_DEPT);
+    }
+
+
+    @Test
+    @DisplayName("회원가입 시 없는 직위코드가 들어오면 예외를 반환한다.")
+    void signUp_position_exception()  {
+
+        MemberSignUpRequest memberReq = genMemberSignUpRequest();
+
+        Dept dept = Dept.builder()
+                .deptName("개발팀")
+                .build();
+
+
+        when(deptRepository.findById(memberReq.dept())).thenReturn(Optional.of(dept));
+        when(codeRepository.findByGroupCodeAndCode("POSITION", memberReq.position())).thenReturn(Optional.empty());
+
+        assertThatThrownBy(
+                () -> {
+                    authService.signUp(memberReq);
+                }
+        ).isInstanceOf(NotFoundException.class)
+                .hasFieldOrPropertyWithValue("errorCode", NotFoundErrorCode.NOT_FOUND_POSITION);
+    }
+
+    @Test
+    @DisplayName("회원가입 시 이메일 중복이면 예외를 반환한다.")
+    void signUp_email_exception()  {
+
+        MemberSignUpRequest memberReq = genMemberSignUpRequest();
+
+        Dept dept = Dept.builder()
+                .deptName("개발팀")
+                .build();
+
+        Code position = new Code("POSITION", "01", "사원");
+
+        when(deptRepository.findById(memberReq.dept())).thenReturn(Optional.of(dept));
+        when(codeRepository.findByGroupCodeAndCode("POSITION", memberReq.position())).thenReturn(Optional.empty());
+
+        assertThatThrownBy(
+                () -> {
+                    authService.signUp(memberReq);
+                }
+        ).isInstanceOf(NotFoundException.class)
+                .hasFieldOrPropertyWithValue("errorCode", NotFoundErrorCode.NOT_FOUND_POSITION);
+    }
+
+
+    private static MemberSignUpRequest genMemberSignUpRequest() {
+
+        return new MemberSignUpRequest(
+                "member1",
+                "test@test.com",
+                1L,
+                "01",
+                LocalDateTime.of(2024, 1, 1, 12, 0),
+                "1989-10-10",
+                "qwer1234!"
+        );
+
+    }
+
+}
