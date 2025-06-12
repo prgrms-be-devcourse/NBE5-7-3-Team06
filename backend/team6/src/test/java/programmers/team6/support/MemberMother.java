@@ -15,7 +15,7 @@ public class MemberMother {
 			.name("testMember")
 			.dept(new Dept("testDept", null))
 			.position(PositionMother.employee())
-			.joinDate(LocalDateTime.of(2025, 06, 12, 10, 11))
+			.joinDate(LocalDateTime.of(2025, 6, 12, 10, 11))
 			.role(Role.USER)
 			.build();
 	}
