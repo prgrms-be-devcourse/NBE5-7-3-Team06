@@ -19,4 +19,15 @@ public class MemberMother {
 			.role(Role.USER)
 			.build();
 	}
+
+	public static Member withIdAndDeptName(Long id, String deptName) {
+		return MemberStub.subBuilder()
+			.id(id)
+			.name("testMember" + id)
+			.dept(new Dept(deptName, null))
+			.position(PositionMother.employee())
+			.joinDate(LocalDateTime.of(2025, 6, 12, 10, 11))
+			.role(Role.USER)
+			.build();
+	}
 }
