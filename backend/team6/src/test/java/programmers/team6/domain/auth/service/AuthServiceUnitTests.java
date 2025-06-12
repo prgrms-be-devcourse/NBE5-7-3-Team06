@@ -17,7 +17,9 @@ import programmers.team6.domain.member.repository.CodeRepository;
 import programmers.team6.domain.member.repository.DeptRepository;
 import programmers.team6.domain.member.repository.MemberInfoRepository;
 import programmers.team6.domain.member.repository.MemberRepository;
+import programmers.team6.global.exception.code.ConflictErrorCode;
 import programmers.team6.global.exception.code.NotFoundErrorCode;
+import programmers.team6.global.exception.customException.ConflictException;
 import programmers.team6.global.exception.customException.NotFoundException;
 
 import java.time.LocalDateTime;
@@ -27,6 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static programmers.team6.support.PositionMother.employee;
 
 @ExtendWith(MockitoExtension.class)
 public class AuthServiceUnitTests {
@@ -56,7 +59,8 @@ public class AuthServiceUnitTests {
                 .deptName("개발팀")
                 .build();
 
-        Code position = new Code("POSITION", "01", "사원");
+        Code position = employee();
+
 
         MemberSignUpRequest memberReq = genMemberSignUpRequest();
 
@@ -113,7 +117,6 @@ public class AuthServiceUnitTests {
                 .deptName("개발팀")
                 .build();
 
-
         when(deptRepository.findById(memberReq.dept())).thenReturn(Optional.of(dept));
         when(codeRepository.findByGroupCodeAndCode("POSITION", memberReq.position())).thenReturn(Optional.empty());
 
@@ -135,17 +138,18 @@ public class AuthServiceUnitTests {
                 .deptName("개발팀")
                 .build();
 
-        Code position = new Code("POSITION", "01", "사원");
+        Code position = employee();
 
         when(deptRepository.findById(memberReq.dept())).thenReturn(Optional.of(dept));
-        when(codeRepository.findByGroupCodeAndCode("POSITION", memberReq.position())).thenReturn(Optional.empty());
+        when(codeRepository.findByGroupCodeAndCode("POSITION", memberReq.position())).thenReturn(Optional.of(position));
+        when(memberInfoRepository.existsByEmail(memberReq.email())).thenReturn(true);
 
         assertThatThrownBy(
                 () -> {
                     authService.signUp(memberReq);
                 }
-        ).isInstanceOf(NotFoundException.class)
-                .hasFieldOrPropertyWithValue("errorCode", NotFoundErrorCode.NOT_FOUND_POSITION);
+        ).isInstanceOf(ConflictException.class)
+                .hasFieldOrPropertyWithValue("errorCode", ConflictErrorCode.CONFLICT_EMAIL);
     }
 
 
