@@ -1,6 +1,5 @@
 package programmers.team6.mock;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +14,7 @@ public class VacationInfoLogReaderFake extends VacationInfoLogReader {
 
 	private final Map<Long, VacationInfoLog> vacationInfoLogs;
 
-		public VacationInfoLogReaderFake(VacationInfoLog... logs) {
+	public VacationInfoLogReaderFake(VacationInfoLog... logs) {
 		super(null);
 		this.vacationInfoLogs = toMap(Arrays.asList(logs));
 	}
