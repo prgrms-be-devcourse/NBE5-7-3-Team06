@@ -20,12 +20,6 @@ public class VacationRequestsReaderFake extends VacationRequestsReader {
 
 	@Override
 	public VacationRequests vacationRequestFrom(List<Long> ids, VacationStatisticsRequest request) {
-		List<VacationRequest> list = vacationRequests
-			.stream()
-			.filter(vacationRequest -> ids.contains(vacationRequest.getMemberId()))
-			.filter(vacationRequest -> vacationRequest.getFrom().getYear() == request.year()
-				|| vacationRequest.getTo().getYear() == request.year())
-			.toList();
-		return new VacationRequests(list);
+		return new VacationRequests(vacationRequests);
 	}
 }

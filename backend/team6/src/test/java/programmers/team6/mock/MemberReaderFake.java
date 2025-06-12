@@ -23,27 +23,6 @@ public class MemberReaderFake extends MemberReader {
 
 	@Override
 	public Members readHasVacationInfoMemberFrom(VacationStatisticsRequest request, Pageable pageable) {
-		List<Member> list = members.stream()
-			.filter(member -> isSameName(request.name(), member))
-			.filter(member -> isSameDept(request.deptId(), member))
-			.toList();
-		return new Members(new PageImpl<>(list, pageable, list.size()));
-	}
-
-	private boolean isSameName(String name, Member member) {
-		if (name == null) {
-			return true;
-		}
-		return member.getName().contains(name);
-	}
-
-	private boolean isSameDept(Long deptId, Member member) {
-		if (deptId == null) {
-			return true;
-		}
-		if (member.getDept() == null) {
-			return false;
-		}
-		return deptId.equals(member.getDept().getId());
+		return new Members(new PageImpl<>(members, pageable, members.size()));
 	}
 }
