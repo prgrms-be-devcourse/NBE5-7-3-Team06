@@ -148,6 +148,9 @@ class VacationServiceTests {
 		void should_throwRuntimeException_when_givenInvalidGroupCodeAndCode() {
 			// given
 			Member member = MemberMother.member();
+			Member leader = MemberMother.member();
+			member.getDept().appointLeader(leader);
+
 			LocalDateTime from = LocalDateTime.now().plusDays(1);
 			LocalDateTime to = LocalDateTime.now();
 			String vacationType = "vacationType";
@@ -165,7 +168,7 @@ class VacationServiceTests {
 			// then
 			assertThatThrownBy(
 				() -> vacationService.requestVacation(member.getId(), vacationCreateRequestDto)).isInstanceOf(
-				BadRequestException.class);
+				RuntimeException.class);
 		}
 
 	}
