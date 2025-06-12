@@ -64,7 +64,7 @@ public class AuthServiceUnitTests {
 
         MemberSignUpRequest memberReq = genMemberSignUpRequest();
 
-        when(deptRepository.findById(genMemberSignUpRequest().dept())).thenReturn(Optional.of(dept));
+        when(deptRepository.findById(memberReq.dept())).thenReturn(Optional.of(dept));
         when(codeRepository.findByGroupCodeAndCode("POSITION", memberReq.position())).thenReturn(Optional.of(position));
         when(memberInfoRepository.existsByEmail(memberReq.email())).thenReturn(false);
         when(passwordEncoder.encode(memberReq.password())).thenReturn(encodedPassword);
