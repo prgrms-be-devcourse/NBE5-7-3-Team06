@@ -72,8 +72,8 @@ class AdminServiceTest {
 				"testReason", List.of("r1", "r2", "r3"));
 			this.approvalSteps = new ArrayList<>();
 			for (int i = 0; i < 3; i++) {
-				approvalSteps.add(
-					AdminVacationRequestSearchTestDataFactory.genTestApprovalStep(vacationRequest, i, String.format("o%d", i)));
+				approvalSteps.add(AdminVacationRequestSearchTestDataFactory.genTestApprovalStep(vacationRequest, i,
+					String.format("o%d", i)));
 			}
 		}
 
@@ -89,11 +89,11 @@ class AdminServiceTest {
 			adminService.updateVacationRequestDetailById(0L, vacationRequestDetailUpdateRequest);
 
 			// then
-			assertThat(vacationRequest.getFrom()).isEqualTo(vacationRequestDetailUpdateRequest.from());
-			assertThat(vacationRequest.getTo()).isEqualTo(vacationRequestDetailUpdateRequest.to());
-			assertThat(vacationRequest.getStatus()).isEqualTo(
-				vacationRequestDetailUpdateRequest.vacationRequestStatus());
-			assertThat(vacationRequest.getReason()).isEqualTo(vacationRequestDetailUpdateRequest.reason());
+			assertThat(vacationRequest).extracting(VacationRequest::getFrom, VacationRequest::getTo,
+					VacationRequest::getStatus, VacationRequest::getReason)
+				.containsExactly(vacationRequestDetailUpdateRequest.from(), vacationRequestDetailUpdateRequest.to(),
+					vacationRequestDetailUpdateRequest.vacationRequestStatus(),
+					vacationRequestDetailUpdateRequest.reason());
 			assertThat(approvalSteps).hasSize(3).extracting(ApprovalStep::getReason).containsExactly("r1", "r2", "r3");
 		}
 
@@ -104,9 +104,8 @@ class AdminServiceTest {
 			when(vacationRequestRepository.findVacationRequestById(anyLong())).thenReturn(Optional.empty());
 
 			// then
-			assertThatThrownBy(
-				() -> adminService.updateVacationRequestDetailById(0L, vacationRequestDetailUpdateRequest))
-				.isInstanceOf(NotFoundException.class)
+			assertThatThrownBy(() -> adminService.updateVacationRequestDetailById(0L,
+				vacationRequestDetailUpdateRequest)).isInstanceOf(NotFoundException.class)
 				.hasMessage(NotFoundErrorCode.NOT_FOUND_VACATION_REQUEST.getMessage());
 		}
 
@@ -118,9 +117,8 @@ class AdminServiceTest {
 			when(codeRepository.findByIdAndGroupCode(anyLong(), eq("VACATION_TYPE"))).thenReturn(Optional.empty());
 
 			// then
-			assertThatThrownBy(
-				() -> adminService.updateVacationRequestDetailById(0L, vacationRequestDetailUpdateRequest))
-				.isInstanceOf(NotFoundException.class)
+			assertThatThrownBy(() -> adminService.updateVacationRequestDetailById(0L,
+				vacationRequestDetailUpdateRequest)).isInstanceOf(NotFoundException.class)
 				.hasMessage(NotFoundErrorCode.NOT_FOUND_CODE.getMessage());
 		}
 
@@ -135,9 +133,8 @@ class AdminServiceTest {
 				Collections.emptyList());
 
 			// then
-			assertThatThrownBy(
-				() -> adminService.updateVacationRequestDetailById(0L, vacationRequestDetailUpdateRequest))
-				.isInstanceOf(ConflictException.class)
+			assertThatThrownBy(() -> adminService.updateVacationRequestDetailById(0L,
+				vacationRequestDetailUpdateRequest)).isInstanceOf(ConflictException.class)
 				.hasMessage(ConflictErrorCode.CONFLICT_APPROVAL_STEP.getMessage());
 		}
 
@@ -152,9 +149,8 @@ class AdminServiceTest {
 				List.of(AdminVacationRequestSearchTestDataFactory.genTestApprovalStep(null, 0, null)));
 
 			// then
-			assertThatThrownBy(
-				() -> adminService.updateVacationRequestDetailById(0L, vacationRequestDetailUpdateRequest))
-				.isInstanceOf(ConflictException.class)
+			assertThatThrownBy(() -> adminService.updateVacationRequestDetailById(0L,
+				vacationRequestDetailUpdateRequest)).isInstanceOf(ConflictException.class)
 				.hasMessage(ConflictErrorCode.CONFLICT_APPROVAL_STEP.getMessage());
 		}
 	}

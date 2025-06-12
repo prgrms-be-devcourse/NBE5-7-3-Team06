@@ -189,14 +189,12 @@ class AdminVacationRequestSearchCustomTest {
 	@Test
 	@DisplayName("검색 조건이 없을 때 모든 휴가 신청을 조회한다")
 	void should_searchVacationRequests_when_defaultSearchCondition() {
-		// given
+		// given & when
 		AdminVacationSearchCondition defaultSearchCondition = new AdminVacationSearchCondition(null, null, null);
 
-		// when
+		// then
 		Page<VacationRequestSearchResponse> result = adminVacationRequestSearchCustom.search(
 			defaultSearchCondition, pageable);
-
-		// then
 		assertThat(result).hasSize(TOTAL_VACATION_REQUESTS_CNT);
 		assertThat(vacationRequestRepository.count()).isEqualTo(TOTAL_VACATION_REQUESTS_CNT);
 	}
@@ -206,11 +204,9 @@ class AdminVacationRequestSearchCustomTest {
 	@DisplayName("유효한 검색 조건으로 휴가 신청을 조회한다")
 	void should_successSearchVacationRequests_when_givenValidData(
 		AdminVacationSearchCondition searchCondition, int expectedResult) {
-		// when
+		// then
 		Page<VacationRequestSearchResponse> searchResult = adminVacationRequestSearchCustom.search(
 			searchCondition, pageable);
-
-		// then
 		assertThat(searchResult).hasSize(expectedResult);
 	}
 
