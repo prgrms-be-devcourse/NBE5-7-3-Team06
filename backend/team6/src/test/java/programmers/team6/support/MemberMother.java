@@ -29,5 +29,9 @@ public class MemberMother {
 			.joinDate(LocalDateTime.of(2025, 6, 12, 10, 11))
 			.role(Role.USER)
 			.build();
+  }
+	
+  public static Member member() {
+		return withId(0L);
 	}
 }
