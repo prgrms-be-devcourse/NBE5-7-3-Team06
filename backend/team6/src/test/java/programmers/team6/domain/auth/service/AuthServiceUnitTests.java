@@ -1,11 +1,14 @@
 package programmers.team6.domain.auth.service;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.BDDMockito.*;
 import static programmers.team6.support.PositionMother.*;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Date;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,16 +16,20 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import programmers.team6.domain.auth.dto.JwtMemberInfo;
+import programmers.team6.domain.auth.dto.TokenBody;
 import programmers.team6.domain.auth.dto.TokenPairWithExpiration;
 import programmers.team6.domain.auth.dto.request.MemberLoginRequest;
 import programmers.team6.domain.auth.dto.request.MemberSignUpRequest;
+import programmers.team6.domain.auth.dto.response.AccessTokenResponse;
 import programmers.team6.domain.auth.dto.response.AuthTokenResponse;
 import programmers.team6.domain.auth.dto.response.LoginResponse;
 import programmers.team6.domain.auth.token.JwtTokenProvider;
+import programmers.team6.domain.auth.util.JwtUtils;
 import programmers.team6.domain.member.entity.Code;
 import programmers.team6.domain.member.entity.Dept;
 import programmers.team6.domain.member.entity.Member;
@@ -55,6 +62,8 @@ class AuthServiceUnitTests {
 	private CodeRepository codeRepository;
 	@Mock
 	private JwtTokenProvider jwtTokenProvider;
+	@Mock
+	private JwtService jwtService;
 
 	@InjectMocks
 	private AuthService authService;
@@ -108,9 +117,7 @@ class AuthServiceUnitTests {
 		when(deptRepository.findById(memberReq.dept())).thenReturn(Optional.empty());
 
 		assertThatThrownBy(
-			() -> {
-				authService.signUp(memberReq);
-			}
+			() -> authService.signUp(memberReq)
 		).isInstanceOf(NotFoundException.class)
 			.hasFieldOrPropertyWithValue("errorCode", NotFoundErrorCode.NOT_FOUND_DEPT);
 	}
@@ -129,9 +136,7 @@ class AuthServiceUnitTests {
 		when(codeRepository.findByGroupCodeAndCode("POSITION", memberReq.position())).thenReturn(Optional.empty());
 
 		assertThatThrownBy(
-			() -> {
-				authService.signUp(memberReq);
-			}
+			() -> authService.signUp(memberReq)
 		).isInstanceOf(NotFoundException.class)
 			.hasFieldOrPropertyWithValue("errorCode", NotFoundErrorCode.NOT_FOUND_POSITION);
 	}
@@ -220,6 +225,36 @@ class AuthServiceUnitTests {
 		).isInstanceOf(UnauthorizedException.class)
 			.hasFieldOrPropertyWithValue("errorCode", UnauthorizedErrorCode.UNAUTHORIZED_PASSWORD);
 
+	}
+
+	@Test
+	@DisplayName("유효한 리프레시 토큰으로 액세스 토큰을 재발급한다")
+	void reissuesAccessToken_whenRefreshTokenIsValid() {
+		String refreshToken = UUID.randomUUID().toString();
+		String accessToken = UUID.randomUUID().toString();
+		AccessTokenResponse authTokenResponse = new AccessTokenResponse(accessToken, 100);
+		when(jwtTokenProvider.generateAccessToken(refreshToken)).thenReturn(authTokenResponse);
+
+		AccessTokenResponse reissue = authService.reissue(refreshToken);
+
+		assertThat(reissue.accessToken()).isEqualTo(accessToken);
+	}
+
+	@Test
+	@DisplayName("리프레시 토큰의 만료 시간 기반으로 블랙리스트를 등록한다")
+	void addsRefreshTokenToBlacklist_basedOnExpirationTime() {
+		String refreshToken = UUID.randomUUID().toString();
+		LocalDateTime expiration = LocalDateTime.of(2025, 6, 13, 0, 1, 0);
+		Date date = Date.from(expiration.toInstant(
+			ZoneOffset.UTC));
+		when(jwtTokenProvider.parseClaims(refreshToken)).thenReturn(new TokenBody(1L, "name", Role.USER, date, date));
+		try (MockedStatic<JwtUtils> jwtUtilsMockedStatic = mockStatic(JwtUtils.class)) {
+			jwtUtilsMockedStatic.when(() -> JwtUtils.calculateTtlMillis(date)).thenReturn(0L);
+
+			authService.addBlackList(refreshToken);
+
+			verify(jwtService, times(1)).addBlackList(refreshToken, 0L);
+		}
 	}
 
 	private static MemberSignUpRequest genMemberSignUpRequest() {
