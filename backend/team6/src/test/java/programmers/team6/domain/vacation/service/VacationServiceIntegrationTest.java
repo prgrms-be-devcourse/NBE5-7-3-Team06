@@ -13,13 +13,13 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
-import programmers.team6.domain.member.entity.Code;
-import programmers.team6.domain.member.entity.Dept;
+import programmers.team6.domain.admin.entity.Code;
+import programmers.team6.domain.admin.entity.Dept;
 import programmers.team6.domain.member.entity.Member;
-import programmers.team6.domain.member.repository.CodeRepository;
-import programmers.team6.domain.member.repository.DeptRepository;
+import programmers.team6.domain.admin.repository.CodeRepository;
+import programmers.team6.domain.admin.repository.DeptRepository;
 import programmers.team6.domain.member.repository.MemberRepository;
-import programmers.team6.domain.member.service.DeptService;
+import programmers.team6.domain.admin.service.DeptService;
 import programmers.team6.domain.vacation.dto.request.VacationCreateRequestDto;
 import programmers.team6.domain.vacation.dto.response.VacationCreateResponseDto;
 import programmers.team6.domain.vacation.dto.response.VacationInfoSelectResponseDto;

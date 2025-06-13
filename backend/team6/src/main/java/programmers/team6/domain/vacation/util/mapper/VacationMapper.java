@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
-import programmers.team6.domain.member.entity.Code;
+import programmers.team6.domain.admin.entity.Code;
 import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.vacation.dto.request.VacationCreateRequestDto;
 import programmers.team6.domain.vacation.dto.response.VacationCreateResponseDto;

@@ -1,4 +1,4 @@
-package programmers.team6.domain.member.service;
+package programmers.team6.domain.admin.service;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -15,10 +15,10 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
 
 import programmers.team6.domain.admin.dto.response.AdminCodeResponse;
-import programmers.team6.domain.member.dto.CodeCreateRequest;
-import programmers.team6.domain.member.entity.Code;
+import programmers.team6.domain.admin.dto.request.CodeCreateRequest;
+import programmers.team6.domain.admin.entity.Code;
 import programmers.team6.domain.member.enums.BasicCodeInfo;
-import programmers.team6.domain.member.repository.CodeRepository;
+import programmers.team6.domain.admin.repository.CodeRepository;
 import programmers.team6.global.exception.code.BadRequestErrorCode;
 import programmers.team6.global.exception.code.NotFoundErrorCode;
 import programmers.team6.global.exception.customException.BadRequestException;

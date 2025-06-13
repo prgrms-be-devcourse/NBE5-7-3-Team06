@@ -1,6 +1,6 @@
 package programmers.team6.support;
 
-import programmers.team6.domain.member.entity.Code;
+import programmers.team6.domain.admin.entity.Code;
 import programmers.team6.domain.member.enums.GroupCode;
 import programmers.team6.domain.vacation.enums.VacationCode;
 

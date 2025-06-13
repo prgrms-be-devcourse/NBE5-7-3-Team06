@@ -1,4 +1,4 @@
-package programmers.team6.domain.member.controller;
+package programmers.team6.domain.admin.controller;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import programmers.team6.domain.admin.dto.response.AdminCodeResponse;
-import programmers.team6.domain.member.dto.CodeCreateRequest;
-import programmers.team6.domain.member.service.CodeService;
+import programmers.team6.domain.admin.dto.request.CodeCreateRequest;
+import programmers.team6.domain.admin.service.CodeService;
 
 @RestController
 @RequiredArgsConstructor

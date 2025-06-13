@@ -1,4 +1,4 @@
-package programmers.team6.domain.member.dto;
+package programmers.team6.domain.admin.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 

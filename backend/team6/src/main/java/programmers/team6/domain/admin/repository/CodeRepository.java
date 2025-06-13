@@ -1,4 +1,4 @@
-package programmers.team6.domain.member.repository;
+package programmers.team6.domain.admin.repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,9 +10,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import programmers.team6.domain.admin.dto.CodeInfo;
-import programmers.team6.domain.member.dto.CodeDropdownResponse;
-import programmers.team6.domain.member.dto.CodeReadResponse;
-import programmers.team6.domain.member.entity.Code;
+import programmers.team6.domain.admin.dto.response.CodeDropdownResponse;
+import programmers.team6.domain.admin.dto.response.CodeReadResponse;
+import programmers.team6.domain.admin.entity.Code;
 
 public interface CodeRepository extends JpaRepository<Code, Long> {
 	Optional<Code> findByIdAndGroupCode(Long id, String groupCode);
@@ -20,14 +20,14 @@ public interface CodeRepository extends JpaRepository<Code, Long> {
 	Optional<Code> findByGroupCodeAndCode(String groupCode, String code);
 
 	@Query("""
-		  SELECT new programmers.team6.domain.member.dto.CodeDropdownResponse (c.code,c.name)
+		  SELECT new programmers.team6.domain.admin.dto.response.CodeDropdownResponse (c.code,c.name)
 		  FROM Code c
 		  WHERE c.groupCode = :groupCode
 		""")
 	List<CodeDropdownResponse> findByGroupCode(@Param("groupCode") String groupCode);
 
 	@Query("""
-			SELECT new programmers.team6.domain.member.dto.CodeReadResponse(c.id,c.groupCode,c.code,c.name)
+			SELECT new programmers.team6.domain.admin.dto.response.CodeReadResponse(c.id,c.groupCode,c.code,c.name)
 			FROM Code c
 			WHERE (:groupCode IS NULL OR c.groupCode = :groupCode)
 		""")

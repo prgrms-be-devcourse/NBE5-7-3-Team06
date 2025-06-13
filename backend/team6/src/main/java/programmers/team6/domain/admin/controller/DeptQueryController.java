@@ -1,4 +1,4 @@
-package programmers.team6.domain.member.controller;
+package programmers.team6.domain.admin.controller;
 
 import java.util.List;
 
@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import programmers.team6.domain.member.dto.DeptDropdownResponse;
-import programmers.team6.domain.member.service.DeptService;
+import programmers.team6.domain.admin.dto.response.DeptDropdownResponse;
+import programmers.team6.domain.admin.service.DeptService;
 
 @RestController
 @RequestMapping("/depts")

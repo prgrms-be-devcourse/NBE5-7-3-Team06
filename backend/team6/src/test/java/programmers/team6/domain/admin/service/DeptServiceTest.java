@@ -1,4 +1,4 @@
-package programmers.team6.domain.member.service;
+package programmers.team6.domain.admin.service;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -7,7 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import programmers.team6.domain.member.repository.DeptRepository;
+import programmers.team6.domain.admin.repository.DeptRepository;
 import programmers.team6.global.exception.code.NotFoundErrorCode;
 import programmers.team6.global.exception.customException.NotFoundException;
 

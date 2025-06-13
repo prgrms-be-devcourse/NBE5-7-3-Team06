@@ -9,9 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import programmers.team6.domain.member.entity.Dept;
+import programmers.team6.domain.admin.entity.Dept;
 import programmers.team6.domain.member.entity.Member;
-import programmers.team6.domain.member.service.DeptService;
+import programmers.team6.domain.admin.service.DeptService;
 import programmers.team6.domain.vacation.dto.response.ApprovalFirstStepDetailResponse;
 import programmers.team6.domain.vacation.dto.response.ApprovalFirstStepSelectResponse;
 import programmers.team6.domain.vacation.dto.response.ApprovalSecondStepDetailResponse;

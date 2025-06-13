@@ -1,4 +1,4 @@
-package programmers.team6.domain.member.entity;
+package programmers.team6.domain.admin.entity;
 
 import static org.assertj.core.api.Assertions.*;
 

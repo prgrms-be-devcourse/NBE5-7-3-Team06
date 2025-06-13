@@ -18,7 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import programmers.team6.domain.member.entity.Member;
-import programmers.team6.domain.member.repository.CodeRepository;
+import programmers.team6.domain.admin.repository.CodeRepository;
 import programmers.team6.domain.member.repository.MemberRepository;
 import programmers.team6.domain.vacation.dto.request.VacationCreateRequestDto;
 import programmers.team6.domain.vacation.dto.response.VacationListResponseDto;

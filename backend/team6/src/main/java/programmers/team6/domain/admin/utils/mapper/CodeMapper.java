@@ -1,8 +1,8 @@
-package programmers.team6.domain.member.util.mapper;
+package programmers.team6.domain.admin.utils.mapper;
 
 import lombok.experimental.UtilityClass;
-import programmers.team6.domain.member.dto.CodeCreateRequest;
-import programmers.team6.domain.member.entity.Code;
+import programmers.team6.domain.admin.dto.request.CodeCreateRequest;
+import programmers.team6.domain.admin.entity.Code;
 import programmers.team6.domain.member.enums.BasicCodeInfo;
 
 @UtilityClass

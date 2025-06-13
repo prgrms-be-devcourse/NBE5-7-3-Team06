@@ -1,4 +1,4 @@
-package programmers.team6.domain.member.entity;
+package programmers.team6.domain.admin.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

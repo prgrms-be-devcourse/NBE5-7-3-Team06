@@ -1,4 +1,4 @@
-package programmers.team6.domain.member.service;
+package programmers.team6.domain.admin.service;
 
 import java.util.List;
 
@@ -9,12 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import programmers.team6.domain.admin.dto.response.AdminCodeResponse;
-import programmers.team6.domain.member.dto.CodeCreateRequest;
-import programmers.team6.domain.member.dto.CodeDropdownResponse;
-import programmers.team6.domain.member.entity.Code;
+import programmers.team6.domain.admin.dto.request.CodeCreateRequest;
+import programmers.team6.domain.admin.dto.response.CodeDropdownResponse;
+import programmers.team6.domain.admin.entity.Code;
 import programmers.team6.domain.member.enums.BasicCodeInfo;
-import programmers.team6.domain.member.repository.CodeRepository;
-import programmers.team6.domain.member.util.mapper.CodeMapper;
+import programmers.team6.domain.admin.repository.CodeRepository;
+import programmers.team6.domain.admin.utils.mapper.CodeMapper;
 import programmers.team6.global.exception.code.BadRequestErrorCode;
 import programmers.team6.global.exception.code.NotFoundErrorCode;
 import programmers.team6.global.exception.customException.BadRequestException;

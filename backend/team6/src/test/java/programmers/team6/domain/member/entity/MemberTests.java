@@ -2,6 +2,8 @@ package programmers.team6.domain.member.entity;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import programmers.team6.domain.admin.entity.Dept;
 import programmers.team6.domain.member.enums.Role;
 import programmers.team6.global.exception.code.BadRequestErrorCode;
 import programmers.team6.global.exception.customException.BadRequestException;

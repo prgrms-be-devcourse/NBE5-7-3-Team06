@@ -1,4 +1,4 @@
-package programmers.team6.domain.member.entity;
+package programmers.team6.domain.admin.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import programmers.team6.domain.member.entity.Member;
 import programmers.team6.global.entity.BaseEntity;
 import programmers.team6.global.exception.code.NotFoundErrorCode;
 import programmers.team6.global.exception.customException.NotFoundException;

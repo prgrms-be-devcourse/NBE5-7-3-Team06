@@ -1,12 +1,11 @@
-package programmers.team6.domain.member.entity;
+package programmers.team6.domain.admin.entity;
 
 import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import net.bytebuddy.utility.dispatcher.JavaDispatcher;
-
+import programmers.team6.domain.member.entity.Member;
 import programmers.team6.global.exception.code.NotFoundErrorCode;
 import programmers.team6.global.exception.customException.NotFoundException;
 
