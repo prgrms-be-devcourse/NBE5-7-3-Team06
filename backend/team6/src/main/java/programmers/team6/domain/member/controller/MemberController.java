@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import programmers.team6.domain.member.annotation.LoginMember;
-import programmers.team6.domain.member.dto.MemberLoginInfoResponse;
+import programmers.team6.domain.member.dto.response.MemberLoginInfoResponse;
 import programmers.team6.domain.member.service.MemberService;
 
 @RestController

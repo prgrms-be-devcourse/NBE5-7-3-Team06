@@ -20,7 +20,7 @@ import programmers.team6.domain.member.service.MemberService;
 import programmers.team6.domain.vacation.entity.VacationInfoLog;
 import programmers.team6.domain.vacation.repository.VacationInfoRepository;
 import programmers.team6.domain.vacation.rule.VacationGrantRuleFinder;
-import programmers.team6.domain.vacation.service.VacationInfoLogPublisher;
+import programmers.team6.domain.vacation.support.VacationInfoLogPublisher;
 import programmers.team6.global.exception.customException.BadRequestException;
 import programmers.team6.support.MemberMother;
 

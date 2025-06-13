@@ -16,7 +16,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import lombok.RequiredArgsConstructor;
-import programmers.team6.domain.auth.config.JwtAuthenticationFilter;
+import programmers.team6.domain.auth.token.JwtAuthenticationFilter;
 import programmers.team6.global.exception.code.ForbiddenErrorCode;
 import programmers.team6.global.exception.code.UnauthorizedErrorCode;
 import programmers.team6.global.util.ErrorResponseUtil;

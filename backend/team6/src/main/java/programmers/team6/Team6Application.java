@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServic
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-import programmers.team6.domain.auth.config.JwtConfiguration;
+import programmers.team6.domain.auth.token.JwtConfiguration;
 
 @EnableJpaAuditing
 @SpringBootApplication(exclude = {UserDetailsServiceAutoConfiguration.class})

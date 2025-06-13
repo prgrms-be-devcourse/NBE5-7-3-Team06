@@ -2,6 +2,8 @@ package programmers.team6.domain.admin.utils;
 
 import jakarta.persistence.criteria.*;
 import jakarta.persistence.metamodel.SingularAttribute;
+import programmers.team6.global.querybuilder.CriteriaCustomQueryBuilder;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

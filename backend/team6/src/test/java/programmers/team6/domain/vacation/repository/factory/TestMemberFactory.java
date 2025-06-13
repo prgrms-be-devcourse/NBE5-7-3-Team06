@@ -6,12 +6,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import programmers.team6.domain.member.entity.Code;
-import programmers.team6.domain.member.entity.Dept;
+import programmers.team6.domain.admin.entity.Code;
+import programmers.team6.domain.admin.entity.Dept;
 import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.member.enums.Role;
-import programmers.team6.domain.member.repository.CodeRepository;
-import programmers.team6.domain.member.repository.DeptRepository;
+import programmers.team6.domain.admin.repository.CodeRepository;
+import programmers.team6.domain.admin.repository.DeptRepository;
 import programmers.team6.domain.member.repository.MemberRepository;
 
 @Component

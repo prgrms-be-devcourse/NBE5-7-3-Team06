@@ -28,14 +28,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import lombok.extern.slf4j.Slf4j;
-import programmers.team6.domain.admin.dto.AdminVacationSearchCondition;
-import programmers.team6.domain.admin.dto.VacationRequestSearchResponse;
+import programmers.team6.domain.admin.dto.response.AdminVacationSearchCondition;
+import programmers.team6.domain.admin.dto.response.VacationRequestSearchResponse;
 import programmers.team6.domain.admin.enums.Quarter;
-import programmers.team6.domain.member.entity.Code;
-import programmers.team6.domain.member.entity.Dept;
+import programmers.team6.domain.admin.entity.Code;
+import programmers.team6.domain.admin.entity.Dept;
 import programmers.team6.domain.member.entity.Member;
-import programmers.team6.domain.member.repository.CodeRepository;
-import programmers.team6.domain.member.repository.DeptRepository;
 import programmers.team6.domain.member.repository.MemberRepository;
 import programmers.team6.domain.vacation.entity.VacationRequest;
 import programmers.team6.domain.vacation.enums.ApprovalStatus;

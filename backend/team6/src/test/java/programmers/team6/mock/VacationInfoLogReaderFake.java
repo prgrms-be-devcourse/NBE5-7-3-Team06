@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import programmers.team6.domain.admin.dto.VacationStatisticsRequest;
-import programmers.team6.domain.admin.service.VacationInfoLogReader;
-import programmers.team6.domain.admin.service.VacationInfoLogs;
+import programmers.team6.domain.admin.dto.request.VacationStatisticsRequest;
+import programmers.team6.domain.admin.support.VacationInfoLogReader;
+import programmers.team6.domain.admin.support.VacationInfoLogs;
 import programmers.team6.domain.vacation.entity.VacationInfoLog;
 
 public class VacationInfoLogReaderFake extends VacationInfoLogReader {

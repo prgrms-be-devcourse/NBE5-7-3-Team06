@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import programmers.team6.domain.vacation.entity.VacationInfoLog;
-import programmers.team6.domain.vacation.service.VacationInfoLogPublisher;
+import programmers.team6.domain.vacation.support.VacationInfoLogPublisher;
 
 public class VacationInfoLogPublisherFake  extends VacationInfoLogPublisher {
 

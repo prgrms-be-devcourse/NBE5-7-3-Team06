@@ -1,6 +1,8 @@
 package programmers.team6.domain.admin.utils;
 
 import jakarta.persistence.TypedQuery;
+import programmers.team6.global.querybuilder.QueryUtils;
+
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

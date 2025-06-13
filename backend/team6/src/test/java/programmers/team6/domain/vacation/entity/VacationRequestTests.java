@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import programmers.team6.domain.member.entity.Code;
+import programmers.team6.domain.admin.entity.Code;
 import programmers.team6.domain.vacation.enums.VacationCode;
 import programmers.team6.domain.vacation.enums.VacationRequestStatus;
 import programmers.team6.support.MemberMother;

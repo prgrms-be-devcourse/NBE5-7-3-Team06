@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import programmers.team6.domain.admin.dto.MemberApprovalResponse;
+import programmers.team6.domain.admin.dto.response.MemberApprovalResponse;
 import programmers.team6.domain.admin.service.MemberApprovalService;
 
 @RestController

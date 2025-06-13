@@ -13,14 +13,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import programmers.team6.domain.admin.dto.VacationInfoUpdateTotalCountRequest;
-import programmers.team6.domain.admin.dto.VacationInfoUpdateTotalCountRequests;
-import programmers.team6.domain.admin.dto.VacationInfoUpdateTotalCountRequestsList;
+import programmers.team6.domain.admin.dto.request.VacationInfoUpdateTotalCountRequest;
+import programmers.team6.domain.admin.dto.request.VacationInfoUpdateTotalCountRequests;
+import programmers.team6.domain.admin.dto.request.VacationInfoUpdateTotalCountRequestsList;
 import programmers.team6.domain.vacation.entity.VacationInfo;
 import programmers.team6.domain.vacation.entity.VacationInfoLog;
 import programmers.team6.domain.vacation.repository.VacationInfoRepository;
 import programmers.team6.domain.vacation.rule.VacationGrantRule;
 import programmers.team6.domain.vacation.rule.VacationGrantRuleFinder;
+import programmers.team6.domain.vacation.support.VacationInfoLogPublisher;
 import programmers.team6.global.exception.customException.BadRequestException;
 import programmers.team6.global.exception.customException.ConflictException;
 

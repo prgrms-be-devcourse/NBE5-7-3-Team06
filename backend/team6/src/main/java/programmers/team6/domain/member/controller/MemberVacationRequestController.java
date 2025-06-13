@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import programmers.team6.domain.admin.dto.VacationRequestDetailReadResponse;
+import programmers.team6.domain.admin.dto.response.VacationRequestDetailReadResponse;
 import programmers.team6.domain.auth.dto.TokenBody;
 import programmers.team6.domain.member.service.MemberVacationRequestService;
 

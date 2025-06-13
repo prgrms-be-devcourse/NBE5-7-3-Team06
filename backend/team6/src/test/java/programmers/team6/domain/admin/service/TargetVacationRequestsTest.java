@@ -8,6 +8,7 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import programmers.team6.domain.admin.support.TargetVacationRequests;
 import programmers.team6.domain.vacation.entity.VacationRequest;
 import programmers.team6.support.TestVacationType;
 

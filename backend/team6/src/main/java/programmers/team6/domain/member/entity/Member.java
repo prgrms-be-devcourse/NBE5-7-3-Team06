@@ -20,6 +20,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import programmers.team6.domain.admin.entity.Code;
+import programmers.team6.domain.admin.entity.Dept;
 import programmers.team6.domain.member.enums.Role;
 import programmers.team6.global.entity.BaseEntity;
 import programmers.team6.global.exception.code.BadRequestErrorCode;

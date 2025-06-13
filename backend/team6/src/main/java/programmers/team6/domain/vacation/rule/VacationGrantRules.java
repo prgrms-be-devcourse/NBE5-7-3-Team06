@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.vacation.entity.VacationInfo;
 import programmers.team6.domain.vacation.entity.VacationInfoLog;
+import programmers.team6.domain.vacation.support.VacationInfos;
 
 public class VacationGrantRules {
 	private final Map<String, VacationGrantRule> rules;

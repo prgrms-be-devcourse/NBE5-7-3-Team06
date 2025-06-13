@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import programmers.team6.domain.auth.dto.TokenBody;
-import programmers.team6.domain.vacation.dto.ApprovalFirstStepDetailResponse;
-import programmers.team6.domain.vacation.dto.ApprovalFirstStepSelectResponse;
-import programmers.team6.domain.vacation.dto.ApprovalSecondStepDetailResponse;
-import programmers.team6.domain.vacation.dto.ApprovalSecondStepSelectResponse;
-import programmers.team6.domain.vacation.dto.ApprovalStepRejectRequest;
-import programmers.team6.domain.vacation.dto.ApprovalStepSelectRequest;
+import programmers.team6.domain.vacation.dto.response.ApprovalFirstStepDetailResponse;
+import programmers.team6.domain.vacation.dto.response.ApprovalFirstStepSelectResponse;
+import programmers.team6.domain.vacation.dto.response.ApprovalSecondStepDetailResponse;
+import programmers.team6.domain.vacation.dto.response.ApprovalSecondStepSelectResponse;
+import programmers.team6.domain.vacation.dto.request.ApprovalStepRejectRequest;
+import programmers.team6.domain.vacation.dto.request.ApprovalStepSelectRequest;
 import programmers.team6.domain.vacation.service.ApprovalStepService;
 import programmers.team6.global.paging.PagingConfig;
 

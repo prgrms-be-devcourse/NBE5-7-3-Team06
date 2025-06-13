@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import programmers.team6.domain.admin.dto.MemberApprovalResponse;
+import programmers.team6.domain.admin.dto.response.MemberApprovalResponse;
 import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.member.enums.Role;
 import programmers.team6.domain.member.repository.MemberRepository;
@@ -16,7 +16,7 @@ import programmers.team6.domain.vacation.enums.VacationCode;
 import programmers.team6.domain.vacation.repository.VacationInfoRepository;
 import programmers.team6.domain.vacation.rule.VacationGrantRule;
 import programmers.team6.domain.vacation.rule.VacationGrantRuleFinder;
-import programmers.team6.domain.vacation.service.VacationInfoLogPublisher;
+import programmers.team6.domain.vacation.support.VacationInfoLogPublisher;
 
 @Service
 @RequiredArgsConstructor
