@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import programmers.team6.domain.admin.dto.AdminCodeResponse;
+import programmers.team6.domain.admin.dto.response.AdminCodeResponse;
 import programmers.team6.domain.member.dto.CodeCreateRequest;
 import programmers.team6.domain.member.dto.CodeDropdownResponse;
 import programmers.team6.domain.member.entity.Code;

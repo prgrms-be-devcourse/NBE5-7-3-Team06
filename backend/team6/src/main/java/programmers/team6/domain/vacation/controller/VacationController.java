@@ -18,14 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import programmers.team6.domain.auth.dto.TokenBody;
-import programmers.team6.domain.vacation.dto.VacationCancelResponseDto;
-import programmers.team6.domain.vacation.dto.VacationCreateRequestDto;
-import programmers.team6.domain.vacation.dto.VacationCreateResponseDto;
-import programmers.team6.domain.vacation.dto.VacationInfoSelectResponseDto;
-import programmers.team6.domain.vacation.dto.VacationListResponseDto;
-import programmers.team6.domain.vacation.dto.VacationRequestCalendarResponse;
-import programmers.team6.domain.vacation.dto.VacationUpdateRequestDto;
-import programmers.team6.domain.vacation.dto.VacationUpdateResponseDto;
+import programmers.team6.domain.vacation.dto.response.VacationCancelResponseDto;
+import programmers.team6.domain.vacation.dto.request.VacationCreateRequestDto;
+import programmers.team6.domain.vacation.dto.response.VacationCreateResponseDto;
+import programmers.team6.domain.vacation.dto.response.VacationInfoSelectResponseDto;
+import programmers.team6.domain.vacation.dto.response.VacationListResponseDto;
+import programmers.team6.domain.vacation.dto.response.VacationRequestCalendarResponse;
+import programmers.team6.domain.vacation.dto.request.VacationUpdateRequestDto;
+import programmers.team6.domain.vacation.dto.request.VacationUpdateResponseDto;
 import programmers.team6.domain.vacation.service.VacationService;
 
 @Slf4j

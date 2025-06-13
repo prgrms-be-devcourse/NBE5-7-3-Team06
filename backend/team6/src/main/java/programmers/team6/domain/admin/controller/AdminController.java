@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import programmers.team6.domain.admin.dto.AdminVacationRequestSearchResponse;
-import programmers.team6.domain.admin.dto.AdminVacationSearchCondition;
-import programmers.team6.domain.admin.dto.VacationRequestDetailReadResponse;
-import programmers.team6.domain.admin.dto.VacationRequestDetailUpdateRequest;
+import programmers.team6.domain.admin.dto.response.AdminVacationRequestSearchResponse;
+import programmers.team6.domain.admin.dto.response.AdminVacationSearchCondition;
+import programmers.team6.domain.admin.dto.response.VacationRequestDetailReadResponse;
+import programmers.team6.domain.admin.dto.request.VacationRequestDetailUpdateRequest;
 import programmers.team6.domain.admin.enums.Quarter;
 import programmers.team6.domain.admin.service.AdminService;
 import programmers.team6.domain.vacation.enums.VacationRequestStatus;

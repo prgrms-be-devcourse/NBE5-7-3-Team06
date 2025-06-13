@@ -18,7 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import programmers.team6.domain.member.entity.Member;
-import programmers.team6.domain.vacation.dto.ApprovalStepRejectRequest;
+import programmers.team6.domain.vacation.dto.request.ApprovalStepRejectRequest;
 import programmers.team6.domain.vacation.entity.ApprovalStep;
 import programmers.team6.domain.vacation.entity.VacationInfo;
 import programmers.team6.domain.vacation.entity.VacationInfoLog;

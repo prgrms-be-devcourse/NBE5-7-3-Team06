@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import programmers.team6.domain.admin.dto.VacationInfoUpdateTotalCountRequest;
-import programmers.team6.domain.admin.dto.VacationInfoUpdateTotalCountRequests;
-import programmers.team6.domain.admin.dto.VacationInfoUpdateTotalCountRequestsList;
+import programmers.team6.domain.admin.dto.request.VacationInfoUpdateTotalCountRequest;
+import programmers.team6.domain.admin.dto.request.VacationInfoUpdateTotalCountRequests;
+import programmers.team6.domain.admin.dto.request.VacationInfoUpdateTotalCountRequestsList;
 import programmers.team6.domain.vacation.entity.VacationInfo;
 import programmers.team6.domain.vacation.entity.VacationInfoLog;
 import programmers.team6.domain.vacation.repository.VacationInfoRepository;

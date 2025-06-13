@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import programmers.team6.domain.admin.dto.VacationRequestDetailReadResponse;
+import programmers.team6.domain.admin.dto.response.VacationRequestDetailReadResponse;
 import programmers.team6.domain.vacation.entity.VacationRequest;
 
 public interface VacationRequestRepository extends JpaRepository<VacationRequest, Long> {
@@ -48,7 +48,7 @@ public interface VacationRequestRepository extends JpaRepository<VacationRequest
 	List<VacationRequest> findByIdsWithFetch(@Param("ids") List<Long> ids);
 
 	@Query(value =
-		"select new programmers.team6.domain.admin.dto.VacationRequestDetailReadResponse(vr.id,vr.from, vr.to, m.id ,m.name, d.deptName,p.name,vr.reason,t.name,vr.status) "
+		"select new programmers.team6.domain.admin.dto.response.VacationRequestDetailReadResponse(vr.id,vr.from, vr.to, m.id ,m.name, d.deptName,p.name,vr.reason,t.name,vr.status) "
 			+ "from VacationRequest vr join vr.type t " + "join vr.member m join m.dept d join m.position p "
 			+ "where vr.id = :id")
 	Optional<VacationRequestDetailReadResponse> findVacationRequestDetailById(@Param("id") Long id);

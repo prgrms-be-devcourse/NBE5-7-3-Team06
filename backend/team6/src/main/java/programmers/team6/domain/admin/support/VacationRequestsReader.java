@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
-import programmers.team6.domain.admin.dto.VacationStatisticsRequest;
+import programmers.team6.domain.admin.dto.request.VacationStatisticsRequest;
 import programmers.team6.domain.vacation.repository.VacationRequestRepository;
 
 @Component

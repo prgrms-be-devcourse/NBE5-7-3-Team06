@@ -8,7 +8,7 @@ import programmers.team6.domain.admin.support.TargetVacationRequests;
 import programmers.team6.domain.admin.support.VacationInfoLogs;
 import programmers.team6.domain.admin.support.VacationRequests;
 import programmers.team6.domain.member.entity.Member;
-import programmers.team6.domain.vacation.dto.VacationMonthlyStatisticsResponse;
+import programmers.team6.domain.vacation.dto.response.VacationMonthlyStatisticsResponse;
 import programmers.team6.domain.vacation.entity.VacationInfoLog;
 
 @Component

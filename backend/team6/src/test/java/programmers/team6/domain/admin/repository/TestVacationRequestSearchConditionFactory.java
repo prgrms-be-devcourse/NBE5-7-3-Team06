@@ -3,7 +3,7 @@ package programmers.team6.domain.admin.repository;
 import java.time.LocalDate;
 
 import lombok.experimental.UtilityClass;
-import programmers.team6.domain.admin.dto.AdminVacationSearchCondition;
+import programmers.team6.domain.admin.dto.response.AdminVacationSearchCondition;
 import programmers.team6.domain.admin.enums.Quarter;
 import programmers.team6.domain.vacation.enums.VacationRequestStatus;
 

@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import programmers.team6.domain.auth.dto.TokenBody;
 import programmers.team6.domain.auth.token.JwtTokenProvider;
 import programmers.team6.domain.member.annotation.LoginMember;
-import programmers.team6.domain.member.dto.MemberLoginInfoResponse;
+import programmers.team6.domain.member.dto.response.MemberLoginInfoResponse;
 import programmers.team6.domain.member.repository.MemberRepository;
 import programmers.team6.global.exception.code.NotFoundErrorCode;
 import programmers.team6.global.exception.code.UnauthorizedErrorCode;

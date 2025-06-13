@@ -20,7 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import programmers.team6.domain.admin.dto.VacationRequestDetailUpdateRequest;
+import programmers.team6.domain.admin.dto.request.VacationRequestDetailUpdateRequest;
 import programmers.team6.domain.admin.repository.AdminVacationRequestSearchCustom;
 import programmers.team6.domain.admin.repository.AdminVacationRequestSearchTestDataFactory;
 import programmers.team6.domain.member.entity.Code;

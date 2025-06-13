@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
-import programmers.team6.domain.admin.dto.ApprovalStepDetailUpdateResponse;
-import programmers.team6.domain.admin.dto.VacationRequestDetailReadResponse;
+import programmers.team6.domain.admin.dto.response.ApprovalStepDetailUpdateResponse;
+import programmers.team6.domain.admin.dto.response.VacationRequestDetailReadResponse;
 import programmers.team6.domain.vacation.repository.ApprovalStepRepository;
 import programmers.team6.domain.vacation.repository.VacationRequestRepository;
 import programmers.team6.global.exception.code.NotFoundErrorCode;

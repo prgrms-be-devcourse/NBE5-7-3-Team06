@@ -2,22 +2,19 @@ package programmers.team6.domain.member.service;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
 
-import programmers.team6.domain.admin.dto.AdminCodeResponse;
+import programmers.team6.domain.admin.dto.response.AdminCodeResponse;
 import programmers.team6.domain.member.dto.CodeCreateRequest;
 import programmers.team6.domain.member.entity.Code;
 import programmers.team6.domain.member.enums.BasicCodeInfo;

@@ -7,7 +7,7 @@ import java.util.List;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
-import programmers.team6.domain.admin.dto.VacationStatisticsRequest;
+import programmers.team6.domain.admin.dto.request.VacationStatisticsRequest;
 import programmers.team6.domain.admin.support.MemberReader;
 import programmers.team6.domain.admin.support.Members;
 import programmers.team6.domain.member.entity.Member;

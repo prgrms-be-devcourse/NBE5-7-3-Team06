@@ -7,10 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import programmers.team6.domain.admin.dto.AdminVacationRequestSearchResponse;
-import programmers.team6.domain.admin.dto.AdminVacationSearchCondition;
-import programmers.team6.domain.admin.dto.VacationRequestDetailReadResponse;
-import programmers.team6.domain.admin.dto.VacationRequestDetailUpdateRequest;
+import programmers.team6.domain.admin.dto.response.AdminVacationRequestSearchResponse;
+import programmers.team6.domain.admin.dto.response.AdminVacationSearchCondition;
+import programmers.team6.domain.admin.dto.response.VacationRequestDetailReadResponse;
+import programmers.team6.domain.admin.dto.request.VacationRequestDetailUpdateRequest;
 import programmers.team6.domain.admin.repository.AdminVacationRequestSearchCustom;
 import programmers.team6.domain.member.entity.Code;
 import programmers.team6.domain.member.repository.CodeRepository;

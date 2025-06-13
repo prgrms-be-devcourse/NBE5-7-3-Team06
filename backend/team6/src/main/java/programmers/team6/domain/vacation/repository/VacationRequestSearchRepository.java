@@ -17,7 +17,7 @@ import programmers.team6.global.querybuilder.CriteriaCustomQueryBuilder;
 import programmers.team6.domain.member.entity.Code;
 import programmers.team6.domain.member.entity.Dept;
 import programmers.team6.domain.member.entity.Member;
-import programmers.team6.domain.vacation.dto.VacationRequestCalendarResponse;
+import programmers.team6.domain.vacation.dto.response.VacationRequestCalendarResponse;
 import programmers.team6.domain.vacation.entity.VacationRequest;
 import programmers.team6.domain.vacation.enums.VacationRequestStatus;
 

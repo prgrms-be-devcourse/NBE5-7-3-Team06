@@ -10,8 +10,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import programmers.team6.domain.admin.dto.ApprovalStepDetailUpdateResponse;
-import programmers.team6.domain.admin.dto.VacationRequestDetailReadResponse;
+import programmers.team6.domain.admin.dto.response.ApprovalStepDetailUpdateResponse;
+import programmers.team6.domain.admin.dto.response.VacationRequestDetailReadResponse;
 import programmers.team6.domain.vacation.enums.ApprovalStatus;
 import programmers.team6.domain.vacation.enums.VacationRequestStatus;
 import programmers.team6.global.exception.code.NotFoundErrorCode;

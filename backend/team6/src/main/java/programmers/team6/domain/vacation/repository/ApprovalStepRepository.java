@@ -10,9 +10,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import programmers.team6.domain.admin.dto.ApprovalStepDetailUpdateResponse;
-import programmers.team6.domain.vacation.dto.ApprovalFirstStepSelectResponse;
-import programmers.team6.domain.vacation.dto.ApprovalSecondStepSelectResponse;
+import programmers.team6.domain.admin.dto.response.ApprovalStepDetailUpdateResponse;
+import programmers.team6.domain.vacation.dto.response.ApprovalFirstStepSelectResponse;
+import programmers.team6.domain.vacation.dto.response.ApprovalSecondStepSelectResponse;
 import programmers.team6.domain.vacation.entity.ApprovalStep;
 import programmers.team6.domain.vacation.entity.VacationRequest;
 import programmers.team6.domain.vacation.enums.ApprovalStatus;
@@ -25,7 +25,7 @@ public interface ApprovalStepRepository extends JpaRepository<ApprovalStep, Long
 	List<ApprovalStep> findFirstStepsByVacationRequestIds(@Param("requestIds") List<Long> requestIds);
 
 	@Query(value =
-		"select new programmers.team6.domain.admin.dto.ApprovalStepDetailUpdateResponse(m.name,asp.reason,asp.approvalStatus) from ApprovalStep asp "
+		"select new programmers.team6.domain.admin.dto.response.ApprovalStepDetailUpdateResponse(m.name,asp.reason,asp.approvalStatus) from ApprovalStep asp "
 			+ "join VacationRequest vr on asp.vacationRequest=vr join asp.member m "
 			+ "where vr.id = :vacationId order by asp.step")
 	List<ApprovalStepDetailUpdateResponse> findApprovalStepDetailById(@Param("vacationId") Long vacationId);
@@ -35,7 +35,7 @@ public interface ApprovalStepRepository extends JpaRepository<ApprovalStep, Long
 	boolean existsByMemberId(Long memberId);
 
 	@Query("""
-		select new programmers.team6.domain.vacation.dto.ApprovalFirstStepSelectResponse(
+		select new programmers.team6.domain.vacation.dto.response.ApprovalFirstStepSelectResponse(
 					a.id, vr.type.name, vr.from, vr.to, vr.member.name,
 					vr.member.dept.deptName, vr.member.position.name, a.approvalStatus
 				)
@@ -46,7 +46,7 @@ public interface ApprovalStepRepository extends JpaRepository<ApprovalStep, Long
 	Page<ApprovalFirstStepSelectResponse> findFirstStepByMemberId(Long memberId, int step, Pageable pageable);
 
 	@Query("""
-		select new programmers.team6.domain.vacation.dto.ApprovalFirstStepSelectResponse(
+		select new programmers.team6.domain.vacation.dto.response.ApprovalFirstStepSelectResponse(
 					a.id, vr.type.name, vr.from, vr.to, vr.member.name,
 					vr.member.dept.deptName, vr.member.position.name, a.approvalStatus
 				)
@@ -62,7 +62,7 @@ public interface ApprovalStepRepository extends JpaRepository<ApprovalStep, Long
 		LocalDateTime from, LocalDateTime to, ApprovalStatus status, int step, Pageable pageable);
 
 	@Query("""
-		select new programmers.team6.domain.vacation.dto.ApprovalSecondStepSelectResponse(
+		select new programmers.team6.domain.vacation.dto.response.ApprovalSecondStepSelectResponse(
 					a2.id, vr.type.name, vr.from, vr.to, vr.member.name,
 					vr.member.dept.deptName, vr.member.position.name, a1.approvalStatus, a2.approvalStatus
 				)
@@ -74,7 +74,7 @@ public interface ApprovalStepRepository extends JpaRepository<ApprovalStep, Long
 	Page<ApprovalSecondStepSelectResponse> findSecondStepByMemberId(Long memberId, int step, Pageable pageable);
 
 	@Query("""
-		select new programmers.team6.domain.vacation.dto.ApprovalSecondStepSelectResponse(
+		select new programmers.team6.domain.vacation.dto.response.ApprovalSecondStepSelectResponse(
 					a2.id, vr.type.name, vr.from, vr.to, vr.member.name,
 					vr.member.dept.deptName, vr.member.position.name, a1.approvalStatus, a2.approvalStatus
 				)

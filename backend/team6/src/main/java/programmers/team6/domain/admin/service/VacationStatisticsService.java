@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import programmers.team6.domain.admin.dto.VacationStatisticsRequest;
+import programmers.team6.domain.admin.dto.request.VacationStatisticsRequest;
 import programmers.team6.domain.admin.support.MemberReader;
 import programmers.team6.domain.admin.support.Members;
 import programmers.team6.domain.admin.support.VacationInfoLogReader;
@@ -15,7 +15,7 @@ import programmers.team6.domain.admin.support.VacationRequests;
 import programmers.team6.domain.admin.support.VacationRequestsReader;
 import programmers.team6.domain.admin.utils.mapper.VacationStatisticsMapper;
 import programmers.team6.domain.member.repository.MemberRepository;
-import programmers.team6.domain.vacation.dto.VacationMonthlyStatisticsResponse;
+import programmers.team6.domain.vacation.dto.response.VacationMonthlyStatisticsResponse;
 
 @Service
 @RequiredArgsConstructor

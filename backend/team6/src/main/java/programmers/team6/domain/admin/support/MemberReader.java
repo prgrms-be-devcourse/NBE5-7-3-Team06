@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
-import programmers.team6.domain.admin.dto.VacationStatisticsRequest;
+import programmers.team6.domain.admin.dto.request.VacationStatisticsRequest;
 import programmers.team6.domain.admin.repository.VacationInfoLogSearchRepository;
 import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.member.repository.MemberSearchRepository;

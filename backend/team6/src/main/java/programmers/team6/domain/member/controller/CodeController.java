@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import programmers.team6.domain.admin.dto.AdminCodeResponse;
+import programmers.team6.domain.admin.dto.response.AdminCodeResponse;
 import programmers.team6.domain.member.dto.CodeCreateRequest;
 import programmers.team6.domain.member.service.CodeService;
 

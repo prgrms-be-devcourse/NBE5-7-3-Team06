@@ -10,15 +10,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import programmers.team6.domain.admin.dto.MemberApprovalResponse;
-import programmers.team6.domain.member.dto.MemberLoginInfoResponse;
+import programmers.team6.domain.admin.dto.response.MemberApprovalResponse;
+import programmers.team6.domain.member.dto.response.MemberLoginInfoResponse;
 import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.member.enums.Role;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
 	@Query("""
-		select new programmers.team6.domain.admin.dto.MemberApprovalResponse(
+		select new programmers.team6.domain.admin.dto.response.MemberApprovalResponse(
 			m.id, m.name, m.position.name, m.dept.deptName, m.memberInfo.birth, m.memberInfo.email
 		)
 		from Member m
@@ -36,7 +36,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 	Optional<Member> findByIdWithDeptAndLeader(@Param("memberId") Long memberId);
 
 	@Query("""
-		    SELECT new programmers.team6.domain.member.dto.MemberLoginInfoResponse(
+		    SELECT new programmers.team6.domain.member.dto.response.MemberLoginInfoResponse(
 		        m.id,
 				m.name,
 				m.dept.id,

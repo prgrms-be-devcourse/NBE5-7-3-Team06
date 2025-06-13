@@ -7,11 +7,11 @@ import org.springframework.stereotype.Component;
 
 import programmers.team6.domain.member.entity.Code;
 import programmers.team6.domain.member.entity.Member;
-import programmers.team6.domain.vacation.dto.VacationCreateRequestDto;
-import programmers.team6.domain.vacation.dto.VacationCreateResponseDto;
-import programmers.team6.domain.vacation.dto.VacationInfoSelectResponseDto;
-import programmers.team6.domain.vacation.dto.VacationListResponseDto;
-import programmers.team6.domain.vacation.dto.VacationUpdateResponseDto;
+import programmers.team6.domain.vacation.dto.request.VacationCreateRequestDto;
+import programmers.team6.domain.vacation.dto.response.VacationCreateResponseDto;
+import programmers.team6.domain.vacation.dto.response.VacationInfoSelectResponseDto;
+import programmers.team6.domain.vacation.dto.response.VacationListResponseDto;
+import programmers.team6.domain.vacation.dto.request.VacationUpdateResponseDto;
 import programmers.team6.domain.vacation.entity.VacationInfo;
 import programmers.team6.domain.vacation.entity.VacationRequest;
 import programmers.team6.domain.vacation.enums.VacationRequestStatus;
