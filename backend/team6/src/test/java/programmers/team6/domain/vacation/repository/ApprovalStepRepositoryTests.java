@@ -136,7 +136,7 @@ class ApprovalStepRepositoryTests {
 	}
 
 	@Test
-	@DisplayName("1차 결재자 ID로 1차 결재 목록을 조회하면 목록을 반환된다")
+	@DisplayName("1차 결재자 ID로 1차 결재 목록을 조회하면 목록이 반환된다")
 	void findFirstStep_test() {
 
 		// given
