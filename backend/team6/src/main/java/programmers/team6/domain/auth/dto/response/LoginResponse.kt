@@ -1,8 +1,8 @@
-package programmers.team6.domain.auth.dto.response;
+package programmers.team6.domain.auth.dto.response
 
-public record LoginResponse(
-	AuthTokenResponse authTokenResponse,
-	String refreshToken,
-	long refreshTokenExpiresIn
-) {
-}
+@JvmRecord
+data class LoginResponse(
+    @JvmField val authTokenResponse: AuthTokenResponse,
+    @JvmField val refreshToken: String,
+    @JvmField val refreshTokenExpiresIn: Long
+)

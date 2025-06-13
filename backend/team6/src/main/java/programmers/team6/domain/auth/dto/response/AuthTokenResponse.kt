@@ -1,12 +1,12 @@
-package programmers.team6.domain.auth.dto.response;
+package programmers.team6.domain.auth.dto.response
 
-import programmers.team6.domain.member.enums.Role;
+import programmers.team6.domain.member.enums.Role
 
-public record AuthTokenResponse(
-	String accessToken,
-	long accessTokenExpiresIn,
-	Long id,
-	String name,
-	Role role
-) {
-}
+@JvmRecord
+data class AuthTokenResponse(
+    val accessToken: String,
+    val accessTokenExpiresIn: Long,
+    val id: Long,
+    val name: String,
+    val role: Role
+)
