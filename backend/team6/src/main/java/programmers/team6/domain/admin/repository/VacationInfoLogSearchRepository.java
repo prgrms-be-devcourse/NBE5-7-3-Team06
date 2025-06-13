@@ -1,4 +1,4 @@
-package programmers.team6.domain.admin.service;
+package programmers.team6.domain.admin.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
