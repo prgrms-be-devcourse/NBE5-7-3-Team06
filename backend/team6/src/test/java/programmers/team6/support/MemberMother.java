@@ -19,4 +19,8 @@ public class MemberMother {
 			.role(Role.USER)
 			.build();
 	}
+
+	public static Member member() {
+		return withId(0L);
+	}
 }
