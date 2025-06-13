@@ -2,6 +2,7 @@ package programmers.team6.global.config;
 
 import jakarta.servlet.http.Cookie;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +33,6 @@ import static programmers.team6.support.JwtMemberInfoMother.defaultUser;
 @Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
 class SecurityConfigTest {
 
     @Autowired
@@ -39,6 +40,7 @@ class SecurityConfigTest {
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+
 
     @Test
     @DisplayName("permitAll 경로는 토큰 없이 접근 가능하다")
@@ -107,8 +109,10 @@ class SecurityConfigTest {
                 .andExpect(status().isOk());
     }
 
+
     @Test
     @DisplayName("로그인 성공 시 토큰 반환")
+    @Sql(scripts = "/data-test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void login_success_returns_token() throws Exception {
 
         String json = """
