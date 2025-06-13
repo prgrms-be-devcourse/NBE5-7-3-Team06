@@ -1,4 +1,4 @@
-package programmers.team6.config;
+package programmers.team6.global.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
