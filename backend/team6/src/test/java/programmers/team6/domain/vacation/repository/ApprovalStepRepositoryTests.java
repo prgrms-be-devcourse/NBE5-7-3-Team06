@@ -54,8 +54,9 @@ class ApprovalStepRepositoryTests {
 	private Long memberId;
 	private Long approverId;
 	private Long approvalfirstStepId;
-	private VacationRequest saveVacation1;
-	private ApprovalStep saveApprovalStep;
+	private VacationRequest savedVacation1;
+	private ApprovalStep savedApprovalFirstStep;
+	private ApprovalStep savedApprovalSecondStep;
 
 	/**
 	 *
@@ -78,7 +79,7 @@ class ApprovalStepRepositoryTests {
 		);
 		memberId = member.getId();
 		approverId = approver.getId();
-		saveVacation1 = vacationRequestRepository.save(
+		savedVacation1 = vacationRequestRepository.save(
 			VacationRequest.builder()
 				.member(member)
 				.from(LocalDateTime.of(2025, 8, 1, 9, 0))
@@ -88,7 +89,7 @@ class ApprovalStepRepositoryTests {
 				.status(VacationRequestStatus.APPROVED)
 				.build()
 		);
-		VacationRequest saveVacation2 = vacationRequestRepository.save(
+		VacationRequest savedVacation2 = vacationRequestRepository.save(
 			VacationRequest.builder()
 				.member(member)
 				.from(LocalDateTime.of(2025, 8, 10, 9, 0))
@@ -98,7 +99,7 @@ class ApprovalStepRepositoryTests {
 				.status(VacationRequestStatus.APPROVED)
 				.build()
 		);
-		VacationRequest saveVacation3 = vacationRequestRepository.save(
+		VacationRequest savedVacation3 = vacationRequestRepository.save(
 			VacationRequest.builder()
 				.member(member)
 				.from(LocalDateTime.of(2025, 8, 20, 9, 0))
@@ -108,7 +109,7 @@ class ApprovalStepRepositoryTests {
 				.status(VacationRequestStatus.REJECTED)
 				.build()
 		);
-		VacationRequest saveVacation4 = vacationRequestRepository.save(
+		VacationRequest savedVacation4 = vacationRequestRepository.save(
 			VacationRequest.builder()
 				.member(member)
 				.from(LocalDateTime.of(2025, 9, 1, 9, 0))
@@ -119,17 +120,18 @@ class ApprovalStepRepositoryTests {
 				.build()
 		);
 
-		saveApprovalStep = approvalStepRepository.save(
-			new ApprovalStep(1, ApprovalStatus.APPROVED, approver, saveVacation1)
+		savedApprovalFirstStep = approvalStepRepository.save(
+			new ApprovalStep(1, ApprovalStatus.APPROVED, approver, savedVacation1)
 		);
-		approvalfirstStepId = saveApprovalStep.getId();
-		approvalStepRepository.save(new ApprovalStep(1, ApprovalStatus.APPROVED, approver, saveVacation2));
-		approvalStepRepository.save(new ApprovalStep(1, ApprovalStatus.REJECTED, approver, saveVacation3));
-		approvalStepRepository.save(new ApprovalStep(1, ApprovalStatus.PENDING, approver, saveVacation4));
-		approvalStepRepository.save(new ApprovalStep(2, ApprovalStatus.APPROVED, approver, saveVacation1));
-		approvalStepRepository.save(new ApprovalStep(2, ApprovalStatus.APPROVED, approver, saveVacation2));
-		approvalStepRepository.save(new ApprovalStep(2, ApprovalStatus.REJECTED, approver, saveVacation3));
-		approvalStepRepository.save(new ApprovalStep(2, ApprovalStatus.WAITING, approver, saveVacation4));
+		approvalfirstStepId = savedApprovalFirstStep.getId();
+		approvalStepRepository.save(new ApprovalStep(1, ApprovalStatus.APPROVED, approver, savedVacation2));
+		approvalStepRepository.save(new ApprovalStep(1, ApprovalStatus.REJECTED, approver, savedVacation3));
+		approvalStepRepository.save(new ApprovalStep(1, ApprovalStatus.PENDING, approver, savedVacation4));
+		savedApprovalSecondStep =
+			approvalStepRepository.save(new ApprovalStep(2, ApprovalStatus.APPROVED, approver, savedVacation1));
+		approvalStepRepository.save(new ApprovalStep(2, ApprovalStatus.APPROVED, approver, savedVacation2));
+		approvalStepRepository.save(new ApprovalStep(2, ApprovalStatus.REJECTED, approver, savedVacation3));
+		approvalStepRepository.save(new ApprovalStep(2, ApprovalStatus.WAITING, approver, savedVacation4));
 
 	}
 
@@ -205,18 +207,34 @@ class ApprovalStepRepositoryTests {
 	@DisplayName("1차 결재 ID와 결재자 ID를 주면 1차 결재 정보를 반환할 것이다")
 	void findByIdAndMemberIdAndStep_test() {
 
-		// given
-
 		// when
 		ApprovalStep findApproval = approvalStepRepository.findByIdAndMemberIdAndStep(
 			approvalfirstStepId, approverId, 1).orElseThrow();
 
 		// then
-		assertThat(findApproval.getId()).isEqualTo(saveApprovalStep.getId());
-		assertThat(findApproval.getStep()).isEqualTo(saveApprovalStep.getStep());
-		assertThat(findApproval.getApprovalStatus()).isEqualTo(saveApprovalStep.getApprovalStatus());
-		assertThat(findApproval.getMember().getId()).isEqualTo(saveApprovalStep.getMember().getId());
-		assertThat(findApproval.getVacationRequest().getId()).isEqualTo(saveApprovalStep.getVacationRequest().getId());
+		assertThat(findApproval.getId()).isEqualTo(savedApprovalFirstStep.getId());
+		assertThat(findApproval.getStep()).isEqualTo(savedApprovalFirstStep.getStep());
+		assertThat(findApproval.getApprovalStatus()).isEqualTo(savedApprovalFirstStep.getApprovalStatus());
+		assertThat(findApproval.getMember().getId()).isEqualTo(savedApprovalFirstStep.getMember().getId());
+		assertThat(findApproval.getVacationRequest().getId()).isEqualTo(
+			savedApprovalFirstStep.getVacationRequest().getId());
+	}
+
+	@Test
+	@DisplayName("휴가 정보와 step 2를 주면 해당 휴가의 2차 결재 정보가 반환될 것이다")
+	void findByVacationRequestAndStep_test() {
+
+		// when
+		ApprovalStep findApproval = approvalStepRepository.findByVacationRequestAndStep(savedVacation1, 2)
+			.orElseThrow();
+
+		// then
+		assertThat(findApproval.getId()).isEqualTo(savedApprovalSecondStep.getId());
+		assertThat(findApproval.getStep()).isEqualTo(savedApprovalSecondStep.getStep());
+		assertThat(findApproval.getApprovalStatus()).isEqualTo(savedApprovalSecondStep.getApprovalStatus());
+		assertThat(findApproval.getMember().getId()).isEqualTo(savedApprovalSecondStep.getMember().getId());
+		assertThat(findApproval.getVacationRequest().getId()).isEqualTo(
+			savedApprovalSecondStep.getVacationRequest().getId());
 	}
 
 }
