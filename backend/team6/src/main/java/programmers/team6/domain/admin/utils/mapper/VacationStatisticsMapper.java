@@ -1,8 +1,12 @@
-package programmers.team6.domain.admin.service;
+package programmers.team6.domain.admin.utils.mapper;
 
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
+import programmers.team6.domain.admin.service.Members;
+import programmers.team6.domain.admin.service.TargetVacationRequests;
+import programmers.team6.domain.admin.service.VacationInfoLogs;
+import programmers.team6.domain.admin.service.VacationRequests;
 import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.vacation.dto.VacationMonthlyStatisticsResponse;
 import programmers.team6.domain.vacation.entity.VacationInfoLog;

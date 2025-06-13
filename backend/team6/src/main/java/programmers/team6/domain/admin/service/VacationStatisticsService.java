@@ -7,9 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import programmers.team6.domain.admin.dto.VacationStatisticsRequest;
+import programmers.team6.domain.admin.utils.mapper.VacationStatisticsMapper;
 import programmers.team6.domain.member.repository.MemberRepository;
 import programmers.team6.domain.vacation.dto.VacationMonthlyStatisticsResponse;
-import programmers.team6.domain.vacation.enums.VacationCode;
 
 @Service
 @RequiredArgsConstructor
