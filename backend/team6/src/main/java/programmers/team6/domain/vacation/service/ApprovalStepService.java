@@ -10,14 +10,14 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import programmers.team6.domain.admin.entity.Dept;
-import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.admin.service.DeptService;
+import programmers.team6.domain.member.entity.Member;
+import programmers.team6.domain.vacation.dto.request.ApprovalStepRejectRequest;
+import programmers.team6.domain.vacation.dto.request.ApprovalStepSelectRequest;
 import programmers.team6.domain.vacation.dto.response.ApprovalFirstStepDetailResponse;
 import programmers.team6.domain.vacation.dto.response.ApprovalFirstStepSelectResponse;
 import programmers.team6.domain.vacation.dto.response.ApprovalSecondStepDetailResponse;
 import programmers.team6.domain.vacation.dto.response.ApprovalSecondStepSelectResponse;
-import programmers.team6.domain.vacation.dto.request.ApprovalStepRejectRequest;
-import programmers.team6.domain.vacation.dto.request.ApprovalStepSelectRequest;
 import programmers.team6.domain.vacation.entity.ApprovalStep;
 import programmers.team6.domain.vacation.entity.VacationInfo;
 import programmers.team6.domain.vacation.entity.VacationInfoLog;
@@ -50,8 +50,8 @@ public class ApprovalStepService {
 	@Transactional(readOnly = true)
 	public Page<ApprovalFirstStepSelectResponse> findFirstStepByFilter(
 		ApprovalStepSelectRequest request, Long memberId, Pageable pageable) {
-		return approvalStepRepository.findFirstStepByFilter(memberId, request.type(),
-			request.name(), request.from(), request.to(), request.status(), STEP1, pageable);
+		return approvalStepRepository.findFirstStepByFilter(memberId, request.type,
+			request.name, request.from, request.to, request.status, STEP1, pageable);
 	}
 
 	@Transactional(readOnly = true)
@@ -62,8 +62,8 @@ public class ApprovalStepService {
 	@Transactional(readOnly = true)
 	public Page<ApprovalSecondStepSelectResponse> findSecondStepByFilter(
 		ApprovalStepSelectRequest request, Long memberId, Pageable pageable) {
-		return approvalStepRepository.findSecondStepByFilter(memberId, request.type(),
-			request.name(), request.from(), request.to(), request.status(), STEP2, pageable);
+		return approvalStepRepository.findSecondStepByFilter(memberId, request.type,
+			request.name, request.from, request.to, request.status, STEP2, pageable);
 	}
 
 	@Transactional(readOnly = true)
@@ -104,7 +104,7 @@ public class ApprovalStepService {
 		ApprovalStep secondStepApproval = findByVacationRequestAndStep(firstStepApproval.getVacationRequest(),
 			STEP2);
 
-		firstStepApproval.reject(request.reason());
+		firstStepApproval.reject(request.reason);
 		secondStepApproval.reject("1차 결재 단계에서 반려되어 자동 반려 처리되었습니다.");
 		firstStepApproval.rejectVacation();
 
@@ -140,7 +140,7 @@ public class ApprovalStepService {
 		ApprovalStep findApprovalStep = findByIdAndMemberIdAndStep(approvalStepId, memberId, STEP2);
 
 		findApprovalStep.validateRejectable();
-		findApprovalStep.reject(request.reason());
+		findApprovalStep.reject(request.reason);
 		findApprovalStep.rejectVacation();
 
 	}
