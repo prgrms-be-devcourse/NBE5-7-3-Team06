@@ -5,8 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import programmers.team6.domain.admin.dto.VacationStatisticsRequest;
-import programmers.team6.domain.admin.service.VacationRequests;
-import programmers.team6.domain.admin.service.VacationRequestsReader;
+import programmers.team6.domain.admin.support.VacationRequests;
+import programmers.team6.domain.admin.support.VacationRequestsReader;
 import programmers.team6.domain.vacation.entity.VacationRequest;
 
 public class VacationRequestsReaderFake extends VacationRequestsReader {

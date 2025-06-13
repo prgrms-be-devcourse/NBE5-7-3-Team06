@@ -1,4 +1,4 @@
-package programmers.team6.domain.vacation.rule;
+package programmers.team6.domain.vacation.support;
 
 import java.util.Collections;
 import java.util.List;

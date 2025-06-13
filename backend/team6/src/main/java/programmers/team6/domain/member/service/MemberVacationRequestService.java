@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import programmers.team6.domain.admin.dto.VacationRequestDetailReadResponse;
-import programmers.team6.domain.vacation.service.VacationRequestReader;
+import programmers.team6.domain.vacation.support.VacationRequestReader;
 import programmers.team6.global.exception.code.ForbiddenErrorCode;
 import programmers.team6.global.exception.customException.ForbiddenException;
 

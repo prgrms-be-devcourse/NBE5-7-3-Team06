@@ -13,6 +13,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
 import programmers.team6.domain.admin.dto.VacationStatisticsRequest;
+import programmers.team6.domain.admin.support.MemberReader;
+import programmers.team6.domain.admin.support.VacationRequestsReader;
+import programmers.team6.domain.admin.utils.mapper.VacationStatisticsMapper;
 import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.member.repository.MemberRepository;
 import programmers.team6.domain.vacation.dto.VacationMonthlyStatisticsResponse;

@@ -33,6 +33,7 @@ import programmers.team6.domain.vacation.enums.VacationRequestStatus;
 import programmers.team6.domain.vacation.repository.VacationInfoRepository;
 import programmers.team6.domain.vacation.repository.VacationRequestRepository;
 import programmers.team6.domain.vacation.repository.VacationRequestSearchRepository;
+import programmers.team6.domain.vacation.support.VacationInfoLogPublisher;
 import programmers.team6.domain.vacation.util.mapper.VacationMapper;
 
 /**

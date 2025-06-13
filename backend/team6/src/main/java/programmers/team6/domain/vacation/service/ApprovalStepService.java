@@ -24,6 +24,7 @@ import programmers.team6.domain.vacation.entity.VacationInfoLog;
 import programmers.team6.domain.vacation.entity.VacationRequest;
 import programmers.team6.domain.vacation.repository.ApprovalStepRepository;
 import programmers.team6.domain.vacation.repository.VacationInfoRepository;
+import programmers.team6.domain.vacation.support.VacationInfoLogPublisher;
 import programmers.team6.domain.vacation.util.mapper.ApprovalStepMapper;
 import programmers.team6.global.exception.code.NotFoundErrorCode;
 import programmers.team6.global.exception.customException.NotFoundException;

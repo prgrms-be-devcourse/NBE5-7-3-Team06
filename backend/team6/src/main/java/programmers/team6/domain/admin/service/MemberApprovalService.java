@@ -16,7 +16,7 @@ import programmers.team6.domain.vacation.enums.VacationCode;
 import programmers.team6.domain.vacation.repository.VacationInfoRepository;
 import programmers.team6.domain.vacation.rule.VacationGrantRule;
 import programmers.team6.domain.vacation.rule.VacationGrantRuleFinder;
-import programmers.team6.domain.vacation.service.VacationInfoLogPublisher;
+import programmers.team6.domain.vacation.support.VacationInfoLogPublisher;
 
 @Service
 @RequiredArgsConstructor

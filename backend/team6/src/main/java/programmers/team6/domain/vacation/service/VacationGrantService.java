@@ -17,7 +17,8 @@ import programmers.team6.domain.vacation.repository.VacationInfoRepository;
 import programmers.team6.domain.vacation.rule.VacationGrantRule;
 import programmers.team6.domain.vacation.rule.VacationGrantRuleFinder;
 import programmers.team6.domain.vacation.rule.VacationGrantRules;
-import programmers.team6.domain.vacation.rule.VacationInfos;
+import programmers.team6.domain.vacation.support.VacationInfos;
+import programmers.team6.domain.vacation.support.VacationInfoLogPublisher;
 
 @Service
 @RequiredArgsConstructor

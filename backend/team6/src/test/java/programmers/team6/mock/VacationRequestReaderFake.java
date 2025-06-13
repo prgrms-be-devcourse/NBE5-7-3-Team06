@@ -6,7 +6,7 @@ import java.util.Map;
 
 import programmers.team6.domain.admin.dto.ApprovalStepDetailUpdateResponse;
 import programmers.team6.domain.admin.dto.VacationRequestDetailReadResponse;
-import programmers.team6.domain.vacation.service.VacationRequestReader;
+import programmers.team6.domain.vacation.support.VacationRequestReader;
 import programmers.team6.global.exception.code.NotFoundErrorCode;
 import programmers.team6.global.exception.customException.NotFoundException;
 

@@ -18,7 +18,7 @@ import programmers.team6.domain.vacation.entity.ApprovalStep;
 import programmers.team6.domain.vacation.entity.VacationRequest;
 import programmers.team6.domain.vacation.repository.ApprovalStepRepository;
 import programmers.team6.domain.vacation.repository.VacationRequestRepository;
-import programmers.team6.domain.vacation.service.VacationRequestReader;
+import programmers.team6.domain.vacation.support.VacationRequestReader;
 import programmers.team6.global.exception.code.ConflictErrorCode;
 import programmers.team6.global.exception.code.NotFoundErrorCode;
 import programmers.team6.global.exception.customException.ConflictException;

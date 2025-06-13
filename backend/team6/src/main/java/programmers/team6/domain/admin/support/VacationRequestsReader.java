@@ -1,4 +1,4 @@
-package programmers.team6.domain.admin.service;
+package programmers.team6.domain.admin.support;
 
 import java.util.List;
 

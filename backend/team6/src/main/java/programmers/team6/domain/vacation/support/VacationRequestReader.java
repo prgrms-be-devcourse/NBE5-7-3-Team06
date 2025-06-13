@@ -1,4 +1,4 @@
-package programmers.team6.domain.vacation.service;
+package programmers.team6.domain.vacation.support;
 
 import java.util.List;
 
