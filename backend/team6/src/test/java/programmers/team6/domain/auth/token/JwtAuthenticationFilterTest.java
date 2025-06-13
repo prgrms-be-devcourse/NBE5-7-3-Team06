@@ -1,4 +1,4 @@
-package programmers.team6.domain.auth.config;
+package programmers.team6.domain.auth.token;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,7 +16,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.context.SecurityContextHolder;
 import programmers.team6.domain.auth.dto.JwtMemberInfo;
 import programmers.team6.domain.auth.dto.TokenBody;
-import programmers.team6.domain.auth.token.JwtTokenProvider;
 import programmers.team6.global.exception.customException.UnauthorizedException;
 import programmers.team6.global.exception.response.ErrorResponse;
 

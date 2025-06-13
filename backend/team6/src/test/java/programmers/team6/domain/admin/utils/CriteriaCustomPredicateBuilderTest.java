@@ -15,6 +15,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 import programmers.team6.domain.admin.enums.Quarter;
+import programmers.team6.global.querybuilder.CriteriaCustomPredicateBuilder;
 
 import java.time.LocalDateTime;
 import java.util.stream.Stream;

@@ -1,4 +1,4 @@
-package programmers.team6.domain.auth.config;
+package programmers.team6.domain.auth.token;
 
 import static programmers.team6.global.exception.code.UnauthorizedErrorCode.*;
 import static programmers.team6.global.util.ErrorResponseUtil.*;
@@ -12,9 +12,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.servlet.View;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -23,7 +20,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import programmers.team6.domain.auth.dto.TokenBody;
-import programmers.team6.domain.auth.token.JwtTokenProvider;
 import programmers.team6.global.exception.customException.UnauthorizedException;
 
 @Slf4j

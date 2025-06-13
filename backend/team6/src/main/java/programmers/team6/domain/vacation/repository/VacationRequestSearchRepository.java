@@ -13,7 +13,7 @@ import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
-import programmers.team6.domain.admin.utils.CriteriaCustomQueryBuilder;
+import programmers.team6.global.querybuilder.CriteriaCustomQueryBuilder;
 import programmers.team6.domain.member.entity.Code;
 import programmers.team6.domain.member.entity.Dept;
 import programmers.team6.domain.member.entity.Member;

@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import programmers.team6.domain.auth.config.JwtConfiguration;
+
 import programmers.team6.domain.auth.dto.JwtMemberInfo;
 import programmers.team6.domain.auth.dto.TokenBody;
 import programmers.team6.domain.auth.dto.TokenPairWithExpiration;
@@ -20,7 +20,6 @@ import programmers.team6.domain.auth.service.JwtService;
 import programmers.team6.domain.member.enums.Role;
 import programmers.team6.global.exception.code.UnauthorizedErrorCode;
 import programmers.team6.global.exception.customException.UnauthorizedException;
-import programmers.team6.support.JwtMemberInfoMother;
 
 import javax.crypto.SecretKey;
 

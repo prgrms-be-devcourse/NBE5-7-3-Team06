@@ -1,4 +1,4 @@
-package programmers.team6.domain.admin.utils;
+package programmers.team6.global.querybuilder;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

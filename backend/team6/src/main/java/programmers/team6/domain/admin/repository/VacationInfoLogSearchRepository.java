@@ -12,8 +12,8 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
-import programmers.team6.domain.admin.utils.CriteriaCustomPredicateBuilder;
-import programmers.team6.domain.admin.utils.CriteriaCustomQueryBuilder;
+import programmers.team6.global.querybuilder.CriteriaCustomPredicateBuilder;
+import programmers.team6.global.querybuilder.CriteriaCustomQueryBuilder;
 import programmers.team6.domain.vacation.entity.VacationInfoLog;
 import programmers.team6.domain.vacation.entity.VacationInfoLog_;
 

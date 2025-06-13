@@ -1,4 +1,4 @@
-package programmers.team6.domain.admin.utils;
+package programmers.team6.global.querybuilder;
 
 import jakarta.persistence.criteria.From;
 import jakarta.persistence.criteria.Path;

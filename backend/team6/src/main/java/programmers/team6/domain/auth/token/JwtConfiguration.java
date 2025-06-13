@@ -1,4 +1,4 @@
-package programmers.team6.domain.auth.config;
+package programmers.team6.domain.auth.token;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

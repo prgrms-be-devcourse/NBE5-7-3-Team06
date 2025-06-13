@@ -1,4 +1,4 @@
-package programmers.team6.domain.admin.utils;
+package programmers.team6.global.querybuilder;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
