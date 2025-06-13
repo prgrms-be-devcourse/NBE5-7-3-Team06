@@ -20,12 +20,14 @@ import programmers.team6.domain.auth.service.JwtService;
 import programmers.team6.domain.member.enums.Role;
 import programmers.team6.global.exception.code.UnauthorizedErrorCode;
 import programmers.team6.global.exception.customException.UnauthorizedException;
+import programmers.team6.support.JwtMemberInfoMother;
 
 import javax.crypto.SecretKey;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static programmers.team6.support.JwtMemberInfoMother.*;
 
 
 @Slf4j
@@ -59,7 +61,7 @@ class JwtTokenProviderTests {
     @DisplayName("토큰을 정상적으로 생성한다.")
     void generate_tokenPair(){
 
-        JwtMemberInfo jwtMemberInfo =  genJwtMemberInfo();
+        JwtMemberInfo jwtMemberInfo = defaultUser();
 
         TokenPairWithExpiration tokenPair = jwtTokenProvider.generateTokenPair(jwtMemberInfo);
 
@@ -83,7 +85,7 @@ class JwtTokenProviderTests {
     @DisplayName("access token 을 재발급한다.")
     void generate_accessToken(){
 
-        JwtMemberInfo jwtMemberInfo = genJwtMemberInfo();
+        JwtMemberInfo jwtMemberInfo =defaultUser();
 
         TokenPairWithExpiration tokenPair = jwtTokenProvider.generateTokenPair(jwtMemberInfo);
 
@@ -102,7 +104,7 @@ class JwtTokenProviderTests {
     @DisplayName("토큰의 유효성을 검사한다 - 성공 ")
     void token_validate_success() {
 
-        JwtMemberInfo jwtMemberInfo = genJwtMemberInfo();
+        JwtMemberInfo jwtMemberInfo =defaultUser();
 
         TokenPairWithExpiration tokenPair = jwtTokenProvider.generateTokenPair(jwtMemberInfo);
 
@@ -120,7 +122,7 @@ class JwtTokenProviderTests {
     @DisplayName("토큰 유효성 검사 실패 - 서명이 잘못된 토큰 ")
     void token_validate_fail_signature() {
 
-        JwtMemberInfo jwtMemberInfo = genJwtMemberInfo();
+        JwtMemberInfo jwtMemberInfo =defaultUser();
 
         JwtConfiguration wrongConfig = new JwtConfiguration(
                 "this-is-a-wrong-secret-key-which-is-very-long-32-bytes",
@@ -162,7 +164,7 @@ class JwtTokenProviderTests {
     @DisplayName("토큰 유효성 검사 실패 - 만료된 토큰 ")
     void token_validate_fail_expired() {
 
-        JwtMemberInfo jwtMemberInfo = genJwtMemberInfo();
+        JwtMemberInfo jwtMemberInfo =defaultUser();
 
         JwtConfiguration wrongConfig = new JwtConfiguration(
                 jwtConfiguration.secret(),
@@ -234,7 +236,7 @@ class JwtTokenProviderTests {
     @DisplayName("token을 넣으면 token body를 반환한다.")
     void parse_claims() {
 
-        JwtMemberInfo jwtMemberInfo =  genJwtMemberInfo();
+        JwtMemberInfo jwtMemberInfo = defaultUser();
         TokenPairWithExpiration tokenPair = jwtTokenProvider.generateTokenPair(jwtMemberInfo);
         String token = tokenPair.accessToken();
 
@@ -255,7 +257,7 @@ class JwtTokenProviderTests {
     @DisplayName("토큰 발급하기")
     void issue_token() {
 
-        JwtMemberInfo jwtMemberInfo = genJwtMemberInfo();
+        JwtMemberInfo jwtMemberInfo =defaultUser();
 
         String accessToken = jwtTokenProvider.issueAccessToken(jwtMemberInfo);
 
@@ -300,11 +302,6 @@ class JwtTokenProviderTests {
 
         assertThat(extractedToken).isNull();
 
-    }
-
-
-    private JwtMemberInfo genJwtMemberInfo() {
-        return new JwtMemberInfo(1L, "member1", Role.USER);
     }
 
     private Claims genClaims(String token) {

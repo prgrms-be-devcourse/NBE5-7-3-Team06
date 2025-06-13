@@ -32,12 +32,10 @@ import programmers.team6.global.exception.customException.UnauthorizedException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtTokenProvider jwtTokenProvider;
-	private final ObjectMapper objectMapper;
 
 	private static final List<String> TOKEN_FREE_URIS = List.of(
 		"/auth", "/codes", "/depts"
 	);
-	private final View error;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
