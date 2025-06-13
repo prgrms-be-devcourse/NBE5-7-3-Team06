@@ -1,17 +1,39 @@
 package programmers.team6.domain.auth.service;
 
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.BDDMockito.*;
+import static programmers.team6.support.PositionMother.*;
+
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Date;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import programmers.team6.domain.auth.dto.JwtMemberInfo;
+import programmers.team6.domain.auth.dto.TokenBody;
+import programmers.team6.domain.auth.dto.TokenPairWithExpiration;
+import programmers.team6.domain.auth.dto.request.MemberLoginRequest;
 import programmers.team6.domain.auth.dto.request.MemberSignUpRequest;
+import programmers.team6.domain.auth.dto.response.AccessTokenResponse;
+import programmers.team6.domain.auth.dto.response.AuthTokenResponse;
+import programmers.team6.domain.auth.dto.response.LoginResponse;
+import programmers.team6.domain.auth.token.JwtTokenProvider;
+import programmers.team6.domain.auth.util.JwtUtils;
 import programmers.team6.domain.member.entity.Code;
 import programmers.team6.domain.member.entity.Dept;
 import programmers.team6.domain.member.entity.Member;
+import programmers.team6.domain.member.entity.MemberInfo;
 import programmers.team6.domain.member.enums.Role;
 import programmers.team6.domain.member.repository.CodeRepository;
 import programmers.team6.domain.member.repository.DeptRepository;
@@ -19,152 +41,234 @@ import programmers.team6.domain.member.repository.MemberInfoRepository;
 import programmers.team6.domain.member.repository.MemberRepository;
 import programmers.team6.global.exception.code.ConflictErrorCode;
 import programmers.team6.global.exception.code.NotFoundErrorCode;
+import programmers.team6.global.exception.code.UnauthorizedErrorCode;
 import programmers.team6.global.exception.customException.ConflictException;
 import programmers.team6.global.exception.customException.NotFoundException;
-
-import java.time.LocalDateTime;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static programmers.team6.support.PositionMother.employee;
+import programmers.team6.global.exception.customException.UnauthorizedException;
+import programmers.team6.support.MemberMother;
 
 @ExtendWith(MockitoExtension.class)
-public class AuthServiceUnitTests {
+class AuthServiceUnitTests {
 
-    @Mock
-    private MemberRepository memberRepository;
-    @Mock
-    private MemberInfoRepository memberInfoRepository;
-    @Mock
-    private PasswordEncoder passwordEncoder;
-    @Mock
-    private DeptRepository deptRepository;
-    @Mock
-    private CodeRepository codeRepository;
+	@Mock
+	private MemberRepository memberRepository;
+	@Mock
+	private MemberInfoRepository memberInfoRepository;
+	@Mock
+	private PasswordEncoder passwordEncoder;
+	@Mock
+	private DeptRepository deptRepository;
+	@Mock
+	private CodeRepository codeRepository;
+	@Mock
+	private JwtTokenProvider jwtTokenProvider;
+	@Mock
+	private JwtService jwtService;
 
-    @InjectMocks
-    private AuthService authService;
+	@InjectMocks
+	private AuthService authService;
 
+	@Test
+	@DisplayName("회원가입 성공 테스트")
+	void signUp_success() {
 
-    @Test
-    @DisplayName("회원가입 성공 테스트")
-    void signUp_success() {
+		String encodedPassword = "encoded1234";
 
-        String encodedPassword = "encoded1234";
+		Dept dept = Dept.builder()
+			.deptName("개발팀")
+			.build();
 
-        Dept dept = Dept.builder()
-                .deptName("개발팀")
-                .build();
+		Code position = employee();
 
-        Code position = employee();
+		MemberSignUpRequest memberReq = genMemberSignUpRequest();
 
+		when(deptRepository.findById(memberReq.dept())).thenReturn(Optional.of(dept));
+		when(codeRepository.findByGroupCodeAndCode("POSITION", memberReq.position())).thenReturn(Optional.of(position));
+		when(memberInfoRepository.existsByEmail(memberReq.email())).thenReturn(false);
+		when(passwordEncoder.encode(memberReq.password())).thenReturn(encodedPassword);
 
-        MemberSignUpRequest memberReq = genMemberSignUpRequest();
+		authService.signUp(memberReq);
 
-        when(deptRepository.findById(memberReq.dept())).thenReturn(Optional.of(dept));
-        when(codeRepository.findByGroupCodeAndCode("POSITION", memberReq.position())).thenReturn(Optional.of(position));
-        when(memberInfoRepository.existsByEmail(memberReq.email())).thenReturn(false);
-        when(passwordEncoder.encode(memberReq.password())).thenReturn(encodedPassword);
+		ArgumentCaptor<Member> captor = ArgumentCaptor.forClass(Member.class);
 
-        authService.signUp(memberReq);
+		verify(memberRepository).save(captor.capture());
 
-        ArgumentCaptor<Member> captor = ArgumentCaptor.forClass(Member.class);
+		Member saved = captor.getValue();
 
-        verify(memberRepository).save(captor.capture());
+		assertThat(saved)
+			.extracting("name", "joinDate", "role")
+			.containsExactly(memberReq.name(), memberReq.joinDate(), Role.PENDING);
 
-        Member saved = captor.getValue();
+		assertThat(saved.getMemberInfo())
+			.extracting("email", "password", "birth")
+			.containsExactly(memberReq.email(), encodedPassword, memberReq.birth());
 
-        assertThat(saved)
-                .extracting("name","joinDate","role")
-                .containsExactly(memberReq.name(),memberReq.joinDate(), Role.PENDING);
+		assertThat(saved.getDept().getDeptName()).isEqualTo(dept.getDeptName());
 
-        assertThat(saved.getMemberInfo())
-                .extracting("email","password","birth")
-                .containsExactly(memberReq.email(),encodedPassword,memberReq.birth());
+		assertThat(saved.getPosition().getCode()).isEqualTo(memberReq.position());
+	}
 
-        assertThat(saved.getDept().getDeptName()).isEqualTo(dept.getDeptName());
+	@Test
+	@DisplayName("회원가입 시 없는 부서정보가 들어오면 예외를 반환한다.")
+	void signUp_dept_exception() {
 
-        assertThat(saved.getPosition().getCode()).isEqualTo(memberReq.position());
-    }
+		MemberSignUpRequest memberReq = genMemberSignUpRequest();
 
-    @Test
-    @DisplayName("회원가입 시 없는 부서정보가 들어오면 예외를 반환한다.")
-    void signUp_dept_exception()  {
+		when(deptRepository.findById(memberReq.dept())).thenReturn(Optional.empty());
 
-        MemberSignUpRequest memberReq = genMemberSignUpRequest();
+		assertThatThrownBy(
+			() -> authService.signUp(memberReq)
+		).isInstanceOf(NotFoundException.class)
+			.hasFieldOrPropertyWithValue("errorCode", NotFoundErrorCode.NOT_FOUND_DEPT);
+	}
 
-        when(deptRepository.findById(memberReq.dept())).thenReturn(Optional.empty());
+	@Test
+	@DisplayName("회원가입 시 없는 직위코드가 들어오면 예외를 반환한다.")
+	void signUp_position_exception() {
 
-        assertThatThrownBy(
-                () -> {
-                    authService.signUp(memberReq);
-                }
-        ).isInstanceOf(NotFoundException.class)
-                .hasFieldOrPropertyWithValue("errorCode", NotFoundErrorCode.NOT_FOUND_DEPT);
-    }
+		MemberSignUpRequest memberReq = genMemberSignUpRequest();
 
+		Dept dept = Dept.builder()
+			.deptName("개발팀")
+			.build();
 
-    @Test
-    @DisplayName("회원가입 시 없는 직위코드가 들어오면 예외를 반환한다.")
-    void signUp_position_exception()  {
+		when(deptRepository.findById(memberReq.dept())).thenReturn(Optional.of(dept));
+		when(codeRepository.findByGroupCodeAndCode("POSITION", memberReq.position())).thenReturn(Optional.empty());
 
-        MemberSignUpRequest memberReq = genMemberSignUpRequest();
+		assertThatThrownBy(
+			() -> authService.signUp(memberReq)
+		).isInstanceOf(NotFoundException.class)
+			.hasFieldOrPropertyWithValue("errorCode", NotFoundErrorCode.NOT_FOUND_POSITION);
+	}
 
-        Dept dept = Dept.builder()
-                .deptName("개발팀")
-                .build();
+	@Test
+	@DisplayName("회원가입 시 이메일 중복이면 예외를 반환한다.")
+	void signUp_email_exception() {
 
-        when(deptRepository.findById(memberReq.dept())).thenReturn(Optional.of(dept));
-        when(codeRepository.findByGroupCodeAndCode("POSITION", memberReq.position())).thenReturn(Optional.empty());
+		MemberSignUpRequest memberReq = genMemberSignUpRequest();
 
-        assertThatThrownBy(
-                () -> {
-                    authService.signUp(memberReq);
-                }
-        ).isInstanceOf(NotFoundException.class)
-                .hasFieldOrPropertyWithValue("errorCode", NotFoundErrorCode.NOT_FOUND_POSITION);
-    }
+		Dept dept = Dept.builder()
+			.deptName("개발팀")
+			.build();
 
-    @Test
-    @DisplayName("회원가입 시 이메일 중복이면 예외를 반환한다.")
-    void signUp_email_exception()  {
+		Code position = employee();
 
-        MemberSignUpRequest memberReq = genMemberSignUpRequest();
+		when(deptRepository.findById(memberReq.dept())).thenReturn(Optional.of(dept));
+		when(codeRepository.findByGroupCodeAndCode("POSITION", memberReq.position())).thenReturn(Optional.of(position));
+		when(memberInfoRepository.existsByEmail(memberReq.email())).thenReturn(true);
 
-        Dept dept = Dept.builder()
-                .deptName("개발팀")
-                .build();
+		assertThatThrownBy(
+			() -> authService.signUp(memberReq)
+		).isInstanceOf(ConflictException.class)
+			.hasFieldOrPropertyWithValue("errorCode", ConflictErrorCode.CONFLICT_EMAIL);
+	}
 
-        Code position = employee();
+	@Test
+	@DisplayName("로그인 성공")
+	void login_successfully() {
+		Member member = MemberMother.withId(1L);
+		MemberInfo info = member.getMemberInfo();
+		String email = info.getEmail();
+		String password = info.getPassword();
 
-        when(deptRepository.findById(memberReq.dept())).thenReturn(Optional.of(dept));
-        when(codeRepository.findByGroupCodeAndCode("POSITION", memberReq.position())).thenReturn(Optional.of(position));
-        when(memberInfoRepository.existsByEmail(memberReq.email())).thenReturn(true);
+		when(memberRepository.findByEmail(email)).thenReturn(Optional.of(member));
 
-        assertThatThrownBy(
-                () -> {
-                    authService.signUp(memberReq);
-                }
-        ).isInstanceOf(ConflictException.class)
-                .hasFieldOrPropertyWithValue("errorCode", ConflictErrorCode.CONFLICT_EMAIL);
-    }
+		when(passwordEncoder.matches(password, password)).thenReturn(true);
 
+		TokenPairWithExpiration tokenPair = new TokenPairWithExpiration("accessToken", "refreshToken", 200, 1000);
+		when(jwtTokenProvider.generateTokenPair(new JwtMemberInfo(1L, member.getName(), member.getRole()))).thenReturn(
+			tokenPair);
 
-    private static MemberSignUpRequest genMemberSignUpRequest() {
+		LoginResponse response = authService.login(new MemberLoginRequest(email, password));
 
-        return new MemberSignUpRequest(
-                "member1",
-                "test@test.com",
-                1L,
-                "01",
-                LocalDateTime.of(2024, 1, 1, 12, 0),
-                "1989-10-10",
-                "qwer1234!"
-        );
+		AuthTokenResponse authTokenResponse = new AuthTokenResponse(tokenPair.accessToken(),
+			tokenPair.accessTokenExpiresIn(), member.getId(),
+			member.getName(), member.getRole());
+		assertThat(response.authTokenResponse()).isEqualTo(authTokenResponse);
+		assertThat(response.refreshToken()).isEqualTo(tokenPair.refreshToken());
+		assertThat(response.refreshTokenExpiresIn()).isEqualTo(tokenPair.refreshTokenExpiresIn());
+	}
 
-    }
+	@Test
+	@DisplayName("이메일이 존재하지않는 경우 실패한다")
+	void fails_login_when_email_is_not_found() {
+		Member member = MemberMother.withId(1L);
+		MemberInfo info = member.getMemberInfo();
+		String email = info.getEmail();
+		String password = info.getPassword();
+
+		when(memberRepository.findByEmail(email)).thenReturn(Optional.empty());
+		MemberLoginRequest memberLoginRequest = new MemberLoginRequest(email, password);
+
+		assertThatThrownBy(
+			() -> authService.login(memberLoginRequest)
+		).isInstanceOf(NotFoundException.class)
+			.hasFieldOrPropertyWithValue("errorCode", NotFoundErrorCode.NOT_FOUND_EMAIL);
+
+	}
+
+	@Test
+	@DisplayName("비밀번호가 일치하지 않으면 테스트가 실패한다")
+	void fails_login_when_password_does_not_match() {
+		Member member = MemberMother.withId(1L);
+		MemberInfo info = member.getMemberInfo();
+		String email = info.getEmail();
+		String password = info.getPassword();
+		String inputPassword = "invalidpassword";
+		when(memberRepository.findByEmail(email)).thenReturn(Optional.of(member));
+
+		when(passwordEncoder.matches(inputPassword, password)).thenReturn(false);
+		MemberLoginRequest memberLoginRequest = new MemberLoginRequest(email, inputPassword);
+
+		assertThatThrownBy(
+			() -> authService.login(memberLoginRequest)
+		).isInstanceOf(UnauthorizedException.class)
+			.hasFieldOrPropertyWithValue("errorCode", UnauthorizedErrorCode.UNAUTHORIZED_PASSWORD);
+
+	}
+
+	@Test
+	@DisplayName("유효한 리프레시 토큰으로 액세스 토큰을 재발급한다")
+	void reissuesAccessToken_whenRefreshTokenIsValid() {
+		String refreshToken = UUID.randomUUID().toString();
+		String accessToken = UUID.randomUUID().toString();
+		AccessTokenResponse authTokenResponse = new AccessTokenResponse(accessToken, 100);
+		when(jwtTokenProvider.generateAccessToken(refreshToken)).thenReturn(authTokenResponse);
+
+		AccessTokenResponse reissue = authService.reissue(refreshToken);
+
+		assertThat(reissue.accessToken()).isEqualTo(accessToken);
+	}
+
+	@Test
+	@DisplayName("리프레시 토큰의 만료 시간 기반으로 블랙리스트를 등록한다")
+	void addsRefreshTokenToBlacklist_basedOnExpirationTime() {
+		String refreshToken = UUID.randomUUID().toString();
+		LocalDateTime expiration = LocalDateTime.of(2025, 6, 13, 0, 1, 0);
+		Date date = Date.from(expiration.toInstant(
+			ZoneOffset.UTC));
+		when(jwtTokenProvider.parseClaims(refreshToken)).thenReturn(new TokenBody(1L, "name", Role.USER, date, date));
+		try (MockedStatic<JwtUtils> jwtUtilsMockedStatic = mockStatic(JwtUtils.class)) {
+			jwtUtilsMockedStatic.when(() -> JwtUtils.calculateTtlMillis(date)).thenReturn(0L);
+
+			authService.addBlackList(refreshToken);
+
+			verify(jwtService, times(1)).addBlackList(refreshToken, 0L);
+		}
+	}
+
+	private static MemberSignUpRequest genMemberSignUpRequest() {
+
+		return new MemberSignUpRequest(
+			"member1",
+			"test@test.com",
+			1L,
+			"01",
+			LocalDateTime.of(2024, 1, 1, 12, 0),
+			"1989-10-10",
+			"qwer1234!"
+		);
+
+	}
 
 }
