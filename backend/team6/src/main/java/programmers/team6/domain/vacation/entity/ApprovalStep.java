@@ -134,4 +134,13 @@ public class ApprovalStep extends BaseEntity {
 	public boolean isHrApprover() {
 		return this.member.isHrMember();
 	}
+
+	// 코틀린에서 lombok 주입 안받아서 추가 했습니다.
+	public Long getId() {
+		return id;
+	}
+
+	public VacationRequest getVacationRequest() {
+		return vacationRequest;
+	}
 }

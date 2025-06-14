@@ -207,7 +207,7 @@ class ApprovalStepRepositoryTests {
 
 		// when
 		ApprovalStep findApproval = approvalStepRepository.findByIdAndMemberIdAndStep(
-			approvalfirstStepId, approverId, 1).orElseThrow();
+			approvalfirstStepId, approverId, 1);
 
 		// then
 		assertThat(findApproval.getId()).isEqualTo(savedApprovalFirstStep.getId());
@@ -223,8 +223,7 @@ class ApprovalStepRepositoryTests {
 	void findByVacationRequestAndStep_test() {
 
 		// when
-		ApprovalStep findApproval = approvalStepRepository.findByVacationRequestAndStep(savedVacation1, 2)
-			.orElseThrow();
+		ApprovalStep findApproval = approvalStepRepository.findByVacationRequestAndStep(savedVacation1, 2);
 
 		// then
 		assertThat(findApproval.getId()).isEqualTo(savedApprovalSecondStep.getId());

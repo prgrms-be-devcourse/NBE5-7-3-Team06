@@ -19,17 +19,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import programmers.team6.domain.admin.entity.Code;
 import programmers.team6.domain.admin.entity.Dept;
-import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.admin.repository.CodeRepository;
+import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.member.repository.MemberRepository;
-import programmers.team6.domain.vacation.support.MonthRange;
 import programmers.team6.domain.vacation.dto.request.VacationCreateRequestDto;
+import programmers.team6.domain.vacation.dto.request.VacationUpdateRequestDto;
+import programmers.team6.domain.vacation.dto.request.VacationUpdateResponseDto;
 import programmers.team6.domain.vacation.dto.response.VacationCreateResponseDto;
 import programmers.team6.domain.vacation.dto.response.VacationInfoSelectResponseDto;
 import programmers.team6.domain.vacation.dto.response.VacationListResponseDto;
 import programmers.team6.domain.vacation.dto.response.VacationRequestCalendarResponse;
-import programmers.team6.domain.vacation.dto.request.VacationUpdateRequestDto;
-import programmers.team6.domain.vacation.dto.request.VacationUpdateResponseDto;
 import programmers.team6.domain.vacation.entity.ApprovalStep;
 import programmers.team6.domain.vacation.entity.VacationInfo;
 import programmers.team6.domain.vacation.entity.VacationRequest;
@@ -39,6 +38,7 @@ import programmers.team6.domain.vacation.repository.ApprovalStepRepository;
 import programmers.team6.domain.vacation.repository.VacationInfoRepository;
 import programmers.team6.domain.vacation.repository.VacationRequestRepository;
 import programmers.team6.domain.vacation.repository.VacationRequestSearchRepository;
+import programmers.team6.domain.vacation.support.MonthRange;
 import programmers.team6.domain.vacation.util.mapper.VacationMapper;
 import programmers.team6.global.exception.code.BadRequestErrorCode;
 import programmers.team6.global.exception.code.NotFoundErrorCode;
@@ -233,8 +233,8 @@ public class VacationService {
 
 		// 결재자 정보 조회
 		ApprovalStep approvalStep = approvalStepRepository.findFirstByVacationRequestOrderByStepAsc(
-				vacationRequest)
-			.orElseThrow(() -> new RuntimeException("결재 단계 정보를 찾을 수 없습니다."));
+			vacationRequest);
+		// .orElseThrow(() -> new RuntimeException("결재 단계 정보를 찾을 수 없습니다."));
 
 		// 응답 DTO 생성
 		return vacationMapper.toVacationUpdateResponseDto(

@@ -1,7 +1,5 @@
 package programmers.team6.domain.vacation.service
 
-import lombok.RequiredArgsConstructor
-import lombok.extern.slf4j.Slf4j
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -23,42 +21,53 @@ import programmers.team6.domain.vacation.util.mapper.ApprovalStepMapper
 import programmers.team6.global.exception.code.NotFoundErrorCode
 import programmers.team6.global.exception.customException.NotFoundException
 
-@Slf4j
 @Service
-@RequiredArgsConstructor
-class ApprovalStepService {
-    private val approvalStepRepository: ApprovalStepRepository? = null
-    private val vacationInfoRepository: VacationInfoRepository? = null
-    private val vacationInfoLogPublisher: VacationInfoLogPublisher? = null
-    private val deptService: DeptService? = null
+class ApprovalStepService(
+    private val approvalStepRepository: ApprovalStepRepository,
+    private val vacationInfoRepository: VacationInfoRepository,
+    private val vacationInfoLogPublisher: VacationInfoLogPublisher,
+    private val deptService: DeptService
+) {
 
     @Transactional(readOnly = true)
     fun findFirstStepByMemberId(memberId: Long, pageable: Pageable): Page<ApprovalFirstStepSelectResponse> {
-        return approvalStepRepository!!.findFirstStepByMemberId(memberId, STEP1, pageable)
+        return approvalStepRepository.findFirstStepByMemberId(memberId, STEP1, pageable)
     }
 
     @Transactional(readOnly = true)
     fun findFirstStepByFilter(
         request: ApprovalStepSelectRequest, memberId: Long, pageable: Pageable
     ): Page<ApprovalFirstStepSelectResponse> {
-        return approvalStepRepository!!.findFirstStepByFilter(
-            memberId, request.type,
-            request.name, request.from, request.to, request.status, STEP1, pageable
+        return approvalStepRepository.findFirstStepByFilter(
+            memberId = memberId,
+            type = request.type,
+            name = request.name,
+            from = request.from,
+            to = request.to,
+            status = request.status,
+            step = STEP1,
+            pageable = pageable
         )
     }
 
     @Transactional(readOnly = true)
     fun findSecondStepByMemberId(memberId: Long, pageable: Pageable): Page<ApprovalSecondStepSelectResponse> {
-        return approvalStepRepository!!.findSecondStepByMemberId(memberId, STEP2, pageable)
+        return approvalStepRepository.findSecondStepByMemberId(memberId, STEP2, pageable)
     }
 
     @Transactional(readOnly = true)
     fun findSecondStepByFilter(
         request: ApprovalStepSelectRequest, memberId: Long, pageable: Pageable
     ): Page<ApprovalSecondStepSelectResponse> {
-        return approvalStepRepository!!.findSecondStepByFilter(
-            memberId, request.type,
-            request.name, request.from, request.to, request.status, STEP2, pageable
+        return approvalStepRepository.findSecondStepByFilter(
+            memberId = memberId,
+            type = request.type,
+            name = request.name,
+            from = request.from,
+            to = request.to,
+            status = request.status,
+            step = STEP2,
+            pageable = pageable
         )
     }
 
@@ -77,35 +86,27 @@ class ApprovalStepService {
     @Transactional
     fun approveFirstStep(approvalStepId: Long, memberId: Long) {
         val firstStepApproval = findByIdAndMemberIdAndStep(approvalStepId, memberId, STEP1)
-
         firstStepApproval.validateApprovable()
 
-        val secondStepApproval = findByVacationRequestAndStep(
-            firstStepApproval.vacationRequest,
-            STEP2
-        )
+        val secondStepApproval = findByVacationRequestAndStep(firstStepApproval.getVacationRequest(), STEP2)
 
         firstStepApproval.approve()
         secondStepApproval.pending()
 
         if (firstStepApproval.isHrApprover) {
-            approveSecondStep(secondStepApproval.id, memberId)
+            approveSecondStep(secondStepApproval.getId(), memberId)
         }
     }
 
     @Transactional
     fun rejectFirstStep(approvalStepId: Long, memberId: Long, request: ApprovalStepRejectRequest) {
         val firstStepApproval = findByIdAndMemberIdAndStep(approvalStepId, memberId, STEP1)
-
         firstStepApproval.validateRejectable()
 
-        val secondStepApproval = findByVacationRequestAndStep(
-            firstStepApproval.vacationRequest,
-            STEP2
-        )
+        val secondStepApproval = findByVacationRequestAndStep(firstStepApproval.getVacationRequest(), STEP2)
 
         firstStepApproval.reject(request.reason)
-        secondStepApproval.reject("1차 결재 단계에서 반려되어 자동 반려 처리되었습니다.")
+        secondStepApproval.reject(FIRST_STEP_REJECT_MESSAGE)
         firstStepApproval.rejectVacation()
     }
 
@@ -114,27 +115,32 @@ class ApprovalStepService {
         val findApprovalStep = findByIdAndMemberIdAndStep(approvalStepId, memberId, STEP2)
         findApprovalStep.validateApprovable()
 
-        val findVacationInfo = vacationInfoRepository!!.findByMemberIdAndVacationType(
+        // todo: VacationInfoRepository 코틀린 변환 후 아래 주석으로 변경해야 함
+        val findVacationInfo = vacationInfoRepository.findByMemberIdAndVacationType(
             findApprovalStep.vacationMemberId,
-            if (findApprovalStep.isHalfDay) "01" else findApprovalStep.vacationCode
-        )
-            .orElseThrow {
-                NotFoundException(
-                    NotFoundErrorCode.NOT_FOUND_VACATION_INFO
-                )
-            }
+            if (findApprovalStep.isHalfDay) "HALF_DAY_CODE" else findApprovalStep.vacationCode
+        ).orElseThrow {
+            NotFoundException(
+                NotFoundErrorCode.NOT_FOUND_VACATION_INFO
+            )
+        }
+//        val findVacationInfo = vacationInfoRepository.findByMemberIdAndVacationType(
+//            findApprovalStep.vacationMemberId,
+//            if (findApprovalStep.isHalfDay) HALF_DAY_CODE else findApprovalStep.vacationCode
+//        ) ?: throw NotFoundException(NotFoundErrorCode.NOT_FOUND_VACATION_INFO)
 
-        val count = if (findApprovalStep.isHalfDay) 0.5 else findApprovalStep.calcVacationDays().toDouble()
-        if (findVacationInfo.canUseVacation(count)) {
+        val count = if (findApprovalStep.isHalfDay) HALF_DAY_COUNT else findApprovalStep.calcVacationDays().toDouble()
+
+        return if (findVacationInfo.canUseVacation(count)) {
             findApprovalStep.approve()
             findApprovalStep.approveVacation()
             val log = findVacationInfo.useVacation(count)
-            vacationInfoLogPublisher!!.publish(log)
-            return true
+            vacationInfoLogPublisher.publish(log)
+            true
         } else {
             findApprovalStep.cancel()
             findApprovalStep.cancelVacation()
-            return false
+            false
         }
     }
 
@@ -148,33 +154,35 @@ class ApprovalStepService {
     }
 
     // 휴가 신청 시 호출되어, 해당 멤버의 결재 단계 생성
-    fun saveApprovalStep(firstApprover: Member?, vacationRequest: VacationRequest?) {
+    fun saveApprovalStep(firstApprover: Member, vacationRequest: VacationRequest) {
         // todo: 2차 결재자 지정 기능 (시스템상 구현 필요)
-        val findDept = deptService!!.findByDeptName("인사팀")
-        approvalStepRepository!!.save(ApprovalStepMapper.toEntity(firstApprover, vacationRequest, STEP1))
+        val findDept = deptService.findByDeptName(HR_DEPT_NAME)
+        approvalStepRepository.save(ApprovalStepMapper.toEntity(firstApprover, vacationRequest, STEP1))
         approvalStepRepository.save(ApprovalStepMapper.toEntity(findDept.deptLeader, vacationRequest, STEP2))
     }
 
     // 휴가 요청 취소될 경우, 관련 결재 단계 상태 CANCELED
     fun cancelApprovalStep(vacationStep: VacationRequest) {
-        val findApprovalSteps = approvalStepRepository!!.findByVacationRequest(vacationStep)
-        for (findApprovalStep in findApprovalSteps) {
-            findApprovalStep.cancel()
-        }
+        val findApprovalSteps = approvalStepRepository.findByVacationRequest(vacationStep)
+        findApprovalSteps.forEach { it.cancel() }
     }
 
     private fun findByIdAndMemberIdAndStep(approvalStepId: Long, memberId: Long, step: Int): ApprovalStep {
-        return approvalStepRepository!!.findByIdAndMemberIdAndStep(approvalStepId, memberId, step)
-            .orElseThrow { NotFoundException(NotFoundErrorCode.NOT_FOUND_APPROVAL_STEP) }
+        return approvalStepRepository.findByIdAndMemberIdAndStep(approvalStepId, memberId, step)
+            ?: throw NotFoundException(NotFoundErrorCode.NOT_FOUND_APPROVAL_STEP)
     }
 
     private fun findByVacationRequestAndStep(vacationRequest: VacationRequest, step: Int): ApprovalStep {
-        return approvalStepRepository!!.findByVacationRequestAndStep(vacationRequest, step)
-            .orElseThrow { NotFoundException(NotFoundErrorCode.NOT_FOUND_APPROVAL_STEP) }
+        return approvalStepRepository.findByVacationRequestAndStep(vacationRequest, step)
+            ?: throw NotFoundException(NotFoundErrorCode.NOT_FOUND_APPROVAL_STEP)
     }
 
     companion object {
         private const val STEP1 = 1
         private const val STEP2 = 2
+        private const val HALF_DAY_CODE = "01"
+        private const val HALF_DAY_COUNT = 0.5
+        private const val HR_DEPT_NAME = "인사팀"
+        private const val FIRST_STEP_REJECT_MESSAGE = "1차 결재 단계에서 반려되어 자동 반려 처리되었습니다."
     }
 }

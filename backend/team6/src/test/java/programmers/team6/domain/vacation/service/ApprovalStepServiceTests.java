@@ -17,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import programmers.team6.domain.admin.service.DeptService;
 import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.vacation.dto.request.ApprovalStepRejectRequest;
 import programmers.team6.domain.vacation.entity.ApprovalStep;
@@ -44,6 +45,9 @@ class ApprovalStepServiceTests {
 	@Mock
 	private VacationInfoLogPublisher vacationInfoLogPublisher;
 
+	@Mock
+	private DeptService deptService;
+
 	@InjectMocks
 	private ApprovalStepService approvalStepService;
 
@@ -67,9 +71,9 @@ class ApprovalStepServiceTests {
 		ApprovalStep secondApprovalStep = genSecondStep(secondStepId, secondApprover, vacationRequest);
 
 		when(approvalStepRepository.findByIdAndMemberIdAndStep(firstStepId, firstApproverId, 1))
-			.thenReturn(Optional.of(firstApprovalStep));
+			.thenReturn(firstApprovalStep);
 		when(approvalStepRepository.findByVacationRequestAndStep(vacationRequest, 2))
-			.thenReturn(Optional.of(secondApprovalStep));
+			.thenReturn(secondApprovalStep);
 
 		// when
 		approvalStepService.approveFirstStep(firstStepId, firstApproverId);
@@ -99,11 +103,11 @@ class ApprovalStepServiceTests {
 		ApprovalStep secondApprovalStep = genSecondStep(secondStepId, hrApprover, vacationRequest);
 
 		when(approvalStepRepository.findByIdAndMemberIdAndStep(firstStepId, hrApproverId, 1))
-			.thenReturn(Optional.of(firstApprovalStep));
+			.thenReturn(firstApprovalStep);
 		when(approvalStepRepository.findByVacationRequestAndStep(vacationRequest, 2))
-			.thenReturn(Optional.of(secondApprovalStep));
+			.thenReturn(secondApprovalStep);
 		when(approvalStepRepository.findByIdAndMemberIdAndStep(secondStepId, hrApproverId, 2))
-			.thenReturn(Optional.of(secondApprovalStep));
+			.thenReturn(secondApprovalStep);
 		when(vacationInfoRepository.findByMemberIdAndVacationType(memberId, "01"))
 			.thenReturn(Optional.of(vacationInfo));
 		doNothing().when(vacationInfoLogPublisher).publish(any(VacationInfoLog.class));
@@ -125,7 +129,7 @@ class ApprovalStepServiceTests {
 		Long failedNum = 99999L;
 		Long firstApproverId = 2L;
 		when(approvalStepRepository.findByIdAndMemberIdAndStep(failedNum, firstApproverId, 1))
-			.thenReturn(Optional.empty());
+			.thenReturn(null);
 
 		// then
 		assertThatThrownBy(
@@ -152,7 +156,7 @@ class ApprovalStepServiceTests {
 		ApprovalStep firstApprovalStep = genFirstStep(firstStepId, firstApprover, vacationRequest, status);
 
 		when(approvalStepRepository.findByIdAndMemberIdAndStep(firstStepId, firstApproverId, 1))
-			.thenReturn(Optional.of(firstApprovalStep));
+			.thenReturn(firstApprovalStep);
 
 		// then
 		assertThatThrownBy(
@@ -179,9 +183,9 @@ class ApprovalStepServiceTests {
 		ApprovalStep firstApprovalStep = genFirstStep(firstStepId, firstApprover, vacationRequest);
 
 		when(approvalStepRepository.findByIdAndMemberIdAndStep(firstStepId, firstApproverId, 1))
-			.thenReturn(Optional.of(firstApprovalStep));
+			.thenReturn(firstApprovalStep);
 		when(approvalStepRepository.findByVacationRequestAndStep(vacationRequest, 2))
-			.thenReturn(Optional.empty());
+			.thenReturn(null);
 
 		//then
 		assertThatThrownBy(
@@ -212,9 +216,9 @@ class ApprovalStepServiceTests {
 		ApprovalStep secondApprovalStep = genSecondStep(secondStepId, secondApprover, vacationRequest);
 
 		when(approvalStepRepository.findByIdAndMemberIdAndStep(firstStepId, firstApproverId, 1))
-			.thenReturn(Optional.of(firstApprovalStep));
+			.thenReturn(firstApprovalStep);
 		when(approvalStepRepository.findByVacationRequestAndStep(vacationRequest, 2))
-			.thenReturn(Optional.of(secondApprovalStep));
+			.thenReturn(secondApprovalStep);
 
 		// when
 		approvalStepService.rejectFirstStep(firstStepId, firstApproverId, new ApprovalStepRejectRequest("안됨"));
@@ -234,7 +238,7 @@ class ApprovalStepServiceTests {
 		Long failedNum = 99999L;
 		Long firstApproverId = 2L;
 		when(approvalStepRepository.findByIdAndMemberIdAndStep(failedNum, firstApproverId, 1))
-			.thenReturn(Optional.empty());
+			.thenReturn(null);
 
 		// then
 		assertThatThrownBy(
@@ -261,7 +265,7 @@ class ApprovalStepServiceTests {
 		ApprovalStep firstApprovalStep = genFirstStep(firstStepId, firstApprover, vacationRequest, status);
 
 		when(approvalStepRepository.findByIdAndMemberIdAndStep(firstStepId, firstApproverId, 1))
-			.thenReturn(Optional.of(firstApprovalStep));
+			.thenReturn(firstApprovalStep);
 
 		// then
 		assertThatThrownBy(
@@ -288,9 +292,9 @@ class ApprovalStepServiceTests {
 		ApprovalStep firstApprovalStep = genFirstStep(firstStepId, firstApprover, vacationRequest);
 
 		when(approvalStepRepository.findByIdAndMemberIdAndStep(firstStepId, firstApproverId, 1))
-			.thenReturn(Optional.of(firstApprovalStep));
+			.thenReturn(firstApprovalStep);
 		when(approvalStepRepository.findByVacationRequestAndStep(vacationRequest, 2))
-			.thenReturn(Optional.empty());
+			.thenReturn(null);
 
 		//then
 		assertThatThrownBy(
@@ -319,7 +323,7 @@ class ApprovalStepServiceTests {
 			ApprovalStatus.PENDING);
 
 		when(approvalStepRepository.findByIdAndMemberIdAndStep(secondStepId, secondApproverId, 2))
-			.thenReturn(Optional.of(secondApprovalStep));
+			.thenReturn(secondApprovalStep);
 		when(vacationInfoRepository.findByMemberIdAndVacationType(memberId, "01"))
 			.thenReturn(Optional.of(vacationInfo));
 		doNothing().when(vacationInfoLogPublisher).publish(any(VacationInfoLog.class));
@@ -343,7 +347,7 @@ class ApprovalStepServiceTests {
 		Long failedNum = 99999L;
 		Long secondApproverId = 2L;
 		when(approvalStepRepository.findByIdAndMemberIdAndStep(failedNum, secondApproverId, 2))
-			.thenReturn(Optional.empty());
+			.thenReturn(null);
 
 		// then
 		assertThatThrownBy(
@@ -370,7 +374,7 @@ class ApprovalStepServiceTests {
 		ApprovalStep secondApprovalStep = genFirstStep(secondStepId, secondApprover, vacationRequest, status);
 
 		when(approvalStepRepository.findByIdAndMemberIdAndStep(secondStepId, secondApproverId, 2))
-			.thenReturn(Optional.of(secondApprovalStep));
+			.thenReturn(secondApprovalStep);
 
 		// then
 		assertThatThrownBy(
@@ -398,7 +402,7 @@ class ApprovalStepServiceTests {
 			ApprovalStatus.PENDING);
 
 		when(approvalStepRepository.findByIdAndMemberIdAndStep(secondStepId, secondApproverId, 2))
-			.thenReturn(Optional.of(secondApprovalStep));
+			.thenReturn(secondApprovalStep);
 		when(vacationInfoRepository.findByMemberIdAndVacationType(memberId, "01"))
 			.thenReturn(Optional.empty());
 
@@ -429,7 +433,7 @@ class ApprovalStepServiceTests {
 			ApprovalStatus.PENDING);
 
 		when(approvalStepRepository.findByIdAndMemberIdAndStep(secondStepId, secondApproverId, 2))
-			.thenReturn(Optional.of(secondApprovalStep));
+			.thenReturn(secondApprovalStep);
 		when(vacationInfoRepository.findByMemberIdAndVacationType(memberId, "01"))
 			.thenReturn(Optional.of(vacationInfo));
 
@@ -460,7 +464,7 @@ class ApprovalStepServiceTests {
 			ApprovalStatus.PENDING);
 
 		when(approvalStepRepository.findByIdAndMemberIdAndStep(secondStepId, secondApproverId, 2))
-			.thenReturn(Optional.of(secondApprovalStep));
+			.thenReturn(secondApprovalStep);
 
 		// when
 		approvalStepService.rejectSecondStep(secondStepId, secondApproverId, new ApprovalStepRejectRequest("안됨"));
@@ -479,7 +483,7 @@ class ApprovalStepServiceTests {
 		Long failedNum = 99999L;
 		Long secondApproverId = 2L;
 		when(approvalStepRepository.findByIdAndMemberIdAndStep(failedNum, secondApproverId, 2))
-			.thenReturn(Optional.empty());
+			.thenReturn(null);
 
 		// then
 		assertThatThrownBy(
@@ -506,7 +510,7 @@ class ApprovalStepServiceTests {
 		ApprovalStep secondApprovalStep = genFirstStep(secondStepId, secondApprover, vacationRequest, status);
 
 		when(approvalStepRepository.findByIdAndMemberIdAndStep(secondStepId, secondApproverId, 2))
-			.thenReturn(Optional.of(secondApprovalStep));
+			.thenReturn(secondApprovalStep);
 
 		// then
 		assertThatThrownBy(
