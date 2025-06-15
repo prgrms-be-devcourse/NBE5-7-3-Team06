@@ -45,17 +45,17 @@ public class VacationMapper {
 		String vacationTypeName,
 		VacationRequestStatus vacationRequestStatus,
 		String approverName) {
-		return VacationCreateResponseDto.builder()
-			.requestId(vacationRequest.getId())
-			.from(vacationRequest.getFrom())
-			.to(vacationRequest.getTo())
-			.reason(vacationRequest.getReason())
-			.vacationType(vacationTypeName)
-			.approvalStatus(vacationRequestStatus.name())
-			.approverName(approverName)
-			.createdAt(vacationRequest.getCreatedAt())
-			.updatedAt(vacationRequest.getUpdatedAt())
-			.build();
+		return new VacationCreateResponseDto(
+			vacationRequest.getId(),
+			vacationRequest.getFrom(),
+			vacationRequest.getTo(),
+			vacationRequest.getReason(),
+			vacationTypeName,
+			vacationRequestStatus.name(),
+			approverName,
+			vacationRequest.getCreatedAt(),
+			vacationRequest.getUpdatedAt()
+		);
 	}
 
 	// VacationRequest → VacationUpdateResponseDto
