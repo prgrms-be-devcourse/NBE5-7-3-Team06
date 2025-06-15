@@ -142,15 +142,15 @@ public class VacationService {
 
 		if (idPage.isEmpty()) {
 			// 빈 결과 반환
-			return VacationListResponseDto.builder()
-				.content(Collections.emptyList())
-				.pageNumber(page)
-				.pageSize(pageable.getPageSize())
-				.totalElements(idPage.getTotalElements())
-				.totalPages(idPage.getTotalPages())
-				.first(idPage.isFirst())
-				.last(idPage.isLast())
-				.build();
+			return new VacationListResponseDto(
+				Collections.emptyList(),
+				page,
+				pageable.getPageSize(),
+				idPage.getTotalElements(),
+				idPage.getTotalPages(),
+				idPage.isFirst(),
+				idPage.isLast()
+			);
 		}
 
 		// 2. 페이징된 ID로 상세 정보 조회 (페치 조인 사용)

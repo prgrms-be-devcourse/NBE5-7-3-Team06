@@ -81,14 +81,14 @@ public class VacationMapper {
 	public VacationListResponseDto toVacationListResponseDto(
 		Page<VacationRequest> page,
 		List<VacationCreateResponseDto> content) {
-		return VacationListResponseDto.builder()
-			.content(content)
-			.pageNumber(page.getNumber())
-			.pageSize(page.getSize())
-			.totalElements(page.getTotalElements())
-			.totalPages(page.getTotalPages())
-			.first(page.isFirst())
-			.last(page.isLast())
-			.build();
+		return new VacationListResponseDto(
+			content,
+			page.getNumber(),
+			page.getSize(),
+			page.getTotalElements(),
+			page.getTotalPages(),
+			page.isFirst(),
+			page.isLast()
+			);
 	}
 }
