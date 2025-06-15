@@ -1,6 +1,10 @@
-package programmers.team6.domain.auth.dto;
+package programmers.team6.domain.auth.dto
 
-import programmers.team6.domain.member.enums.Role;
+import programmers.team6.domain.member.enums.Role
 
-public record JwtMemberInfo(Long id, String name, Role role) {
-}
+
+data class JwtMemberInfo(
+    val id: Long,
+    val name: String,
+    val role: Role
+)

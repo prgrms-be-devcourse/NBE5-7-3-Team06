@@ -77,9 +77,9 @@ class JwtAuthenticationFilterTest {
         String token = "token";
 
         TokenBody tokenBody = new TokenBody(
-                jwtMemberInfo.id(),
-                jwtMemberInfo.name(),
-                jwtMemberInfo.role(),
+                jwtMemberInfo.id,
+                jwtMemberInfo.name,
+                jwtMemberInfo.role,
                 new Date(System.currentTimeMillis() + 1000 * 60 * 60),
                 new Date()
         );

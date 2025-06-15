@@ -1,35 +1,31 @@
-package programmers.team6.domain.auth.util;
+package programmers.team6.domain.auth.util
 
-import java.util.Date;
+import jakarta.servlet.http.HttpServletResponse
+import org.springframework.http.HttpHeaders
+import org.springframework.http.ResponseCookie
+import java.util.*
+import kotlin.math.max
 
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
 
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+object JwtUtils {
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class JwtUtils {
+    fun toSeconds(millis: Long): Long {
+        return millis / 1000
+    }
 
-	public static long toSeconds(long millis) {
-		return millis / 1000;
-	}
+	fun calculateTtlMillis(expiration: Date): Long {
+        return max((expiration.time - System.currentTimeMillis()).toDouble(), 0.0).toLong()
+    }
 
-	public static long calculateTtlMillis(Date expiration) {
-		return Math.max(expiration.getTime() - System.currentTimeMillis(), 0);
-	}
+    fun addRefreshTokenCookie(response: HttpServletResponse, refreshToken: String, expiresIn: Long) {
+        val refreshCookie = ResponseCookie.from("refreshToken", refreshToken)
+            .httpOnly(true)
+            .secure(true)
+            .path("/")
+            .sameSite("Strict")
+            .maxAge(toSeconds(expiresIn))
+            .build()
 
-	public static void addRefreshTokenCookie(HttpServletResponse response, String refreshToken, long expiresIn) {
-		ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken)
-			.httpOnly(true)
-			.secure(true)
-			.path("/")
-			.sameSite("Strict")
-			.maxAge(JwtUtils.toSeconds(expiresIn))
-			.build();
-
-		response.setHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
-	}
-
+        response.setHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString())
+    }
 }

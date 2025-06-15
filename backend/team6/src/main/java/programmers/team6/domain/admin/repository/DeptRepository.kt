@@ -1,21 +1,21 @@
-package programmers.team6.domain.admin.repository;
+package programmers.team6.domain.admin.repository
 
-import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
+import programmers.team6.domain.admin.dto.response.DeptDropdownResponse
+import programmers.team6.domain.admin.entity.Dept
+import java.util.*
 
-import java.util.Optional;
+interface DeptRepository : JpaRepository<Dept, Long> {
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-
-import programmers.team6.domain.admin.dto.response.DeptDropdownResponse;
-import programmers.team6.domain.admin.entity.Dept;
-
-public interface DeptRepository extends JpaRepository<Dept, Long> {
-
-	@Query("""
+    @Query(
+        """
 		  SELECT new programmers.team6.domain.admin.dto.response.DeptDropdownResponse(d.id,d.deptName)
 		  FROM Dept d
-		""")
-	List<DeptDropdownResponse> findAllDept();
-	Optional<Dept> findByDeptName(String deptName);
+		
+		"""
+    )
+    fun findAllDept(): List<DeptDropdownResponse>
+
+    fun findByDeptName(deptName: String): Dept
 }

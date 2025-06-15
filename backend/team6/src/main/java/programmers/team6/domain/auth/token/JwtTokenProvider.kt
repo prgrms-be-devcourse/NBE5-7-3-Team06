@@ -1,138 +1,139 @@
-package programmers.team6.domain.auth.token;
+package programmers.team6.domain.auth.token
 
-import java.util.Date;
+import io.jsonwebtoken.ExpiredJwtException
+import io.jsonwebtoken.Jwts
+import io.jsonwebtoken.MalformedJwtException
+import io.jsonwebtoken.UnsupportedJwtException
+import io.jsonwebtoken.security.Keys
+import io.jsonwebtoken.security.SignatureException
+import jakarta.servlet.http.HttpServletRequest
+import lombok.RequiredArgsConstructor
+import lombok.extern.slf4j.Slf4j
+import org.springframework.stereotype.Component
+import programmers.team6.domain.auth.dto.JwtMemberInfo
+import programmers.team6.domain.auth.dto.TokenBody
+import programmers.team6.domain.auth.dto.TokenPairWithExpiration
+import programmers.team6.domain.auth.dto.response.AccessTokenResponse
+import programmers.team6.domain.auth.service.JwtService
+import programmers.team6.domain.member.enums.Role
+import programmers.team6.global.exception.code.UnauthorizedErrorCode
+import programmers.team6.global.exception.customException.UnauthorizedException
+import java.util.*
+import javax.crypto.SecretKey
 
-import javax.crypto.SecretKey;
 
-import org.springframework.stereotype.Component;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SignatureException;
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import programmers.team6.domain.auth.dto.JwtMemberInfo;
-import programmers.team6.domain.auth.dto.TokenBody;
-import programmers.team6.domain.auth.dto.TokenPairWithExpiration;
-import programmers.team6.domain.auth.dto.response.AccessTokenResponse;
-import programmers.team6.domain.auth.service.JwtService;
-import programmers.team6.domain.member.enums.Role;
-import programmers.team6.global.exception.code.UnauthorizedErrorCode;
-import programmers.team6.global.exception.customException.UnauthorizedException;
-
-@Slf4j
 @Component
-@RequiredArgsConstructor
-public class JwtTokenProvider {
+class JwtTokenProvider(
+    private val jwtConfiguration: JwtConfiguration,
+    private val jwtService: JwtService
+) {
 
-	private final JwtConfiguration jwtConfiguration;
-	private final JwtService jwtService;
+    companion object {
+        private const val HEADER = "Authorization"
+        private const val BEARER = "Bearer "
+    }
 
-	private static final String HEADER = "Authorization";
-	private static final String BEARER = "Bearer ";
+    fun generateTokenPair(jwtMemberInfo: JwtMemberInfo): TokenPairWithExpiration {
+        val accessToken = issueAccessToken(jwtMemberInfo)
+        val refreshToken = issueRefreshToken(jwtMemberInfo)
 
-	public TokenPairWithExpiration generateTokenPair(JwtMemberInfo jwtMemberInfo) {
+        return TokenPairWithExpiration(
+            accessToken, refreshToken, jwtConfiguration.accessTokenExpiration,
+            jwtConfiguration.refreshTokenExpiration
+        )
+    }
 
-		String accessToken = issueAccessToken(jwtMemberInfo);
-		String refreshToken = issueRefreshToken(jwtMemberInfo);
+    fun generateAccessToken(refreshToken: String): AccessTokenResponse {
+        val tokenBody = parseClaims(refreshToken)
 
-		return new TokenPairWithExpiration(accessToken, refreshToken, jwtConfiguration.accessTokenExpiration(),
-			jwtConfiguration.refreshTokenExpiration());
-	}
+        val jwtMemberInfo = JwtMemberInfo(tokenBody.id, tokenBody.name, tokenBody.role)
 
-	public AccessTokenResponse generateAccessToken(String refreshToken) {
+        val accessToken = issueAccessToken(jwtMemberInfo)
 
-		TokenBody tokenBody = parseClaims(refreshToken);
+        return AccessTokenResponse(accessToken, jwtConfiguration.accessTokenExpiration)
+    }
 
-		JwtMemberInfo jwtMemberInfo = new JwtMemberInfo(tokenBody.id(), tokenBody.name(), tokenBody.role());
+    fun validate(token: String) {
 
-		String accessToken = issueAccessToken(jwtMemberInfo);
+        runCatching {
+           Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+        }.onFailure { e ->
+            throw when (e) {
+                is SecurityException, is SignatureException ->
+                    UnauthorizedException(UnauthorizedErrorCode.UNAUTHORIZED_INVALID_SIGNATURE)
+                is MalformedJwtException ->
+                    UnauthorizedException(UnauthorizedErrorCode.UNAUTHORIZED_MALFORMED_TOKEN)
+                is ExpiredJwtException ->
+                    UnauthorizedException(UnauthorizedErrorCode.UNAUTHORIZED_EXPIRED_TOKEN)
+                is UnsupportedJwtException ->
+                    UnauthorizedException(UnauthorizedErrorCode.UNAUTHORIZED_UNSUPPORTED_TOKEN)
+                is IllegalArgumentException ->
+                    UnauthorizedException(UnauthorizedErrorCode.UNAUTHORIZED_ILLEGAL_ARGUMENT_TOKEN)
+                else ->
+                    UnauthorizedException(UnauthorizedErrorCode.UNAUTHORIZED_INVALID_TOKEN)
+            }
+        }
+    }
 
-		return new AccessTokenResponse(accessToken, jwtConfiguration.accessTokenExpiration());
-	}
+    fun validateNotBlackListed(refreshToken: String) {
+        if (jwtService.isBlackListed(refreshToken)) {
+            throw UnauthorizedException(UnauthorizedErrorCode.UNAUTHORIZED_BLACKLIST_TOKEN)
+        }
+    }
 
-	public void validate(String token) {
-		try {
-			Jws<Claims> claimsJws = Jwts.parser()
-				.verifyWith(getSecretKey())
-				.build()
-				.parseSignedClaims(token);
-		} catch (SecurityException | SignatureException e) {
-			throw new UnauthorizedException(UnauthorizedErrorCode.UNAUTHORIZED_INVALID_SIGNATURE);
-		} catch (MalformedJwtException e) {
-			throw new UnauthorizedException(UnauthorizedErrorCode.UNAUTHORIZED_MALFORMED_TOKEN);
-		} catch (ExpiredJwtException e) {
-			throw new UnauthorizedException(UnauthorizedErrorCode.UNAUTHORIZED_EXPIRED_TOKEN);
-		} catch (UnsupportedJwtException e) {
-			throw new UnauthorizedException(UnauthorizedErrorCode.UNAUTHORIZED_UNSUPPORTED_TOKEN);
-		} catch (IllegalArgumentException e) {
-			throw new UnauthorizedException(UnauthorizedErrorCode.UNAUTHORIZED_ILLEGAL_ARGUMENT_TOKEN);
-		} catch (Exception e) {
-			throw new UnauthorizedException(UnauthorizedErrorCode.UNAUTHORIZED_INVALID_TOKEN);
-		}
-	}
+    fun parseClaims(token: String): TokenBody {
+        val claims = Jwts.parser()
+            .verifyWith(secretKey)
+            .build()
+            .parseSignedClaims(token)
 
-	public void validateNotBlackListed(String refreshToken) {
-		if (jwtService.isBlackListed(refreshToken)) {
-			throw new UnauthorizedException(UnauthorizedErrorCode.UNAUTHORIZED_BLACKLIST_TOKEN);
-		}
-	}
+        val payload = claims.payload
 
-	public TokenBody parseClaims(String token) {
+        val id = payload.subject.toLong()
 
-		Jws<Claims> claims = Jwts.parser()
-			.verifyWith(getSecretKey())
-			.build()
-			.parseSignedClaims(token);
+        return TokenBody(
+            id,
+            payload["name"].toString(),
+            Role.valueOf(payload["role"].toString()),
+            payload.expiration,
+            payload.issuedAt
+        )
+    }
 
-		Claims payload = claims.getPayload();
+    fun issueAccessToken(jwtMemberInfo: JwtMemberInfo): String {
+        return issue(jwtMemberInfo, jwtConfiguration.accessTokenExpiration)
+    }
 
-		Long id = Long.parseLong(payload.getSubject());
+    fun issueRefreshToken(jwtMemberInfo: JwtMemberInfo): String {
+        return issue(jwtMemberInfo, jwtConfiguration.refreshTokenExpiration)
+    }
 
-		return new TokenBody(
-			id,
-			payload.get("name").toString(),
-			Role.valueOf(payload.get("role").toString()),
-			payload.getExpiration(),
-			payload.getIssuedAt());
-	}
+    private fun issue(jwtMemberInfo: JwtMemberInfo, expTime: Long): String {
+        return Jwts.builder()
+            .subject(jwtMemberInfo.id.toString())
+            .claim("name", jwtMemberInfo.name)
+            .claim("role", jwtMemberInfo.role)
+            .issuedAt(Date())
+            .expiration(Date(Date().time + expTime))
+            .signWith(secretKey, Jwts.SIG.HS256)
+            .compact()
+    }
 
-	public String issueAccessToken(JwtMemberInfo jwtMemberInfo) {
-		return issue(jwtMemberInfo, jwtConfiguration.accessTokenExpiration());
-	}
+    private val secretKey: SecretKey by lazy {
+        Keys.hmacShaKeyFor(jwtConfiguration.secret.toByteArray())
+    }
 
-	public String issueRefreshToken(JwtMemberInfo jwtMemberInfo) {
-		return issue(jwtMemberInfo, jwtConfiguration.refreshTokenExpiration());
-	}
+    fun extractToken(request: HttpServletRequest): String? {
+        val header = request.getHeader(HEADER)
 
-	private String issue(JwtMemberInfo jwtMemberInfo, Long expTime) {
-		return Jwts.builder()
-			.subject(jwtMemberInfo.id().toString())
-			.claim("name", jwtMemberInfo.name())
-			.claim("role", jwtMemberInfo.role())
-			.issuedAt(new Date())
-			.expiration(new Date(new Date().getTime() + expTime))
-			.signWith(getSecretKey(), Jwts.SIG.HS256)
-			.compact();
-	}
+        if (header != null && header.startsWith(BEARER)) {
+            return header.substring(BEARER.length)
+        }
+        return null
+    }
 
-	private SecretKey getSecretKey() {
-		return Keys.hmacShaKeyFor(jwtConfiguration.secret().getBytes());
-	}
-
-	public String extractToken(HttpServletRequest request) {
-		String header = request.getHeader(HEADER);
-
-		if (header != null && header.startsWith(BEARER)) {
-			return header.substring(BEARER.length());
-		}
-		return null;
-	}
 
 }

@@ -59,7 +59,7 @@ class SecurityConfigTest {
 
         JwtMemberInfo user = defaultUser();
 
-        String token = jwtTokenProvider.generateTokenPair(user).accessToken();
+        String token = jwtTokenProvider.generateTokenPair(user).accessToken;
 
         mockMvc.perform(get("/admin/member-approvals")
                         .header("Authorization", "Bearer " + token))
@@ -74,7 +74,7 @@ class SecurityConfigTest {
 
         JwtMemberInfo admin = admin();
 
-        String token = jwtTokenProvider.generateTokenPair(admin).accessToken();
+        String token = jwtTokenProvider.generateTokenPair(admin).accessToken;
 
         mockMvc.perform(get("/admin/member-approvals")
                         .header("Authorization", "Bearer " + token))
@@ -99,7 +99,7 @@ class SecurityConfigTest {
 
         JwtMemberInfo user = defaultUser();
 
-        String token = jwtTokenProvider.generateTokenPair(user).accessToken();
+        String token = jwtTokenProvider.generateTokenPair(user).accessToken;
 
         String yearMonth = "2025-05";
         String deptId = "1";

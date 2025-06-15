@@ -1,14 +1,13 @@
-package programmers.team6.domain.auth.dto;
+package programmers.team6.domain.auth.dto
 
-import java.util.Date;
+import programmers.team6.domain.member.enums.Role
+import java.util.*
 
-import programmers.team6.domain.member.enums.Role;
 
-public record TokenBody(
-	Long id,
-	String name,
-	Role role,
-	Date expiration,
-	Date issuedAt
-) {
-}
+data class TokenBody(
+	val id: Long,
+	val name: String,
+	val role: Role,
+	val expiration: Date,
+	val issuedAt: Date
+)

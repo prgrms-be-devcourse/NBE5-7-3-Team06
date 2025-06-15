@@ -40,7 +40,7 @@ public class VacationController {
 	public ResponseEntity<VacationInfoSelectResponseDto> getMyVacationInfo(
 		@AuthenticationPrincipal TokenBody tokenBody) {
 
-		Long memberId = tokenBody.id();
+		Long memberId = tokenBody.id;
 
 		// 휴가 정보 조회
 		VacationInfoSelectResponseDto vacationInfo = vacationService.getMyVacationInfo(memberId);
@@ -54,7 +54,7 @@ public class VacationController {
 		@Validated @RequestBody VacationCreateRequestDto requestDto,
 		@AuthenticationPrincipal TokenBody tokenBody) {
 
-		Long memberId = tokenBody.id();
+		Long memberId = tokenBody.id;
 		VacationCreateResponseDto response = vacationService.requestVacation(memberId, requestDto);
 		return ResponseEntity.ok(response);
 	}
@@ -65,7 +65,7 @@ public class VacationController {
 		@AuthenticationPrincipal TokenBody tokenBody,
 		@RequestParam(defaultValue = "0") int page) {
 
-		Long memberId = tokenBody.id();
+		Long memberId = tokenBody.id;
 		VacationListResponseDto response = vacationService.getVacationRequestList(memberId, page);
 		return ResponseEntity.ok(response);
 	}
@@ -77,7 +77,7 @@ public class VacationController {
 		@PathVariable Long requestId,
 		@Validated @RequestBody VacationUpdateRequestDto requestDto) {
 
-		Long memberId = tokenBody.id();
+		Long memberId = tokenBody.id;
 		VacationUpdateResponseDto response = vacationService.updateVacationRequest(memberId, requestId, requestDto);
 		return ResponseEntity.ok(response);
 	}
@@ -88,7 +88,7 @@ public class VacationController {
 		@AuthenticationPrincipal TokenBody tokenBody,
 		@PathVariable Long requestId) {
 
-		Long memberId = tokenBody.id();
+		Long memberId = tokenBody.id;
 
 		boolean success = vacationService.cancelVacationRequest(memberId, requestId);
 
