@@ -1,63 +1,46 @@
-package programmers.team6.global.validator;
+package programmers.team6.global.validator
 
-import java.lang.reflect.Field;
-import java.util.Arrays;
+import jakarta.validation.ConstraintValidator
+import jakarta.validation.ConstraintValidatorContext
 
-import org.springframework.util.ObjectUtils;
+class EnumValidator : ConstraintValidator<EnumValue?, String> {
 
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
+    private var enumValue: EnumValue? = null
 
-public class EnumValidator implements ConstraintValidator<EnumValue, String> {
+    override fun initialize(constraintAnnotation: EnumValue?) {
+        this.enumValue = constraintAnnotation
+    }
 
-	private EnumValue enumValue;
+    override fun isValid(value: String, context: ConstraintValidatorContext): Boolean {
+        val enumValue = this.enumValue ?: return true
 
-	@Override
-	public void initialize(final EnumValue constraintAnnotation) {
-		this.enumValue = constraintAnnotation;
-	}
+        if (value.isBlank()) {
+            return true
+        }
 
-	@Override
-	public boolean isValid(final String value, final ConstraintValidatorContext context) {
-		if (ObjectUtils.isEmpty(value)) {
-			return true;
-		}
-		final Enum<?>[] enumConstants = this.enumValue.enumClass().getEnumConstants();
-		if (enumConstants == null) {
-			context.buildConstraintViolationWithTemplate(enumValue.message())
-				.addConstraintViolation();
-			return false;
-		}
-		boolean result = Arrays.stream(enumConstants)
-			.anyMatch(enumConstant -> convertible(value, enumConstant));
-		if (!result) {
-			context.buildConstraintViolationWithTemplate(enumValue.message())
-				.addConstraintViolation();
-			return result;
-		}
-		return result;
-	}
+        val enumConstants = enumValue.enumClass.java.enumConstants ?: return false
 
-	private boolean convertible(String value, final Enum<?> enumConstant) {
-		try {
-			// Enum 클래스의 모든 필드를 가져옴
-			Field[] fields = enumConstant.getClass().getDeclaredFields();
+        val result = enumConstants.any { enumConstant ->
+            convertible(value, enumConstant, enumValue.fieldName)
+        }
 
-			// 필드들을 순회하며 'code' 필드가 존재하는지 확인
-			for (Field field : fields) {
-				if (!field.getName().equals(enumValue.fieldName())) {
-					continue;
-				}
+        if (!result) {
+            context.buildConstraintViolationWithTemplate(enumValue.message)
+                .addConstraintViolation()
+                .disableDefaultConstraintViolation()
+        }
 
-				field.setAccessible(true);
-				String codeValue = (String)field.get(enumConstant);
-				if (value.trim().equalsIgnoreCase(codeValue)) {
-					return true;
-				}
-			}
-			return false;
-		} catch (IllegalAccessException e) {
-			return false;
-		}
-	}
+        return result
+    }
+
+    private fun convertible(value: String, enumConstant: Enum<*>, fieldName: String): Boolean {
+        return try {
+            val field = enumConstant.javaClass.getDeclaredField(fieldName)
+            field.isAccessible = true
+            val codeValue = field[enumConstant] as? String ?: return false
+            value.trim().equals(codeValue, ignoreCase = true)
+        } catch (e: Exception) {
+            false
+        }
+    }
 }

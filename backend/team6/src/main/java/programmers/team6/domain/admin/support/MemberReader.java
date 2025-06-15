@@ -21,11 +21,11 @@ public class MemberReader {
 	private final VacationInfoLogSearchRepository vacationInfoLogSearchRepository;
 
 	public Members readHasVacationInfoMemberFrom(VacationStatisticsRequest request, Pageable pageable) {
-		LocalDateTime date = LocalDateTime.of(request.year(), 12, 31, 23, 59);
+		LocalDateTime date = LocalDateTime.of(request.year, 12, 31, 23, 59);
 
 		List<Long> ids = vacationInfoLogSearchRepository.queryContainVacationInfoMemberIds(date,
-			request.vacationCode());
-		Page<Member> members = memberRepository.searchFrom(request.deptId(), request.name(), ids, pageable);
+			request.vacationCode);
+		Page<Member> members = memberRepository.searchFrom(request.deptId, request.name, ids, pageable);
 		return new Members(members);
 	}
 }

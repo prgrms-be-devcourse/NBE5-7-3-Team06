@@ -1,38 +1,27 @@
-package programmers.team6.domain.admin.support;
+package programmers.team6.domain.admin.support
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Component;
-
-import lombok.RequiredArgsConstructor;
-import programmers.team6.domain.admin.dto.request.VacationStatisticsRequest;
-import programmers.team6.domain.vacation.entity.VacationInfoLog;
-import programmers.team6.domain.vacation.repository.VacationInfoLogRepository;
+import lombok.RequiredArgsConstructor
+import org.springframework.stereotype.Component
+import programmers.team6.domain.admin.dto.request.VacationStatisticsRequest
+import programmers.team6.domain.vacation.entity.VacationInfoLog
+import programmers.team6.domain.vacation.repository.VacationInfoLogRepository
+import java.time.LocalDateTime
 
 @Component
 @RequiredArgsConstructor
-public class VacationInfoLogReader {
+open class VacationInfoLogReader(private val repository: VacationInfoLogRepository) {
 
-	private final VacationInfoLogRepository repository;
+    open fun lastedLogsFrom(ids: List<Long?>?, request: VacationStatisticsRequest): VacationInfoLogs {
+        val date = LocalDateTime.of(request.year, 12, 31, 23, 59)
+        val lastedByMemberIdInAndYear = repository.findLastedByMemberIdInAndYear(ids, date, request.vacationCode)
+        return VacationInfoLogs(toLastedMap(lastedByMemberIdInAndYear))
+    }
 
-	public VacationInfoLogs lastedLogsFrom(List<Long> ids, VacationStatisticsRequest request) {
-		LocalDateTime date = LocalDateTime.of(request.year(), 12, 31, 23, 59);
-		List<VacationInfoLog> lastedByMemberIdInAndYear = repository.findLastedByMemberIdInAndYear(ids, date, request.vacationCode());
-		return new VacationInfoLogs(toLastedMap(lastedByMemberIdInAndYear));
-	}
+    private fun toLastedMap(logs: List<VacationInfoLog>): Map<Long, VacationInfoLog> {
+        return logs.groupBy { it.getMemberId() }
+            .mapValues { (_, logs) -> logs.reduce { acc, log -> lastedLog(acc, log) } }
+    }
 
-	private Map<Long, VacationInfoLog> toLastedMap(List<VacationInfoLog> logs) {
-		return logs.stream()
-			.collect(Collectors.toMap(VacationInfoLog::getMemberId,
-				Function.identity(),
-				VacationInfoLogReader::lastedLog));
-	}
-
-	private static VacationInfoLog lastedLog(VacationInfoLog log1, VacationInfoLog log2) {
-		return log1.getLogDate().isAfter(log2.getLogDate()) ? log1 : log2;
-	}
+    private fun lastedLog(log1: VacationInfoLog, log2: VacationInfoLog): VacationInfoLog =
+        if (log1.logDate.isAfter(log2.logDate)) log1 else log2
 }

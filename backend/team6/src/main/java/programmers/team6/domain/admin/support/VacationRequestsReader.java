@@ -16,7 +16,7 @@ public class VacationRequestsReader {
 
 	public VacationRequests vacationRequestFrom(List<Long> ids, VacationStatisticsRequest request) {
 		return new VacationRequests(
-			vacationRequestRepository.findByMemberIdInAndYear(ids, request.year(), codes(request.vacationCode())));
+			vacationRequestRepository.findByMemberIdInAndYear(ids, request.year, codes(request.vacationCode)));
 	}
 
 	private List<String> codes(String code) {
