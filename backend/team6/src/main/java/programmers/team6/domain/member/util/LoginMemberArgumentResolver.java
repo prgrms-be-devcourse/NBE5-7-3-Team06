@@ -48,7 +48,7 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
 
 		TokenBody tokenBody = jwtTokenProvider.parseClaims(accessToken);
 
-		Long id = tokenBody.id();
+		Long id = tokenBody.id;
 
 		MemberLoginInfoResponse loginMemberInfo = memberRepository.findLoginMemberInfo(id);
 

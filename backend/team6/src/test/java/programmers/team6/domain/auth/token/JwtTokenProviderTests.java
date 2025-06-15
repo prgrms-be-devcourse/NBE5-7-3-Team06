@@ -53,7 +53,7 @@ class JwtTokenProviderTests {
         );
         jwtTokenProvider = new JwtTokenProvider(jwtConfiguration, jwtService);
 
-        secretKey = Keys.hmacShaKeyFor(jwtConfiguration.secret().getBytes());
+        secretKey = Keys.hmacShaKeyFor(jwtConfiguration.secret.getBytes());
     }
 
     @Test
@@ -64,15 +64,15 @@ class JwtTokenProviderTests {
 
         TokenPairWithExpiration tokenPair = jwtTokenProvider.generateTokenPair(jwtMemberInfo);
 
-        Claims accessToken = genClaims(tokenPair.accessToken());
+        Claims accessToken = genClaims(tokenPair.accessToken);
 
-        Claims refreshToken = genClaims(tokenPair.refreshToken());
+        Claims refreshToken = genClaims(tokenPair.refreshToken);
 
-        assertThat(accessToken.getSubject()).isEqualTo(jwtMemberInfo.id().toString());
+        assertThat(accessToken.getSubject()).isEqualTo(jwtMemberInfo.id.toString());
         assertThat(accessToken.get("role")).isEqualTo(Role.USER.name());
         assertThat(accessToken.getExpiration()).isNotNull();
 
-        assertThat(refreshToken.getSubject()).isEqualTo(jwtMemberInfo.id().toString());
+        assertThat(refreshToken.getSubject()).isEqualTo(jwtMemberInfo.id.toString());
         assertThat(refreshToken.get("role")).isEqualTo(Role.USER.name());
         assertThat(refreshToken.getExpiration()).isNotNull();
 
@@ -88,13 +88,13 @@ class JwtTokenProviderTests {
 
         TokenPairWithExpiration tokenPair = jwtTokenProvider.generateTokenPair(jwtMemberInfo);
 
-        String refreshToken = tokenPair.refreshToken();
+        String refreshToken = tokenPair.refreshToken;
 
         AccessTokenResponse accessTokenResponse = jwtTokenProvider.generateAccessToken(refreshToken);
 
-        Claims claims = genClaims(accessTokenResponse.accessToken());
+        Claims claims = genClaims(accessTokenResponse.accessToken);
 
-        assertThat(claims.getSubject()).isEqualTo(jwtMemberInfo.id().toString());
+        assertThat(claims.getSubject()).isEqualTo(jwtMemberInfo.id.toString());
         assertThat(claims.get("role")).isEqualTo(Role.USER.name());
         assertThat(claims.getExpiration()).isNotNull();
     }
@@ -107,7 +107,7 @@ class JwtTokenProviderTests {
 
         TokenPairWithExpiration tokenPair = jwtTokenProvider.generateTokenPair(jwtMemberInfo);
 
-        String accessToken = tokenPair.accessToken();
+        String accessToken = tokenPair.accessToken;
 
         assertThatCode(
                 () -> {
@@ -125,17 +125,17 @@ class JwtTokenProviderTests {
 
         JwtConfiguration wrongConfig = new JwtConfiguration(
                 "this-is-a-wrong-secret-key-which-is-very-long-32-bytes",
-                jwtConfiguration.accessTokenExpiration(),
-                jwtConfiguration.refreshTokenExpiration(),
-                jwtConfiguration.header(),
-                jwtConfiguration.secret()
+                jwtConfiguration.accessTokenExpiration,
+                jwtConfiguration.refreshTokenExpiration,
+                jwtConfiguration.header,
+                jwtConfiguration.secret
         );
 
         JwtTokenProvider wrongJwtTokenProvider = new JwtTokenProvider(wrongConfig, jwtService);
 
         TokenPairWithExpiration tokenPair = wrongJwtTokenProvider.generateTokenPair(jwtMemberInfo);
 
-        String wrongToken = tokenPair.accessToken();
+        String wrongToken = tokenPair.accessToken;
 
         assertThatThrownBy(
                 () -> {
@@ -166,18 +166,18 @@ class JwtTokenProviderTests {
         JwtMemberInfo jwtMemberInfo =defaultUser();
 
         JwtConfiguration wrongConfig = new JwtConfiguration(
-                jwtConfiguration.secret(),
+                jwtConfiguration.secret,
                 1L,
-                jwtConfiguration.refreshTokenExpiration(),
-                jwtConfiguration.header(),
-                jwtConfiguration.prefix()
+                jwtConfiguration.refreshTokenExpiration,
+                jwtConfiguration.header,
+                jwtConfiguration.prefix
         );
 
         JwtTokenProvider wrongJwtTokenProvider = new JwtTokenProvider(wrongConfig, jwtService);
 
         TokenPairWithExpiration tokenPair = wrongJwtTokenProvider.generateTokenPair(jwtMemberInfo);
 
-        String wrongToken = tokenPair.accessToken();
+        String wrongToken = tokenPair.accessToken;
 
         assertThatThrownBy(
                 () -> {
@@ -237,19 +237,19 @@ class JwtTokenProviderTests {
 
         JwtMemberInfo jwtMemberInfo = defaultUser();
         TokenPairWithExpiration tokenPair = jwtTokenProvider.generateTokenPair(jwtMemberInfo);
-        String token = tokenPair.accessToken();
+        String token = tokenPair.accessToken;
 
         TokenBody tokenBody = jwtTokenProvider.parseClaims(token);
 
         assertThat(tokenBody)
                 .extracting("id","name","role")
                 .containsExactly(
-                        jwtMemberInfo.id(),
-                        jwtMemberInfo.name(),
-                        jwtMemberInfo.role()
+                        jwtMemberInfo.id,
+                        jwtMemberInfo.name,
+                        jwtMemberInfo.role
                 );
-        assertThat(tokenBody.expiration()).isNotNull();
-        assertThat(tokenBody.issuedAt()).isNotNull();
+        assertThat(tokenBody.expiration).isNotNull();
+        assertThat(tokenBody.issuedAt).isNotNull();
     }
 
     @Test
@@ -262,9 +262,9 @@ class JwtTokenProviderTests {
 
         Claims claims = genClaims(accessToken);
 
-        assertThat(claims.getSubject()).isEqualTo(jwtMemberInfo.id().toString());
-        assertThat(claims.get("name")).isEqualTo(jwtMemberInfo.name());
-        assertThat(claims.get("role")).isEqualTo(jwtMemberInfo.role().name());
+        assertThat(claims.getSubject()).isEqualTo(jwtMemberInfo.id.toString());
+        assertThat(claims.get("name")).isEqualTo(jwtMemberInfo.name);
+        assertThat(claims.get("role")).isEqualTo(jwtMemberInfo.role.name());
 
         assertThat(claims.getExpiration()).isNotNull();
         assertThat(claims.getIssuedAt()).isNotNull();

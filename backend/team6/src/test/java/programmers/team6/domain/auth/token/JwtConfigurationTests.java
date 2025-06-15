@@ -18,6 +18,6 @@ class JwtConfigurationTests {
 	void jwtConfiguration_test() throws Exception {
 
 		assertThat(jwtConfiguration).isNotNull();
-		assertThat(jwtConfiguration.secret()).isNotNull();
+		assertThat(jwtConfiguration.secret).isNotNull();
 	}
 }

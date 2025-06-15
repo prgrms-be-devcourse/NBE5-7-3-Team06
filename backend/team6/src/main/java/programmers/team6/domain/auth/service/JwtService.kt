@@ -1,27 +1,27 @@
-package programmers.team6.domain.auth.service;
+package programmers.team6.domain.auth.service
 
-import java.util.concurrent.TimeUnit;
-
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.stereotype.Service;
-
-import lombok.RequiredArgsConstructor;
+import lombok.RequiredArgsConstructor
+import org.springframework.data.redis.core.StringRedisTemplate
+import org.springframework.stereotype.Service
+import java.util.concurrent.TimeUnit
 
 @Service
-@RequiredArgsConstructor
-public class JwtService {
+class JwtService(
+    private val stringRedisTemplate: StringRedisTemplate
+) {
 
-	private final StringRedisTemplate stringRedisTemplate;
+    companion object {
+        private const val PREFIX = "BL_"
+    }
 
-	private static final String PREFIX = "BL_";
+    fun addBlackList(refreshToken: String, expirationTime: Long) {
+        val key = PREFIX + refreshToken
+        stringRedisTemplate.opsForValue()[key, "logout", expirationTime] = TimeUnit.MILLISECONDS
+    }
 
-	public void addBlackList(String refreshToken, long expirationTime) {
-		String key = PREFIX + refreshToken;
-		stringRedisTemplate.opsForValue().set(key, "logout", expirationTime, TimeUnit.MILLISECONDS);
-	}
+    fun isBlackListed(refreshToken: String): Boolean {
+        return stringRedisTemplate.hasKey(PREFIX + refreshToken)
+    }
 
-	public boolean isBlackListed(String refreshToken) {
-		return stringRedisTemplate.hasKey(PREFIX + refreshToken);
-	}
 
 }

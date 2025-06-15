@@ -24,7 +24,7 @@ public class MemberVacationRequestController {
 	@ResponseStatus(HttpStatus.OK)
 	VacationRequestDetailReadResponse showVacationRequestDetail(@PathVariable Long id,
 		@AuthenticationPrincipal TokenBody tokenBody) {
-		Long memberId = tokenBody.id();
+		Long memberId = tokenBody.id;
 		return memberVacationRequestService.selectVacationRequestDetailById(id, memberId);
 	}
 }

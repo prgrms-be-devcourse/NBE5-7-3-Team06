@@ -1,74 +1,71 @@
-package programmers.team6.domain.auth.token;
+package programmers.team6.domain.auth.token
 
-import static programmers.team6.global.exception.code.UnauthorizedErrorCode.*;
-import static programmers.team6.global.util.ErrorResponseUtil.*;
+import jakarta.servlet.FilterChain
+import jakarta.servlet.ServletException
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import lombok.RequiredArgsConstructor
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.stereotype.Component
+import org.springframework.web.filter.OncePerRequestFilter
+import programmers.team6.domain.auth.dto.TokenBody
+import programmers.team6.global.exception.code.UnauthorizedErrorCode
+import programmers.team6.global.exception.customException.UnauthorizedException
+import programmers.team6.global.util.ErrorResponseUtil.setErrorResponse
+import java.io.IOException
 
-import java.io.IOException;
-import java.util.List;
-
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
-
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import programmers.team6.domain.auth.dto.TokenBody;
-import programmers.team6.global.exception.customException.UnauthorizedException;
-
-@Slf4j
 @Component
-@RequiredArgsConstructor
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+class JwtAuthenticationFilter(
+    private val jwtTokenProvider: JwtTokenProvider,
+) : OncePerRequestFilter() {
 
-	private final JwtTokenProvider jwtTokenProvider;
+    companion object {
+        private val TOKEN_FREE_URIS = listOf(
+            "/auth", "/codes", "/depts"
+        )
+    }
 
-	private static final List<String> TOKEN_FREE_URIS = List.of(
-		"/auth", "/codes", "/depts"
-	);
+    @Throws(ServletException::class, IOException::class)
+    override fun doFilterInternal(
+        request: HttpServletRequest, response: HttpServletResponse,
+        filterChain: FilterChain
+    ) {
+        val uri: String = request.requestURI
 
-	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-		FilterChain filterChain) throws ServletException, IOException {
+        val tokenFree: Boolean = TOKEN_FREE_URIS.any { uri.startsWith(it) }
 
-		String uri = request.getRequestURI();
+        if (tokenFree) {
+            filterChain.doFilter(request, response)
+            return
+        }
 
-		boolean tokenFree = TOKEN_FREE_URIS.stream().anyMatch(uri::startsWith);
+        val token: String? = jwtTokenProvider.extractToken(request)
 
-		String token = jwtTokenProvider.extractToken(request);
+        if (token == null) {
+            setErrorResponse(response, UnauthorizedErrorCode.UNAUTHORIZED_INVALID_HEADER)
+            return
+        }
 
-		if (tokenFree) {
-			filterChain.doFilter(request, response);
-			return;
-		}
+        try {
+            jwtTokenProvider.validate(token)
+        } catch (e: UnauthorizedException) {
+            setErrorResponse(response, e.errorCode)
+            return
+        }
 
-		if (token == null) {
-			setErrorResponse(response, UNAUTHORIZED_INVALID_HEADER);
-			return;
-		}
+        val tokenBody: TokenBody = jwtTokenProvider.parseClaims(token)
 
-		try {
-			jwtTokenProvider.validate(token);
-		} catch (UnauthorizedException e) {
-			setErrorResponse(response, e.getErrorCode());
-			return;
-		}
+        val auth: Authentication = UsernamePasswordAuthenticationToken(
+            tokenBody, null, listOf(SimpleGrantedAuthority(tokenBody.role.toString()))
+        )
 
-		TokenBody tokenbody = jwtTokenProvider.parseClaims(token);
+        SecurityContextHolder.getContext().authentication = auth
 
-		Authentication auth = new UsernamePasswordAuthenticationToken(
-			tokenbody, null, List.of(new SimpleGrantedAuthority(tokenbody.role().toString()))
-		);
+        filterChain.doFilter(request, response)
+    }
 
-		SecurityContextHolder.getContext().setAuthentication(auth);
-
-		filterChain.doFilter(request, response);
-	}
 
 }

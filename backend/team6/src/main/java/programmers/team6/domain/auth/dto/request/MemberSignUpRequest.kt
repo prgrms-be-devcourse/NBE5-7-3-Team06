@@ -4,7 +4,7 @@ import jakarta.validation.constraints.*
 import java.time.LocalDateTime
 
 
-@JvmRecord
+
 data class MemberSignUpRequest(
 
     @field:NotBlank(message = "이름은 필수입니다.")

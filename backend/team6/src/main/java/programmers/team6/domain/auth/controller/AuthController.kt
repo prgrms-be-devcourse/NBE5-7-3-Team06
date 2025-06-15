@@ -1,91 +1,82 @@
-package programmers.team6.domain.auth.controller;
+package programmers.team6.domain.auth.controller
 
-import java.util.Map;
-
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import programmers.team6.domain.auth.dto.request.MemberLoginRequest;
-import programmers.team6.domain.auth.dto.request.MemberSignUpRequest;
-import programmers.team6.domain.auth.dto.response.AccessTokenResponse;
-import programmers.team6.domain.auth.dto.response.AuthTokenResponse;
-import programmers.team6.domain.auth.dto.response.LoginResponse;
-import programmers.team6.domain.auth.service.AuthService;
-import programmers.team6.domain.auth.util.JwtUtils;
+import jakarta.servlet.http.HttpServletResponse
+import jakarta.validation.Valid
+import lombok.RequiredArgsConstructor
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseCookie
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
+import programmers.team6.domain.auth.dto.request.MemberLoginRequest
+import programmers.team6.domain.auth.dto.request.MemberSignUpRequest
+import programmers.team6.domain.auth.dto.response.AccessTokenResponse
+import programmers.team6.domain.auth.dto.response.AuthTokenResponse
+import programmers.team6.domain.auth.service.AuthService
+import programmers.team6.domain.auth.util.JwtUtils
 
 @RestController
 @RequestMapping("/auth")
-@RequiredArgsConstructor
-public class AuthController {
+class AuthController (
+    private val authService: AuthService
+) {
 
-	private final AuthService authService;
 
-	@PostMapping("/signup")
-	@ResponseStatus(HttpStatus.CREATED)
-	public void signUp(@RequestBody @Valid MemberSignUpRequest memberSignUpRequest) {
+    @PostMapping("/signup")
+    @ResponseStatus(HttpStatus.CREATED)
+    fun signUp( @Valid @RequestBody memberSignUpRequest: MemberSignUpRequest) {
+        authService.signUp(memberSignUpRequest)
+    }
 
-		authService.signUp(memberSignUpRequest);
-	}
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/email-duplicate-check")
+    fun isEmailDuplicated(@RequestParam email: String): Map<String, Boolean> {
+        val isEmailDuplicated = authService.isExistsByEmail(email)
 
-	@GetMapping("/email-duplicate-check")
-	public ResponseEntity<Map<String, Boolean>> isEmailDuplicated(@RequestParam String email) {
+        return mapOf("isEmailDuplicated" to  isEmailDuplicated)
+    }
 
-		boolean isEmailDuplicated = authService.isExistsByEmail(email);
+    @PostMapping("/login")
+    @ResponseStatus(HttpStatus.OK)
+    fun login(
+        @RequestBody memberLoginRequest: MemberLoginRequest,
+        response: HttpServletResponse
+    ): Map<String, AuthTokenResponse> {
+        val loginResponse = authService.login(memberLoginRequest)
 
-		return ResponseEntity.ok(Map.of("isEmailDuplicated", isEmailDuplicated));
-	}
+        val refreshToken = loginResponse.refreshToken
 
-	@PostMapping("/login")
-	public ResponseEntity<Map<String, AuthTokenResponse>> login(@RequestBody MemberLoginRequest memberLoginRequest,
-		HttpServletResponse response) {
+        JwtUtils.addRefreshTokenCookie(response, refreshToken, loginResponse.refreshTokenExpiresIn)
 
-		LoginResponse loginResponse = authService.login(memberLoginRequest);
+        return mapOf("token" to loginResponse.authTokenResponse)
+    }
 
-		String refreshToken = loginResponse.refreshToken();
+    @PostMapping("/reissue")
+    @ResponseStatus(HttpStatus.OK)
+    fun refresh(
+        @CookieValue("refreshToken") refreshToken: String
+    ): AccessTokenResponse {
+        val accessToken = authService.reissue(refreshToken)
 
-		JwtUtils.addRefreshTokenCookie(response, refreshToken, loginResponse.refreshTokenExpiresIn());
+        return accessToken
+    }
 
-		return ResponseEntity.ok(Map.of("token", loginResponse.authTokenResponse()));
-	}
+    @PostMapping("/logout")
+    @ResponseStatus(HttpStatus.OK)
+    fun logout(@CookieValue("refreshToken") refreshToken: String): ResponseEntity<Void> {
 
-	@PostMapping("/reissue")
-	public ResponseEntity<AccessTokenResponse> refresh(
-		@CookieValue("refreshToken") String refreshToken, HttpServletResponse response) {
+        authService.addBlackList(refreshToken)
 
-		AccessTokenResponse accessToken = authService.reissue(refreshToken);
+        val deleteCookie = ResponseCookie.from("refreshToken", "")
+            .httpOnly(true)
+            .secure(true)
+            .path("/")
+            .sameSite("Strict")
+            .maxAge(0)
+            .build()
 
-		return ResponseEntity.ok(accessToken);
-	}
-
-	@PostMapping("/logout")
-	public ResponseEntity<Void> logout(@CookieValue("refreshToken") String refreshToken) {
-
-		authService.addBlackList(refreshToken);
-
-		ResponseCookie deleteCookie = ResponseCookie.from("refreshToken", "")
-			.httpOnly(true)
-			.secure(true)
-			.path("/")
-			.sameSite("Strict")
-			.maxAge(0)
-			.build();
-
-		return ResponseEntity.ok()
-			.header(HttpHeaders.SET_COOKIE, deleteCookie.toString())
-			.build();
-	}
-
+        return ResponseEntity.ok()
+            .header(HttpHeaders.SET_COOKIE, deleteCookie.toString())
+            .build()
+    }
 }

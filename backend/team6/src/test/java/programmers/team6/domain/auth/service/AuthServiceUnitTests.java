@@ -82,10 +82,10 @@ class AuthServiceUnitTests {
 
 		MemberSignUpRequest memberReq = genMemberSignUpRequest();
 
-		when(deptRepository.findById(memberReq.dept())).thenReturn(Optional.of(dept));
-		when(codeRepository.findByGroupCodeAndCode("POSITION", memberReq.position())).thenReturn(Optional.of(position));
-		when(memberInfoRepository.existsByEmail(memberReq.email())).thenReturn(false);
-		when(passwordEncoder.encode(memberReq.password())).thenReturn(encodedPassword);
+		when(deptRepository.findById(memberReq.dept)).thenReturn(Optional.of(dept));
+		when(codeRepository.findByGroupCodeAndCode("POSITION", memberReq.position)).thenReturn(Optional.of(position));
+		when(memberInfoRepository.existsByEmail(memberReq.email)).thenReturn(false);
+		when(passwordEncoder.encode(memberReq.password)).thenReturn(encodedPassword);
 
 		authService.signUp(memberReq);
 
@@ -97,15 +97,15 @@ class AuthServiceUnitTests {
 
 		assertThat(saved)
 			.extracting("name", "joinDate", "role")
-			.containsExactly(memberReq.name(), memberReq.joinDate(), Role.PENDING);
+			.containsExactly(memberReq.name, memberReq.joinDate, Role.PENDING);
 
 		assertThat(saved.getMemberInfo())
 			.extracting("email", "password", "birth")
-			.containsExactly(memberReq.email(), encodedPassword, memberReq.birth());
+			.containsExactly(memberReq.email, encodedPassword, memberReq.birth);
 
 		assertThat(saved.getDept().getDeptName()).isEqualTo(dept.getDeptName());
 
-		assertThat(saved.getPosition().getCode()).isEqualTo(memberReq.position());
+		assertThat(saved.getPosition().getCode()).isEqualTo(memberReq.position);
 	}
 
 	@Test
@@ -114,7 +114,7 @@ class AuthServiceUnitTests {
 
 		MemberSignUpRequest memberReq = genMemberSignUpRequest();
 
-		when(deptRepository.findById(memberReq.dept())).thenReturn(Optional.empty());
+		when(deptRepository.findById(memberReq.dept)).thenReturn(Optional.empty());
 
 		assertThatThrownBy(
 			() -> authService.signUp(memberReq)
@@ -132,8 +132,8 @@ class AuthServiceUnitTests {
 			.deptName("개발팀")
 			.build();
 
-		when(deptRepository.findById(memberReq.dept())).thenReturn(Optional.of(dept));
-		when(codeRepository.findByGroupCodeAndCode("POSITION", memberReq.position())).thenReturn(Optional.empty());
+		when(deptRepository.findById(memberReq.dept)).thenReturn(Optional.of(dept));
+		when(codeRepository.findByGroupCodeAndCode("POSITION", memberReq.position)).thenReturn(Optional.empty());
 
 		assertThatThrownBy(
 			() -> authService.signUp(memberReq)
@@ -153,9 +153,9 @@ class AuthServiceUnitTests {
 
 		Code position = employee();
 
-		when(deptRepository.findById(memberReq.dept())).thenReturn(Optional.of(dept));
-		when(codeRepository.findByGroupCodeAndCode("POSITION", memberReq.position())).thenReturn(Optional.of(position));
-		when(memberInfoRepository.existsByEmail(memberReq.email())).thenReturn(true);
+		when(deptRepository.findById(memberReq.dept)).thenReturn(Optional.of(dept));
+		when(codeRepository.findByGroupCodeAndCode("POSITION", memberReq.position)).thenReturn(Optional.of(position));
+		when(memberInfoRepository.existsByEmail(memberReq.email)).thenReturn(true);
 
 		assertThatThrownBy(
 			() -> authService.signUp(memberReq)
@@ -181,12 +181,12 @@ class AuthServiceUnitTests {
 
 		LoginResponse response = authService.login(new MemberLoginRequest(email, password));
 
-		AuthTokenResponse authTokenResponse = new AuthTokenResponse(tokenPair.accessToken(),
-			tokenPair.accessTokenExpiresIn(), member.getId(),
+		AuthTokenResponse authTokenResponse = new AuthTokenResponse(tokenPair.accessToken,
+                tokenPair.accessTokenExpiresIn, member.getId(),
 			member.getName(), member.getRole());
-		assertThat(response.authTokenResponse()).isEqualTo(authTokenResponse);
-		assertThat(response.refreshToken()).isEqualTo(tokenPair.refreshToken());
-		assertThat(response.refreshTokenExpiresIn()).isEqualTo(tokenPair.refreshTokenExpiresIn());
+		assertThat(response.authTokenResponse).isEqualTo(authTokenResponse);
+		assertThat(response.refreshToken).isEqualTo(tokenPair.refreshToken);
+		assertThat(response.refreshTokenExpiresIn).isEqualTo(tokenPair.refreshTokenExpiresIn);
 	}
 
 	@Test
@@ -237,7 +237,7 @@ class AuthServiceUnitTests {
 
 		AccessTokenResponse reissue = authService.reissue(refreshToken);
 
-		assertThat(reissue.accessToken()).isEqualTo(accessToken);
+		assertThat(reissue.accessToken).isEqualTo(accessToken);
 	}
 
 	@Test
