@@ -1,31 +1,29 @@
-package programmers.team6.domain.admin.support;
+package programmers.team6.domain.admin.support
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import programmers.team6.domain.vacation.entity.VacationRequest
 
-import lombok.EqualsAndHashCode;
-import programmers.team6.domain.vacation.entity.VacationRequest;
+class VacationRequests(requests: List<VacationRequest>) {
+    private val requests: Map<Long, List<VacationRequest>>
 
-@EqualsAndHashCode
-public class VacationRequests {
+    init {
+        this.requests = requests.groupBy { it.memberId }
+    }
 
-	private final Map<Long, List<VacationRequest>> requests;
+    fun targetRequests(memberId: Long): TargetVacationRequests {
+        return TargetVacationRequests(requests[memberId].orEmpty())
+    }
 
-	public VacationRequests(List<VacationRequest> requests) {
-		this.requests = toMap(requests);
-	}
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
 
-	private Map<Long, List<VacationRequest>> toMap(List<VacationRequest> requests) {
-		return requests.stream().collect(Collectors.groupingBy(VacationRequest::getMemberId));
-	}
+        other as VacationRequests
 
-	public TargetVacationRequests targetRequests(Long memberId) {
-		return new TargetVacationRequests(findByMemberId(memberId));
-	}
+        return requests == other.requests
+    }
 
-	private List<VacationRequest> findByMemberId(Long memberId) {
-		return requests.getOrDefault(memberId, Collections.emptyList());
-	}
+    override fun hashCode(): Int {
+        return requests.hashCode()
+    }
+
 }
