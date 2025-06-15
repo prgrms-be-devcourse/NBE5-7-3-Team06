@@ -7,12 +7,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
 public class VacationInfoLog {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,5 +54,29 @@ public class VacationInfoLog {
 
 	public double remainingCount() {
 		return totalCount - useCount;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public double getTotalCount() {
+		return totalCount;
+	}
+
+	public double getUseCount() {
+		return useCount;
+	}
+
+	public String getVacationType() {
+		return vacationType;
+	}
+
+	public Long getMemberId() {
+		return memberId;
+	}
+
+	public LocalDateTime getLogDate() {
+		return logDate;
 	}
 }

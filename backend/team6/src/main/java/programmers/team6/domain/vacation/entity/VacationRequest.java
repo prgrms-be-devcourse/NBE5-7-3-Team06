@@ -16,7 +16,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Version;
 import lombok.AccessLevel;
 import lombok.Builder;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import programmers.team6.domain.admin.entity.Code;
 import programmers.team6.domain.member.entity.Member;
@@ -24,7 +23,6 @@ import programmers.team6.domain.vacation.enums.VacationRequestStatus;
 import programmers.team6.global.entity.BaseEntity;
 
 @Entity
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class VacationRequest extends BaseEntity {
 
@@ -168,5 +166,37 @@ public class VacationRequest extends BaseEntity {
 	// todo : code 번호 확정 시 변경 고려
 	public boolean isHalfDay() {
 		return this.type.getName().equals("반차");
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public Member getMember() {
+		return member;
+	}
+
+	public LocalDateTime getFrom() {
+		return from;
+	}
+
+	public LocalDateTime getTo() {
+		return to;
+	}
+
+	public String getReason() {
+		return reason;
+	}
+
+	public Code getType() {
+		return type;
+	}
+
+	public VacationRequestStatus getStatus() {
+		return status;
+	}
+
+	public Integer getVersion() {
+		return version;
 	}
 }
