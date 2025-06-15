@@ -27,7 +27,6 @@ internal class VacationStatisticsServiceTest {
     @Test
     @DisplayName("사용자의 휴가정보를 출력한다")
     fun display_user_vacation_info() {
-        val memberRepository = mockk<MemberRepository>()
         val member1 = MemberMother.withId(1L)
         val member2 = MemberMother.withId(2L)
         val memberReader: MemberReader = MemberReaderFake(member1, member2)
@@ -55,11 +54,9 @@ internal class VacationStatisticsServiceTest {
         val pageRequest = PageRequest.of(0, 10)
 
         val vacationStatisticsService = VacationStatisticsService(
-            memberRepository,
             vacationInfoLogReaderFake,
             vacationRequestsReaderFake,
-            memberReader,
-            VacationStatisticsMapper()
+            memberReader
         )
 
         val statistics = vacationStatisticsService.getMonthlyVacationStatistics(vacationStatisticsRequest, pageRequest)

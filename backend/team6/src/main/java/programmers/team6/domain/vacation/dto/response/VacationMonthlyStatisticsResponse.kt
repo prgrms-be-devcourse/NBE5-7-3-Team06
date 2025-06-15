@@ -1,22 +1,21 @@
-package programmers.team6.domain.vacation.dto.response;
+package programmers.team6.domain.vacation.dto.response
 
-public record VacationMonthlyStatisticsResponse(
-	Long memberId,
-	String userName,
-	double totalCount,
-	double usedCount,
-	double remainCount,
-	double january,
-	double february,
-	double march,
-	double april,
-	double may,
-	double june,
-	double july,
-	double august,
-	double september,
-	double october,
-	double november,
-	double december
-) {
-}
+data class VacationMonthlyStatisticsResponse(
+    val memberId: Long,
+    val userName: String,
+    val totalCount: Double,
+    val usedCount: Double,
+    val remainCount: Double,
+    val january: Double,
+    val february: Double,
+    val march: Double,
+    val april: Double,
+    val may: Double,
+    val june: Double,
+    val july: Double,
+    val august: Double,
+    val september: Double,
+    val october: Double,
+    val november: Double,
+    val december: Double
+)
