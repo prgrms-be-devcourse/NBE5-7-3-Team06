@@ -17,5 +17,5 @@ interface DeptRepository : JpaRepository<Dept, Long> {
     )
     fun findAllDept(): List<DeptDropdownResponse>
 
-    fun findByDeptName(deptName: String): Dept
+    fun findByDeptName(deptName: String): Dept?
 }

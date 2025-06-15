@@ -171,7 +171,7 @@ class AuthServiceUnitTests {
 		String email = info.getEmail();
 		String password = info.getPassword();
 
-		when(memberRepository.findByEmail(email)).thenReturn(Optional.of(member));
+		when(memberRepository.findByEmail(email)).thenReturn(member);
 
 		when(passwordEncoder.matches(password, password)).thenReturn(true);
 
@@ -197,7 +197,7 @@ class AuthServiceUnitTests {
 		String email = info.getEmail();
 		String password = info.getPassword();
 
-		when(memberRepository.findByEmail(email)).thenReturn(Optional.empty());
+		when(memberRepository.findByEmail(email)).thenReturn(null);
 		MemberLoginRequest memberLoginRequest = new MemberLoginRequest(email, password);
 
 		assertThatThrownBy(
@@ -215,7 +215,7 @@ class AuthServiceUnitTests {
 		String email = info.getEmail();
 		String password = info.getPassword();
 		String inputPassword = "invalidpassword";
-		when(memberRepository.findByEmail(email)).thenReturn(Optional.of(member));
+		when(memberRepository.findByEmail(email)).thenReturn(member);
 
 		when(passwordEncoder.matches(inputPassword, password)).thenReturn(false);
 		MemberLoginRequest memberLoginRequest = new MemberLoginRequest(email, inputPassword);
