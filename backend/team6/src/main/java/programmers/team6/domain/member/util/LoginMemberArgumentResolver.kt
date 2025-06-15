@@ -1,61 +1,50 @@
-package programmers.team6.domain.member.util;
+package programmers.team6.domain.member.util
 
-import org.springframework.core.MethodParameter;
-import org.springframework.stereotype.Component;
-import org.springframework.web.bind.support.WebDataBinderFactory;
-import org.springframework.web.context.request.NativeWebRequest;
-import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.method.support.ModelAndViewContainer;
-
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
-import programmers.team6.domain.auth.dto.TokenBody;
-import programmers.team6.domain.auth.token.JwtTokenProvider;
-import programmers.team6.domain.member.annotation.LoginMember;
-import programmers.team6.domain.member.dto.response.MemberLoginInfoResponse;
-import programmers.team6.domain.member.repository.MemberRepository;
-import programmers.team6.global.exception.code.NotFoundErrorCode;
-import programmers.team6.global.exception.code.UnauthorizedErrorCode;
-import programmers.team6.global.exception.customException.NotFoundException;
-import programmers.team6.global.exception.customException.UnauthorizedException;
+import jakarta.servlet.http.HttpServletRequest
+import org.springframework.core.MethodParameter
+import org.springframework.stereotype.Component
+import org.springframework.web.bind.support.WebDataBinderFactory
+import org.springframework.web.context.request.NativeWebRequest
+import org.springframework.web.method.support.HandlerMethodArgumentResolver
+import org.springframework.web.method.support.ModelAndViewContainer
+import programmers.team6.domain.auth.token.JwtTokenProvider
+import programmers.team6.domain.member.annotation.LoginMember
+import programmers.team6.domain.member.dto.response.MemberLoginInfoResponse
+import programmers.team6.domain.member.repository.MemberRepository
+import programmers.team6.global.exception.code.NotFoundErrorCode
+import programmers.team6.global.exception.code.UnauthorizedErrorCode
+import programmers.team6.global.exception.customException.NotFoundException
+import programmers.team6.global.exception.customException.UnauthorizedException
 
 @Component
-@RequiredArgsConstructor
-public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolver {
+class LoginMemberArgumentResolver(
+    private val jwtTokenProvider: JwtTokenProvider,
+    private val memberRepository: MemberRepository
+) : HandlerMethodArgumentResolver {
 
-	private final JwtTokenProvider jwtTokenProvider;
-	private final MemberRepository memberRepository;
 
-	@Override
-	public boolean supportsParameter(MethodParameter parameter) {
+    override fun supportsParameter(parameter: MethodParameter): Boolean {
+       return parameter.hasParameterAnnotation(LoginMember::class.java)
+                && parameter.parameterType == MemberLoginInfoResponse::class.java
+    }
 
-		return parameter.hasParameterAnnotation(LoginMember.class)
-			   && parameter.getParameterType().equals(MemberLoginInfoResponse.class);
-	}
+    @Throws(Exception::class)
+    override fun resolveArgument(
+        parameter: MethodParameter, mavContainer: ModelAndViewContainer?,
+        webRequest: NativeWebRequest, binderFactory: WebDataBinderFactory?
+    ): MemberLoginInfoResponse {
+        val nativeRequest = webRequest.nativeRequest as HttpServletRequest
 
-	@Override
-	public MemberLoginInfoResponse resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
+        val accessToken = jwtTokenProvider.extractToken(nativeRequest)
+            ?: throw UnauthorizedException(UnauthorizedErrorCode.UNAUTHORIZED_INVALID_HEADER)
 
-		NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+        val tokenBody = jwtTokenProvider.parseClaims(accessToken)
 
-		HttpServletRequest nativeRequest = (HttpServletRequest)webRequest.getNativeRequest();
+        val id = tokenBody.id
 
-		String accessToken = jwtTokenProvider.extractToken(nativeRequest);
+        val loginMemberInfo = memberRepository.findLoginMemberInfo(id)
+            ?: throw NotFoundException(NotFoundErrorCode.NOT_FOUND_MEMBER)
 
-		if (accessToken == null) {
-			throw new UnauthorizedException(UnauthorizedErrorCode.UNAUTHORIZED_INVALID_HEADER);
-		}
-
-		TokenBody tokenBody = jwtTokenProvider.parseClaims(accessToken);
-
-		Long id = tokenBody.id();
-
-		MemberLoginInfoResponse loginMemberInfo = memberRepository.findLoginMemberInfo(id);
-
-		if (loginMemberInfo == null) {
-			throw new NotFoundException(NotFoundErrorCode.NOT_FOUND_MEMBER);
-		}
-
-		return loginMemberInfo;
-	}
+        return loginMemberInfo
+    }
 }

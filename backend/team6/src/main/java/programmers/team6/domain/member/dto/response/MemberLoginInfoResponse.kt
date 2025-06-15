@@ -1,10 +1,11 @@
-package programmers.team6.domain.member.dto.response;
+package programmers.team6.domain.member.dto.response
 
-public record MemberLoginInfoResponse(
-	Long id,
-	String name,
-	Long deptId,
-	String deptName,
-	Long positionId,
-	String positionName) {
-}
+@JvmRecord
+data class MemberLoginInfoResponse(
+    val id: Long,
+    val name: String,
+    val deptId: Long,
+    val deptName: String,
+    val positionId: Long,
+    val positionName: String
+)
