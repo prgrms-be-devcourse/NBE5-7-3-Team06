@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.member.enums.Role;
+import programmers.team6.domain.member.repository.MemberRepository;
 import programmers.team6.domain.member.service.MemberService;
 import programmers.team6.domain.vacation.entity.VacationInfoLog;
 import programmers.team6.domain.vacation.repository.VacationInfoRepository;
@@ -26,6 +27,9 @@ import programmers.team6.support.MemberMother;
 
 @ExtendWith(MockitoExtension.class)
 class MemberApprovalServiceTests {
+
+	@Mock
+	private MemberRepository memberRepository;
 
 	@Spy
 	private VacationGrantRuleFinder vacationGrantRuleFinder;
