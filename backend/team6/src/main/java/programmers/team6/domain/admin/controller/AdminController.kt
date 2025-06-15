@@ -1,70 +1,68 @@
-package programmers.team6.domain.admin.controller;
+package programmers.team6.domain.admin.controller
 
-import java.time.LocalDate;
-
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import programmers.team6.domain.admin.dto.response.AdminVacationRequestSearchResponse;
-import programmers.team6.domain.admin.dto.response.AdminVacationSearchCondition;
-import programmers.team6.domain.admin.dto.response.VacationRequestDetailReadResponse;
-import programmers.team6.domain.admin.dto.request.VacationRequestDetailUpdateRequest;
-import programmers.team6.domain.admin.enums.Quarter;
-import programmers.team6.domain.admin.service.AdminService;
-import programmers.team6.domain.vacation.enums.VacationRequestStatus;
+import jakarta.validation.Valid
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
+import org.springframework.data.web.PageableDefault
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.*
+import programmers.team6.domain.admin.dto.request.VacationRequestDetailUpdateRequest
+import programmers.team6.domain.admin.dto.response.AdminVacationRequestSearchResponse
+import programmers.team6.domain.admin.dto.response.AdminVacationSearchCondition
+import programmers.team6.domain.admin.dto.response.AdminVacationSearchCondition.Companion.bindingApplicantCondition
+import programmers.team6.domain.admin.dto.response.AdminVacationSearchCondition.Companion.bindingDateRangeCondition
+import programmers.team6.domain.admin.dto.response.VacationRequestDetailReadResponse
+import programmers.team6.domain.admin.enums.Quarter
+import programmers.team6.domain.admin.service.AdminService
+import programmers.team6.domain.vacation.enums.VacationRequestStatus
+import java.time.LocalDate
 
 @RestController
 @RequestMapping("/admin")
-@RequiredArgsConstructor
-public class AdminController {
-	private final AdminService adminService;
+class AdminController(
+    private val adminService: AdminService
+) {
 
-	@GetMapping("/vacation-request")
-	@ResponseStatus(HttpStatus.OK)
-	AdminVacationRequestSearchResponse selectVacationRequests(
-		@PageableDefault(page = 0, size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
-		@RequestParam(value = "start", required = false) LocalDate startDate,
-		@RequestParam(value = "end", required = false) LocalDate endDate,
-		@RequestParam(value = "year", required = false) Integer year,
-		@RequestParam(value = "quarter", required = false) Quarter quarter,
+    @GetMapping("/vacation-request")
+    @ResponseStatus(HttpStatus.OK)
+    fun selectVacationRequests(
+        @PageableDefault(page = 0, size = 20, sort = ["createdAt"], direction = Sort.Direction.DESC) pageable: Pageable,
+        @RequestParam(value = "start", required = false) startDate: LocalDate?,
+        @RequestParam(value = "end", required = false) endDate: LocalDate?,
+        @RequestParam(value = "year", required = false) year: Int?,
+        @RequestParam(value = "quarter", required = false) quarter: Quarter?,  // 신청자 파라미터
 
-		// 신청자 파라미터
-		@RequestParam(value = "name", required = false) String name,
-		@RequestParam(value = "deptName", required = false) String deptName,
-		@RequestParam(value = "positionCodeId", required = false) Long positionCodeId,
-		@RequestParam(value = "vacationTypeCodeId", required = false) Long vacationTypeCodeId,
+        @RequestParam(value = "name", required = false) name: String?,
+        @RequestParam(value = "deptName", required = false) deptName: String?,
+        @RequestParam(value = "positionCodeId", required = false) positionCodeId: Long?,
+        @RequestParam(value = "vacationTypeCodeId", required = false) vacationTypeCodeId: Long?,  // 휴가 신청 상태
 
-		// 휴가 신청 상태
-		@RequestParam(value = "vacationRequestStatus", required = false) VacationRequestStatus status) {
-		return adminService.search(pageable, new AdminVacationSearchCondition(
-			AdminVacationSearchCondition.bindingDateRangeCondition(startDate, endDate, year, quarter),
-			AdminVacationSearchCondition.bindingApplicantCondition(name, deptName, positionCodeId, vacationTypeCodeId),
-			status
-		));
-	}
+        @RequestParam(value = "vacationRequestStatus", required = false) status: VacationRequestStatus?
+    ): AdminVacationRequestSearchResponse {
+        return adminService.search(
+            pageable, AdminVacationSearchCondition(
+                bindingDateRangeCondition(startDate, endDate, year, quarter),
+                bindingApplicantCondition(name, deptName, positionCodeId, vacationTypeCodeId),
+                status
+            )
+        )
+    }
 
-	@GetMapping("/vacation-request/{id}")
-	@ResponseStatus(HttpStatus.OK)
-	VacationRequestDetailReadResponse showVacationRequestDetail(@PathVariable Long id) {
-		return adminService.selectVacationRequestDetailById(id);
-	}
+    @GetMapping("/vacation-request/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    fun showVacationRequestDetail(@PathVariable id: Long): VacationRequestDetailReadResponse? {
+        return adminService.selectVacationRequestDetailById(id)
+    }
 
-	@PutMapping("/vacation-request/{id}")
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	void updateVacationRequestDetail(@PathVariable Long id,
-		@RequestBody @Valid VacationRequestDetailUpdateRequest vacationRequestDetailUpdateRequest) {
-		adminService.updateVacationRequestDetailById(id, vacationRequestDetailUpdateRequest);
-	}
+    @PutMapping("/vacation-request/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun updateVacationRequestDetail(
+        @PathVariable
+        id: Long,
+        @Valid
+        @RequestBody
+        vacationRequestDetailUpdateRequest: VacationRequestDetailUpdateRequest
+    ) {
+        adminService.updateVacationRequestDetailById(id, vacationRequestDetailUpdateRequest)
+    }
 }

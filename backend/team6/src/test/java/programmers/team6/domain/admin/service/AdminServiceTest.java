@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -21,9 +20,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import programmers.team6.domain.admin.dto.request.VacationRequestDetailUpdateRequest;
+import programmers.team6.domain.admin.entity.Code;
 import programmers.team6.domain.admin.repository.AdminVacationRequestSearchCustom;
 import programmers.team6.domain.admin.repository.AdminVacationRequestSearchTestDataFactory;
-import programmers.team6.domain.admin.entity.Code;
 import programmers.team6.domain.admin.repository.CodeRepository;
 import programmers.team6.domain.vacation.entity.ApprovalStep;
 import programmers.team6.domain.vacation.entity.VacationRequest;
@@ -62,11 +61,7 @@ class AdminServiceTest {
 		@BeforeEach
 		void setUp() {
 			this.vacationRequest = VacationRequest.builder().build();
-			this.vacationRequestType = Code.builder()
-				.groupCode("VACATION_TYPE")
-				.code(UUID.randomUUID().toString())
-				.name("test_name")
-				.build();
+			this.vacationRequestType = new Code("VACATION_TYPE", UUID.randomUUID().toString(), "test_name");
 			this.vacationRequestDetailUpdateRequest = new VacationRequestDetailUpdateRequest(0L,
 				LocalDateTime.now().plusDays(1L), LocalDateTime.now().plusDays(3L), VacationRequestStatus.APPROVED,
 				"testReason", List.of("r1", "r2", "r3"));
@@ -81,9 +76,9 @@ class AdminServiceTest {
 		@DisplayName("알맞은 VacationRequestId와 VacationRequestDetail 입력시, update 성공")
 		void success_when_givenValidVacationRequestIdAndVacationRequestDetail() {
 			// when
-			when(vacationRequestRepository.findVacationRequestById(anyLong())).thenReturn(Optional.of(vacationRequest));
+			when(vacationRequestRepository.findVacationRequestById(anyLong())).thenReturn(vacationRequest);
 			when(codeRepository.findByIdAndGroupCode(anyLong(), eq("VACATION_TYPE"))).thenReturn(
-				Optional.of(vacationRequestType));
+				vacationRequestType);
 			when(approvalStepRepository.findApprovalStepsByVacationRequest_IdOrderByStepAsc(anyLong())).thenReturn(
 				approvalSteps);
 			adminService.updateVacationRequestDetailById(0L, vacationRequestDetailUpdateRequest);
@@ -91,9 +86,9 @@ class AdminServiceTest {
 			// then
 			assertThat(vacationRequest).extracting(VacationRequest::getFrom, VacationRequest::getTo,
 					VacationRequest::getStatus, VacationRequest::getReason)
-				.containsExactly(vacationRequestDetailUpdateRequest.from(), vacationRequestDetailUpdateRequest.to(),
-					vacationRequestDetailUpdateRequest.vacationRequestStatus(),
-					vacationRequestDetailUpdateRequest.reason());
+				.containsExactly(vacationRequestDetailUpdateRequest.getFrom(), vacationRequestDetailUpdateRequest.getTo(),
+					vacationRequestDetailUpdateRequest.getVacationRequestStatus(),
+					vacationRequestDetailUpdateRequest.getReason());
 			assertThat(approvalSteps).hasSize(3).extracting(ApprovalStep::getReason).containsExactly("r1", "r2", "r3");
 		}
 
@@ -101,7 +96,7 @@ class AdminServiceTest {
 		@DisplayName("잘못된 VacationRequestId 입력시, NotFoundException 발생")
 		void fail_when_givenInvalidVacationRequestId() {
 			// when
-			when(vacationRequestRepository.findVacationRequestById(anyLong())).thenReturn(Optional.empty());
+			when(vacationRequestRepository.findVacationRequestById(anyLong())).thenReturn(null);
 
 			// then
 			assertThatThrownBy(() -> adminService.updateVacationRequestDetailById(0L,
@@ -113,8 +108,8 @@ class AdminServiceTest {
 		@DisplayName("잘못된 VacationRequest의 typeId(분류코드 id) 입력시, NotFoundException 발생")
 		void fail_when_givenInvalidVacationRequestTypeId() {
 			// when
-			when(vacationRequestRepository.findVacationRequestById(anyLong())).thenReturn(Optional.of(vacationRequest));
-			when(codeRepository.findByIdAndGroupCode(anyLong(), eq("VACATION_TYPE"))).thenReturn(Optional.empty());
+			when(vacationRequestRepository.findVacationRequestById(anyLong())).thenReturn(vacationRequest);
+			when(codeRepository.findByIdAndGroupCode(anyLong(), eq("VACATION_TYPE"))).thenReturn(null);
 
 			// then
 			assertThatThrownBy(() -> adminService.updateVacationRequestDetailById(0L,
@@ -126,9 +121,9 @@ class AdminServiceTest {
 		@DisplayName("해당 VacationReuqest의 ApprovalStep이 없을 경우, ConflictException 발생")
 		void fail_when_givenEmptyApprovalSteps() {
 			// when
-			when(vacationRequestRepository.findVacationRequestById(anyLong())).thenReturn(Optional.of(vacationRequest));
+			when(vacationRequestRepository.findVacationRequestById(anyLong())).thenReturn(vacationRequest);
 			when(codeRepository.findByIdAndGroupCode(anyLong(), eq("VACATION_TYPE"))).thenReturn(
-				Optional.of(vacationRequestType));
+				vacationRequestType);
 			when(approvalStepRepository.findApprovalStepsByVacationRequest_IdOrderByStepAsc(anyLong())).thenReturn(
 				Collections.emptyList());
 
@@ -142,9 +137,9 @@ class AdminServiceTest {
 		@DisplayName("해당 VacationReuqest와 ApprovalStep가 동기화가 안된경우, ConflictException 발생")
 		void fail_when_givenInvalidApprovalSteps() {
 			// when
-			when(vacationRequestRepository.findVacationRequestById(anyLong())).thenReturn(Optional.of(vacationRequest));
+			when(vacationRequestRepository.findVacationRequestById(anyLong())).thenReturn(vacationRequest);
 			when(codeRepository.findByIdAndGroupCode(anyLong(), eq("VACATION_TYPE"))).thenReturn(
-				Optional.of(vacationRequestType));
+				vacationRequestType);
 			when(approvalStepRepository.findApprovalStepsByVacationRequest_IdOrderByStepAsc(anyLong())).thenReturn(
 				List.of(AdminVacationRequestSearchTestDataFactory.genTestApprovalStep(null, 0, null)));
 

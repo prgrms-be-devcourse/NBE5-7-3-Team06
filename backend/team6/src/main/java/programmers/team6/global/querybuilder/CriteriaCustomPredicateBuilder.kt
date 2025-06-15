@@ -1,85 +1,102 @@
-package programmers.team6.global.querybuilder;
+package programmers.team6.global.querybuilder
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.From;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.metamodel.SingularAttribute;
-import programmers.team6.domain.admin.enums.Quarter;
+import jakarta.persistence.criteria.CriteriaBuilder
+import jakarta.persistence.criteria.Expression
+import jakarta.persistence.criteria.From
+import jakarta.persistence.criteria.Predicate
+import jakarta.persistence.metamodel.SingularAttribute
+import programmers.team6.domain.admin.enums.Quarter
+import java.time.LocalDateTime
 
 /**
  * 필터링을 위한 Predicate 리스트 빌드
  * @author gunwoong
  */
-public class CriteriaCustomPredicateBuilder<T> {
-	private final CriteriaBuilder cb;
-	private final List<Predicate> predicates;
+class CriteriaCustomPredicateBuilder<T> private constructor(
+    private val cb: CriteriaBuilder,
+    private val predicates: MutableList<Predicate> = mutableListOf()
+) {
 
-	private CriteriaCustomPredicateBuilder(CriteriaBuilder cb) {
-		this.cb = cb;
-		this.predicates = new ArrayList<>();
-	}
+    fun <R> applyDateRangeFilter(
+        root: From<T, R>,
+        mappedFromField: SingularAttribute<in R, LocalDateTime>,
+        mappedToField: SingularAttribute<in R, LocalDateTime>,
+        from: LocalDateTime?, to: LocalDateTime?
+    ): CriteriaCustomPredicateBuilder<T> {
+        if (isProvided(from, to)) {
+            this.predicates.add(cb.greaterThanOrEqualTo<LocalDateTime?>(root.get<LocalDateTime?>(mappedToField), from))
+            this.predicates.add(cb.lessThanOrEqualTo<LocalDateTime?>(root.get<LocalDateTime?>(mappedFromField), to))
+        }
+        return this
+    }
 
-	public static <T> CriteriaCustomPredicateBuilder<T> builder(CriteriaBuilder cb) {
-		return new CriteriaCustomPredicateBuilder<>(cb);
-	}
+    fun <R> applyDateRangeFilter(
+        root: From<T, R>,
+        mappedFromField: SingularAttribute<in R, LocalDateTime>,
+        mappedToField: SingularAttribute<in R, LocalDateTime>,
+        year: Int?, quarter: Quarter?
+    ): CriteriaCustomPredicateBuilder<T> {
+        var quarter = quarter ?: Quarter.NONE
+        if (isProvided(year)) {
+            return applyDateRangeFilter(
+                root,
+                mappedFromField,
+                mappedToField,
+                quarter.getStart(year!!),
+                quarter.getEnd(year!!)
+            )
+        }
 
-	public <R> CriteriaCustomPredicateBuilder<T> applyDateRangeFilter(From<T, R> root,
-		SingularAttribute<? super R, LocalDateTime> mappedFromField,
-		SingularAttribute<? super R, LocalDateTime> mappedToField,
-		LocalDateTime from, LocalDateTime to) {
-		if (isProvided(from) && isProvided(to)) {
-			this.predicates.add(cb.greaterThanOrEqualTo(root.get(mappedToField), from));
-			this.predicates.add(cb.lessThanOrEqualTo(root.get(mappedFromField), to));
-		}
-		return this;
-	}
+        return this
+    }
 
-	public <R> CriteriaCustomPredicateBuilder<T> applyDateRangeFilter(From<T, R> root,
-		SingularAttribute<? super R, LocalDateTime> mappedFromField,
-		SingularAttribute<? super R, LocalDateTime> mappedToField,
-		Integer year, Quarter quarter) {
-		if (year == null) {
-			return this;
-		}
-		if (quarter == null) {
-			quarter = Quarter.NONE;
-		}
-		return applyDateRangeFilter(root, mappedFromField, mappedToField, quarter.getStart(year), quarter.getEnd(year));
-	}
+    fun applyEqualFilter(
+        root: From<T, *>, conditionValue: Any?,
+        vararg mappedFields: SingularAttribute<*, *>
+    ): CriteriaCustomPredicateBuilder<T> {
+        if (isProvided(conditionValue)) {
+            this.predicates.add(cb.equal(CriteriaUtils.searchPath(root, *mappedFields), conditionValue))
+        }
+        return this
+    }
 
-	public CriteriaCustomPredicateBuilder<T> applyEqualFilter(From<T, ?> root, Object conditionValue,
-		SingularAttribute<?, ?>... mappedFields) {
-		if (isProvided(conditionValue)) {
-			this.predicates.add(cb.equal(CriteriaUtils.searchPath(root, mappedFields), conditionValue));
-		}
-		return this;
-	}
+    fun applyNonEqualFilter(
+        root: From<T, *>, conditionValue: Any?,
+        vararg mappedFields: SingularAttribute<*, *>
+    ): CriteriaCustomPredicateBuilder<T> {
+        if (isProvided(conditionValue)) {
+            this.predicates.add(cb.notEqual(CriteriaUtils.searchPath(root, *mappedFields), conditionValue))
+        }
+        return this
+    }
 
-	public CriteriaCustomPredicateBuilder<T> applyNonEqualFilter(From<T, ?> root, Object conditionValue,
-		SingularAttribute<?, ?>... mappedFields) {
-		if (isProvided(conditionValue)) {
-			this.predicates.add(cb.notEqual(CriteriaUtils.searchPath(root, mappedFields), conditionValue));
-		}
-		return this;
-	}
+    fun applyLikeFilter(
+        root: From<T, *>, conditionValue: String?,
+        vararg mappedFields: SingularAttribute<*, *>
+    ): CriteriaCustomPredicateBuilder<T> {
+        if (isProvided(conditionValue)) {
+            this.predicates.add(
+                cb.like(
+                    CriteriaUtils.searchPath(root, *mappedFields) as Expression<String>,
+                    "%" + conditionValue + "%"
+                )
+            )
+        }
+        return this
+    }
 
-	public CriteriaCustomPredicateBuilder<T> applyLikeFilter(From<T, ?> root, String conditionValue,
-		SingularAttribute<?, ?>... mappedFields) {
-		if (isProvided(conditionValue)) {
-			this.predicates.add(cb.like(CriteriaUtils.searchPath(root, mappedFields), "%" + conditionValue + "%"));
-		}
-		return this;
-	}
+    fun build(): MutableList<Predicate> {
+        return predicates
+    }
 
-	public List<Predicate> build() {
-		return predicates;
-	}
+    private fun isProvided(vararg values: Any?): Boolean {
+        return values.all { it != null }
+    }
 
-	private boolean isProvided(Object value) {
-		return value != null;
-	}
+    companion object {
+        @JvmStatic
+        fun <T> builder(cb: CriteriaBuilder): CriteriaCustomPredicateBuilder<T> {
+            return CriteriaCustomPredicateBuilder(cb)
+        }
+    }
 }

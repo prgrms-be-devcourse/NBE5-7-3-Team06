@@ -1,6 +1,12 @@
-package programmers.team6.domain.admin.dto.request;
+package programmers.team6.domain.admin.dto.request
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank
 
-public record CodeCreateRequest(@NotBlank String groupCode, @NotBlank String code, @NotBlank String name) {
-}
+data class CodeCreateRequest(
+    @NotBlank
+    val groupCode: String,
+    @NotBlank
+    val code: String,
+    @NotBlank
+    val name: String
+)

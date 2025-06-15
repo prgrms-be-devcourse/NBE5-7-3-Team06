@@ -1,81 +1,76 @@
-package programmers.team6.global.querybuilder;
+package programmers.team6.global.querybuilder
 
-import java.util.List;
-
-import org.springframework.data.domain.Sort;
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Expression;
-import jakarta.persistence.criteria.From;
-import jakarta.persistence.criteria.Order;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.metamodel.SingularAttribute;
+import jakarta.persistence.EntityManager
+import jakarta.persistence.TypedQuery
+import jakarta.persistence.criteria.*
+import jakarta.persistence.metamodel.SingularAttribute
+import org.springframework.data.domain.Sort
+import programmers.team6.global.querybuilder.CriteriaUtils.searchPath
 
 /**
  * 주어진 필터(Predicates)를 기반으로 쿼리 생성 및 projection
  * @param <T>
  * @author gunwoong
- */
-public class CriteriaCustomQueryBuilder<T> {
-	private CriteriaQuery<T> cq;
-	private CriteriaBuilder cb;
-	private TypedQuery<T> typedQuery;
+</T> */
+class CriteriaCustomQueryBuilder<T> private constructor(
+    private val cq: CriteriaQuery<T>,
+    private val cb: CriteriaBuilder,
+    private var typedQuery: TypedQuery<T>? = null
+) {
 
-	private CriteriaCustomQueryBuilder(CriteriaQuery<T> cq, CriteriaBuilder cb) {
-		this.cq = cq;
-		this.cb = cb;
-	}
+    fun applyDynamicPredicates(predicates: List<Predicate>): CriteriaCustomQueryBuilder<T> {
+        cq.where(cb.and(*predicates.toTypedArray()))
+        return this
+    }
 
-	public static <T> CriteriaCustomQueryBuilder<T> builder(CriteriaQuery<T> cq, CriteriaBuilder cb) {
-		return new CriteriaCustomQueryBuilder<>(cq, cb);
-	}
+    fun projection(
+        projectionClass: Class<T>,
+        vararg projectionFields: Expression<*>
+    ): CriteriaCustomQueryBuilder<T> {
+        cq.select(cb.construct(projectionClass, *projectionFields))
+        return this
+    }
 
-	public CriteriaCustomQueryBuilder<T> applyDynamicPredicates(List<Predicate> predicates) {
-		cq.where(cb.and(predicates.toArray(new Predicate[0])));
-		return this;
-	}
+    fun groupBy(vararg groupFields: Expression<*>): CriteriaCustomQueryBuilder<T> {
+        cq.groupBy(*groupFields)
+        return this
+    }
 
-	public CriteriaCustomQueryBuilder<T> projection(Class<T> projectionClass, Expression... projectionFields) {
-		cq.select(cb.construct(projectionClass, projectionFields));
-		return this;
-	}
+    fun <X> orderByLatest(root: From<*, *>, mappedField: SingularAttribute<*,*>): CriteriaCustomQueryBuilder<T> {
+        cq.orderBy(cb.desc(searchPath(root, mappedField)))
+        return this
+    }
 
-	public CriteriaCustomQueryBuilder<T> groupBy(Expression... groupFields) {
-		cq.groupBy(groupFields);
-		return this;
-	}
+    fun createQuery(entityManager: EntityManager): CriteriaCustomQueryBuilder<T> {
+        this.typedQuery = entityManager.createQuery(cq)
+        return this
+    }
 
-	public <X> CriteriaCustomQueryBuilder<T> orderByLatest(From<?, ?> root, SingularAttribute<X, ?> mappedField) {
-		cq.orderBy(cb.desc(CriteriaUtils.searchPath(root, mappedField)));
-		return this;
-	}
+    fun build(): TypedQuery<T> {
+        return typedQuery!!
+    }
 
-	public CriteriaCustomQueryBuilder<T> createQuery(EntityManager entityManager) {
-		this.typedQuery = entityManager.createQuery(cq);
-		return this;
-	}
+    fun orderBy(root: From<*, *>, sort: Sort): CriteriaCustomQueryBuilder<T> {
+        val orders = toOrders(root, sort)
+        cq.orderBy(orders)
+        return this
+    }
 
-	public TypedQuery<T> build() {
-		return typedQuery;
-	}
+    private fun toOrders(root: From<*, *>, sort: Sort): List<Order> {
+        return sort.stream().map<Order> { order: Sort.Order -> toOrder(root, order) }.toList()
+    }
 
-	public CriteriaCustomQueryBuilder<T> orderBy(From<?, ?> root, Sort sort) {
-		List<Order> orders = toOrders(root, sort);
-		cq.orderBy(orders);
-		return this;
-	}
+    private fun toOrder(root: From<*, *>, order: Sort.Order): Order {
+        if (order.isAscending()) {
+            return cb.asc(root.get<Any>(order.getProperty()))
+        }
+        return cb.desc(root.get<Any>(order.getProperty()))
+    }
 
-	private List<Order> toOrders(From<?, ?> root, Sort sort) {
-		return sort.stream().map(order -> toOrder(root, order)).toList();
-	}
-
-	private Order toOrder(From<?, ?> root, Sort.Order order) {
-		if (order.isAscending()) {
-			return cb.asc(root.get(order.getProperty()));
-		}
-		return cb.desc(root.get(order.getProperty()));
-	}
+    companion object {
+        @JvmStatic
+        fun <T> builder(cq: CriteriaQuery<T>, cb: CriteriaBuilder): CriteriaCustomQueryBuilder<T> {
+            return CriteriaCustomQueryBuilder(cq, cb)
+        }
+    }
 }

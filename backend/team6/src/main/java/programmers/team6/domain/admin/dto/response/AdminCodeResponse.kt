@@ -1,8 +1,8 @@
-package programmers.team6.domain.admin.dto.response;
+package programmers.team6.domain.admin.dto.response
 
-import java.util.List;
+import org.springframework.data.domain.Page
 
-import org.springframework.data.domain.Page;
-
-public record AdminCodeResponse(Page<CodeReadResponse> codeReadResponse, List<String> groupCodes) {
-}
+data class AdminCodeResponse(
+    val codeReadResponse: Page<CodeReadResponse>,
+    val groupCodes: List<String>
+)

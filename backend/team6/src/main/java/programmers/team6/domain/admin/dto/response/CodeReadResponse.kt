@@ -1,4 +1,3 @@
-package programmers.team6.domain.admin.dto.response;
+package programmers.team6.domain.admin.dto.response
 
-public record CodeReadResponse(Long id, String groupCode, String code, String name) {
-}
+data class CodeReadResponse(val id: Long?, val groupCode: String?, val code: String?, val name: String?)

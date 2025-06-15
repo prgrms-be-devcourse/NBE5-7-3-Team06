@@ -1,23 +1,21 @@
-package programmers.team6.global.querybuilder;
+package programmers.team6.global.querybuilder
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import jakarta.persistence.TypedQuery
+import lombok.experimental.UtilityClass
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.Pageable
 
-import jakarta.persistence.TypedQuery;
-import lombok.experimental.UtilityClass;
-
-/**
- * @author gunwoong
- */
-@UtilityClass
-public class QueryUtils {
-	/**
-	 * 제공된 쿼리를 페이징하여 페이지 객체 리턴
-	 */
-	public static <T> Page<T> makeQueryToPageable(TypedQuery<T> query, Pageable pageable, Long totalCount) {
-		return new PageImpl<>(query.setFirstResult((int)pageable.getOffset())
-			.setMaxResults(pageable.getPageSize())
-			.getResultList(), pageable, totalCount);
-	}
+object QueryUtils {
+    /**
+     * 제공된 쿼리를 페이징하여 페이지 객체 리턴
+     */
+    @JvmStatic
+    fun <T> makeQueryToPageable(query: TypedQuery<T>, pageable: Pageable, totalCount: Long): Page<T> {
+        return PageImpl<T>(
+            query.setFirstResult(pageable.getOffset().toInt())
+                .setMaxResults(pageable.getPageSize())
+                .getResultList(), pageable, totalCount
+        )
+    }
 }

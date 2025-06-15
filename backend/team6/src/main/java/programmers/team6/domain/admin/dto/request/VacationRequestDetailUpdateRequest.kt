@@ -1,19 +1,17 @@
-package programmers.team6.domain.admin.dto.request;
+package programmers.team6.domain.admin.dto.request
 
-import java.time.LocalDateTime;
-import java.util.List;
+import jakarta.validation.Valid
+import jakarta.validation.constraints.FutureOrPresent
+import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.Positive
+import programmers.team6.domain.vacation.enums.VacationRequestStatus
+import java.time.LocalDateTime
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import programmers.team6.domain.vacation.enums.VacationRequestStatus;
-
-public record VacationRequestDetailUpdateRequest(@NotNull @Positive Long typeId,
-												 @NotNull @FutureOrPresent LocalDateTime from,
-												 @NotNull @FutureOrPresent LocalDateTime to,
-												 @NotNull VacationRequestStatus vacationRequestStatus,
-												 @NotNull String reason,
-												 @Valid List<@NotNull String> approvalReason) {
-
-}
+data class VacationRequestDetailUpdateRequest(
+	val typeId: @NotNull @Positive Long,
+	val from: @NotNull @FutureOrPresent LocalDateTime,
+	val to: @NotNull @FutureOrPresent LocalDateTime,
+	val vacationRequestStatus: @NotNull VacationRequestStatus,
+	val reason: @NotNull String,
+	val approvalReason: @Valid MutableList<String>
+)

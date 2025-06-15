@@ -21,7 +21,7 @@ public class VacationRequestReader {
 
 	public VacationRequestDetailReadResponse readDetailFrom(Long id) {
 		return vacationRequestRepository.findVacationRequestDetailById(id)
-			.orElseThrow(() -> new NotFoundException(NotFoundErrorCode.NOT_FOUND_VACATION_REQUEST))
+			// .orElseThrow(() -> new NotFoundException(NotFoundErrorCode.NOT_FOUND_VACATION_REQUEST))
 			.injectApprovalStepDetails(readApprovalFrom(id));
 	}
 

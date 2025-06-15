@@ -1,38 +1,51 @@
-package programmers.team6.domain.admin.repository;
+package programmers.team6.domain.admin.repository
 
-import java.time.LocalDate;
+import programmers.team6.domain.admin.dto.response.AdminVacationSearchCondition
+import programmers.team6.domain.admin.dto.response.AdminVacationSearchCondition.Companion.bindingApplicantCondition
+import programmers.team6.domain.admin.dto.response.AdminVacationSearchCondition.Companion.bindingDateRangeCondition
+import programmers.team6.domain.admin.enums.Quarter
+import programmers.team6.domain.vacation.enums.VacationRequestStatus
+import java.time.LocalDate
 
-import lombok.experimental.UtilityClass;
-import programmers.team6.domain.admin.dto.response.AdminVacationSearchCondition;
-import programmers.team6.domain.admin.enums.Quarter;
-import programmers.team6.domain.vacation.enums.VacationRequestStatus;
+object TestVacationRequestSearchConditionFactory {
+    @JvmStatic
+    fun createByDateRange(start: LocalDate?, end: LocalDate?): AdminVacationSearchCondition {
+        return AdminVacationSearchCondition(
+            bindingDateRangeCondition(start, end, null, null), AdminVacationSearchCondition.DEFAULT_APPLICANT, null
+        )
+    }
 
-@UtilityClass
-public class TestVacationRequestSearchConditionFactory {
-	public static AdminVacationSearchCondition createByDateRange(LocalDate start, LocalDate end) {
-		return new AdminVacationSearchCondition(
-			AdminVacationSearchCondition.bindingDateRangeCondition(start, end, null, null), null, null);
-	}
+    @JvmStatic
+    fun createByDateRange(year: Int?, quarter: Quarter?): AdminVacationSearchCondition {
+        return AdminVacationSearchCondition(
+            bindingDateRangeCondition(null, null, year, quarter), AdminVacationSearchCondition.DEFAULT_APPLICANT, null
+        )
+    }
 
-	public static AdminVacationSearchCondition createByDateRange(Integer year, Quarter quarter) {
-		return new AdminVacationSearchCondition(
-			AdminVacationSearchCondition.bindingDateRangeCondition(null, null, year, quarter), null, null);
-	}
+    @JvmStatic
+    fun createByApplicant(name: String?, deptName: String?): AdminVacationSearchCondition {
+        return AdminVacationSearchCondition(
+            AdminVacationSearchCondition.DEFAULT_DATE_RANGE,
+            bindingApplicantCondition(name, deptName, null, null), null
+        )
+    }
 
-	public static AdminVacationSearchCondition createByApplicant(String name, String deptName) {
-		return new AdminVacationSearchCondition(null,
-			AdminVacationSearchCondition.bindingApplicantCondition(name, deptName, null, null), null);
-	}
+    @JvmStatic
+    fun createByApplicant(positionCodeId: Long?, vacationTypeCodeId: Long?): AdminVacationSearchCondition {
+        return AdminVacationSearchCondition(
+            AdminVacationSearchCondition.DEFAULT_DATE_RANGE,
+            bindingApplicantCondition(null, null, positionCodeId, vacationTypeCodeId),
+            null
+        )
+    }
 
-	public static AdminVacationSearchCondition createByApplicant(Long positionCodeId, Long vacationTypeCodeId) {
-		return new AdminVacationSearchCondition(null,
-			AdminVacationSearchCondition.bindingApplicantCondition(null, null, positionCodeId, vacationTypeCodeId),
-			null);
-	}
-
-	public static AdminVacationSearchCondition createByVacationRequestStatus(
-		VacationRequestStatus vacationRequestStatus) {
-		return new AdminVacationSearchCondition(null, null, vacationRequestStatus);
-	}
-
+    fun createByVacationRequestStatus(
+        vacationRequestStatus: VacationRequestStatus?
+    ): AdminVacationSearchCondition {
+        return AdminVacationSearchCondition(
+            AdminVacationSearchCondition.DEFAULT_DATE_RANGE,
+            AdminVacationSearchCondition.DEFAULT_APPLICANT,
+            vacationRequestStatus
+        )
+    }
 }

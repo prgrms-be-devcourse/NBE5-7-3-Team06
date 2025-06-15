@@ -1,26 +1,19 @@
-package programmers.team6.domain.admin.utils.mapper;
+package programmers.team6.domain.admin.utils.mapper
 
-import lombok.experimental.UtilityClass;
-import programmers.team6.domain.admin.dto.request.CodeCreateRequest;
-import programmers.team6.domain.admin.entity.Code;
-import programmers.team6.domain.member.enums.BasicCodeInfo;
+import programmers.team6.domain.admin.dto.request.CodeCreateRequest
+import programmers.team6.domain.admin.entity.Code
+import programmers.team6.domain.member.enums.BasicCodeInfo
 
-@UtilityClass
-public class CodeMapper {
-	public static Code toCode(CodeCreateRequest codeCreateRequest) {
-		return Code.builder()
-			.groupCode(codeCreateRequest.groupCode())
-			.code(codeCreateRequest.code())
-			.name(codeCreateRequest.name())
-			.build();
-	}
+object CodeMapper {
+    fun toCode(codeCreateRequest: CodeCreateRequest): Code {
+        return Code(
+            groupCode = codeCreateRequest.groupCode,
+            code = codeCreateRequest.code,
+            name = codeCreateRequest.name
+        )
+    }
 
-	public static Code toCode(BasicCodeInfo basicCodeInfo) {
-		return Code.builder()
-			.groupCode(basicCodeInfo.getGroupCode())
-			.code(basicCodeInfo.getCode())
-			.name(basicCodeInfo.getName())
-			.build();
-	}
-
+    fun toCode(basicCodeInfo: BasicCodeInfo): Code {
+        return Code(groupCode = basicCodeInfo.groupCode, code = basicCodeInfo.code, name = basicCodeInfo.name)
+    }
 }

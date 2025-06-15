@@ -30,9 +30,9 @@ import org.springframework.data.domain.Pageable;
 import lombok.extern.slf4j.Slf4j;
 import programmers.team6.domain.admin.dto.response.AdminVacationSearchCondition;
 import programmers.team6.domain.admin.dto.response.VacationRequestSearchResponse;
-import programmers.team6.domain.admin.enums.Quarter;
 import programmers.team6.domain.admin.entity.Code;
 import programmers.team6.domain.admin.entity.Dept;
+import programmers.team6.domain.admin.enums.Quarter;
 import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.member.repository.MemberRepository;
 import programmers.team6.domain.vacation.entity.VacationRequest;
@@ -188,7 +188,9 @@ class AdminVacationRequestSearchCustomTest {
 	@DisplayName("검색 조건이 없을 때 모든 휴가 신청을 조회한다")
 	void should_searchVacationRequests_when_defaultSearchCondition() {
 		// given & when
-		AdminVacationSearchCondition defaultSearchCondition = new AdminVacationSearchCondition(null, null, null);
+		AdminVacationSearchCondition defaultSearchCondition = new AdminVacationSearchCondition(
+			AdminVacationSearchCondition.Companion.getDEFAULT_DATE_RANGE(),
+			AdminVacationSearchCondition.Companion.getDEFAULT_APPLICANT(), null);
 
 		// then
 		Page<VacationRequestSearchResponse> result = adminVacationRequestSearchCustom.search(

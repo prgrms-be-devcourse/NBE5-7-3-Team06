@@ -1,86 +1,82 @@
-package programmers.team6.domain.admin.dto.response;
+package programmers.team6.domain.admin.dto.response
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonSetter
+import com.fasterxml.jackson.annotation.Nulls
+import jakarta.validation.Valid
+import jakarta.validation.constraints.Max
+import jakarta.validation.constraints.Min
+import jakarta.validation.constraints.Positive
+import jakarta.validation.constraints.Size
+import programmers.team6.domain.admin.enums.Quarter
+import programmers.team6.domain.vacation.enums.VacationRequestStatus
+import programmers.team6.global.exception.code.BadRequestErrorCode
+import programmers.team6.global.exception.customException.BadRequestException
+import java.time.LocalDate
+import java.time.LocalDateTime
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
-import programmers.team6.domain.admin.enums.Quarter;
-import programmers.team6.domain.vacation.enums.VacationRequestStatus;
-import programmers.team6.global.exception.code.BadRequestErrorCode;
-import programmers.team6.global.exception.customException.BadRequestException;
+data class AdminVacationSearchCondition(
+    @Valid
+    @JsonSetter(nulls = Nulls.SKIP)
+    val dateRange: DateRangeCondition = DEFAULT_DATE_RANGE,
+    @Valid
+    @JsonSetter(nulls = Nulls.SKIP)
+    val applicant: ApplicantCondition = DEFAULT_APPLICANT,
 
-public record AdminVacationSearchCondition(
-	@Valid DateRangeCondition dateRange,
-	@Valid ApplicantCondition applicant,
-	// 휴가 신청 상태
-	VacationRequestStatus vacationRequestStatus
+    val vacationRequestStatus: VacationRequestStatus?
 ) {
-	public AdminVacationSearchCondition {
-		if (dateRange == null) {
-			dateRange = new DateRangeCondition(null, null, null, null);
-		}
-		if (applicant == null) {
-			applicant = new ApplicantCondition(null, null, null, null);
-		}
-	}
 
-	public record DateRangeCondition(
-		// 시작일
-		@FutureOrPresent
-		LocalDateTime start,
-		// 종료일
-		@FutureOrPresent
-		LocalDateTime end,
-		// 년도
-		@Min(2000)
-		@Max(2100)
-		Integer year,
-		// 분기
-		Quarter quarter
-	) {
-		public DateRangeCondition {
-			if ((start != null && end == null) || (start == null && end != null) || (quarter != null && year == null)) {
-				throw new BadRequestException(BadRequestErrorCode.BAD_REQUEST_VALIDATION);
-			}
-			if (quarter == null) {
-				quarter = Quarter.NONE;
-			}
-		}
-	}
+    class DateRangeCondition(
+        val start: LocalDateTime?,
+        val end: LocalDateTime?,
+        @Max(2100) @Min(2000)
+        val year: Int?,
+        val quarter: Quarter
+    ) {
+        init {
+            if ((start != null && end == null) || (start == null && end != null) || (quarter != Quarter.NONE && year == null)) {
+                throw BadRequestException(BadRequestErrorCode.BAD_REQUEST_VALIDATION)
+            }
+        }
+    }
 
-	// 휴가 신청자
-	public record ApplicantCondition(
-		// 이름
-		@Size(max = 30)
-		String name,
-		// 부서명
-		@Size(max = 50)
-		String deptName,
-		// 직책 codeId
-		@Positive
-		Long positionCodeId,
-		// 휴가 종류 codeId
-		@Positive
-		Long vacationTypeCodeId
-	) {
-	}
+    // 휴가 신청자
+    data class ApplicantCondition(
+        @Size(max = 30)
+        val name: String?,
+        @Size(max = 50)
+        val deptName: String?,
+        @Positive
+        val positionCodeId: Long?,
+        @Positive
+        val vacationTypeCodeId: Long?
+    )
 
-	public static DateRangeCondition bindingDateRangeCondition(LocalDate start, LocalDate end, Integer year,
-		Quarter quarter) {
-		return new DateRangeCondition(start != null ? start.atStartOfDay() : null,
-			end != null ? end.atTime(23, 59, 59) : null, year, quarter);
-	}
+    companion object {
+        @JvmStatic
+        fun bindingDateRangeCondition(
+            start: LocalDate?, end: LocalDate?, year: Int?,
+            quarter: Quarter?
+        ): DateRangeCondition {
+            return DateRangeCondition(
+                start?.atStartOfDay(),
+                end?.atTime(23, 59, 59), year, (quarter ?: Quarter.NONE)
+            )
+        }
 
-	public static ApplicantCondition bindingApplicantCondition(String name,
-		String deptName,
-		Long positionCodeId,
-		Long vacationTypeCodeId) {
-		return new ApplicantCondition(name, deptName, positionCodeId, vacationTypeCodeId);
-	}
+        @JvmStatic
+        fun bindingApplicantCondition(
+            name: String?,
+            deptName: String?,
+            positionCodeId: Long?,
+            vacationTypeCodeId: Long?
+        ): ApplicantCondition {
+            return ApplicantCondition(name, deptName, positionCodeId, vacationTypeCodeId)
+        }
 
+        @JvmStatic
+        val DEFAULT_DATE_RANGE = bindingDateRangeCondition(null, null, null, Quarter.NONE)
+        @JvmStatic
+        val DEFAULT_APPLICANT = bindingApplicantCondition(null, null, null, null)
+
+    }
 }

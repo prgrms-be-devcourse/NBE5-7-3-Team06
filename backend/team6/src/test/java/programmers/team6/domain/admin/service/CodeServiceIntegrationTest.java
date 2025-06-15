@@ -64,7 +64,7 @@ class CodeServiceIntegrationTest {
 		String groupCode = "TEST_GROUP_CODE";
 		String code = "TEST_CODE";
 		String name = "TEST_NAME";
-		codeRepository.save(Code.builder().groupCode(groupCode).code(code).name(name).build());
+		codeRepository.save(new Code(groupCode, code, name));
 
 		// when & then
 		assertThatThrownBy(() -> codeService.createCode(new CodeCreateRequest(groupCode, code, name))).isInstanceOf(
@@ -86,8 +86,8 @@ class CodeServiceIntegrationTest {
 		// then
 		AdminCodeResponse response = codeService.readCodePage(PageRequest.of(0, targetCodeCnt + anotherCodeCnt + 1),
 			targetGroupCode);
-		assertThat(response.codeReadResponse().getTotalElements()).isEqualTo(targetCodeCnt);
-		assertThat(response.groupCodes()).hasSize(2);
+		assertThat(response.getCodeReadResponse().getTotalElements()).isEqualTo(targetCodeCnt);
+		assertThat(response.getGroupCodes()).hasSize(2);
 	}
 
 	@Test
@@ -107,15 +107,15 @@ class CodeServiceIntegrationTest {
 			targetGroupCode);
 		assertThat(targetGroupCode).isNull();
 		assertThat(targetCodeCnt).isEqualTo(0);
-		assertThat(response.codeReadResponse().getTotalElements()).isEqualTo(targetCodeCnt + anotherCodeCnt);
-		assertThat(response.groupCodes()).hasSize(1);
+		assertThat(response.getCodeReadResponse().getTotalElements()).isEqualTo(targetCodeCnt + anotherCodeCnt);
+		assertThat(response.getGroupCodes()).hasSize(1);
 	}
 
 	@Test
 	@DisplayName("update 혹은 delete 과정에서 존재하지 않는 code id 제공시, NotFoundException 발생")
 	void should_throwNotFoundException_when_givenInvalidCodeId() {
 		assertThatThrownBy(() -> {
-			codeService.updateCode(0L, new CodeCreateRequest(null, null, null));
+			codeService.updateCode(0L, new CodeCreateRequest("", "", ""));
 			codeService.deleteCode(0L);
 		}).isInstanceOf(NotFoundException.class).hasMessage(NotFoundErrorCode.NOT_FOUND_CODE.getMessage());
 	}
@@ -124,8 +124,7 @@ class CodeServiceIntegrationTest {
 	@DisplayName("delete 과정에서 존재하는 code id 제공시, 정상적으로 hard delete")
 	void should_deleteCode_when_givenCodeId() {
 		// given
-		Code code = codeRepository.save(
-			Code.builder().groupCode("TEST_GROUP_CODE").code("TEST_CODE").name("TEST_NAME").build());
+		Code code = codeRepository.save(new Code("TEST_GROUP_CODE", "TEST_CODE", "TEST_NAME"));
 
 		// when
 		codeService.deleteCode(code.getId());
@@ -141,11 +140,8 @@ class CodeServiceIntegrationTest {
 	void should_ignoreDelete_when_givenBasicCodeId() {
 		// given
 		BasicCodeInfo basicCodeInfo = BasicCodeInfo.ANNUAL;
-		Code code = codeRepository.save(Code.builder()
-			.groupCode(basicCodeInfo.getGroupCode())
-			.code(basicCodeInfo.getCode())
-			.name(basicCodeInfo.getName())
-			.build());
+		Code code = codeRepository.save(
+			new Code(basicCodeInfo.getGroupCode(), basicCodeInfo.getCode(), basicCodeInfo.getCodeName()));
 
 		// when
 		codeService.deleteCode(code.getId());
@@ -160,11 +156,7 @@ class CodeServiceIntegrationTest {
 			return;
 		}
 		for (int i = 0; i < cnt; i++) {
-			codeRepository.save(Code.builder()
-				.groupCode(groupCode)
-				.code(String.format("%02d", i))
-				.name(String.format("%s%d", prefixName, i))
-				.build());
+			codeRepository.save(new Code(groupCode, String.format("%02d", i), String.format("%s%d", prefixName, i)));
 		}
 	}
 

@@ -12,7 +12,7 @@ class CodeTest {
 	@DisplayName("변경할 데이터가 유니크한 (groupCode, code)와 name일 경우, 성공적으로 code를 update")
 	void should_successUpdate_when_givenValidData() {
 		// given
-		Code code = Code.builder().build();
+		Code code = new Code("", "", "");
 		String updatedGroupCode = UUID.randomUUID().toString();
 		String updatedCode = UUID.randomUUID().toString();
 		String updatedName = UUID.randomUUID().toString();
