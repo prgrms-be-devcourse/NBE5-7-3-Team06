@@ -1,84 +1,86 @@
-package programmers.team6.global.config;
+package programmers.team6.global.config
 
-import java.util.List;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import lombok.RequiredArgsConstructor;
-import programmers.team6.domain.auth.token.JwtAuthenticationFilter;
-import programmers.team6.global.exception.code.ForbiddenErrorCode;
-import programmers.team6.global.exception.code.UnauthorizedErrorCode;
-import programmers.team6.global.util.ErrorResponseUtil;
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.config.annotation.web.configurers.*
+import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfigurationSource
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import programmers.team6.domain.auth.token.JwtAuthenticationFilter
+import programmers.team6.global.exception.code.ForbiddenErrorCode
+import programmers.team6.global.exception.code.UnauthorizedErrorCode
+import programmers.team6.global.util.ErrorResponseUtil
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
-public class SecurityConfig {
+class SecurityConfig(
+    private val jwtAuthenticationFilter: JwtAuthenticationFilter
+) {
 
-	private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    @Bean
+    fun passwordEncoder(): PasswordEncoder {
+        return BCryptPasswordEncoder()
+    }
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+    @Bean
+    @Throws(Exception::class)
+    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
+        return http
+            .httpBasic { httpB: HttpBasicConfigurer<HttpSecurity> -> httpB.disable() }
+            .formLogin { form: FormLoginConfigurer<HttpSecurity> -> form.disable() }
+            .csrf { csrf: CsrfConfigurer<HttpSecurity> -> csrf.disable() }
+            .cors { cors: CorsConfigurer<HttpSecurity?> -> cors.configurationSource(corsConfigurationSource()) }
+            .sessionManagement { session: SessionManagementConfigurer<HttpSecurity?> ->
+                session.sessionCreationPolicy(
+                    SessionCreationPolicy.STATELESS
+                )
+            }
+            .authorizeHttpRequests(
+                { auth->
+                    auth
+                        .requestMatchers(
+                            "/auth/**",
+                            "/codes/**",
+                            "/depts/**"
+                        )
+                        .permitAll()
+                        .requestMatchers("/admin/**").hasAuthority("ADMIN")
+                        .anyRequest().authenticated()
+                }
+            ).exceptionHandling { exception ->
+                exception
+                    .authenticationEntryPoint { _, response, _ ->
+                        ErrorResponseUtil.setErrorResponse(response, UnauthorizedErrorCode.UNAUTHORIZED_ENTRY_POINT)
+                    }
+                    .accessDeniedHandler { _, response, _ ->
+                        ErrorResponseUtil.setErrorResponse(response, ForbiddenErrorCode.FORBIDDEN_NO_AUTHORITY)
+                    }
+            }
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .build()
+    }
 
-	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		return http
-			.httpBasic(httpB -> httpB.disable())
-			.formLogin(form -> form.disable())
-			.csrf(csrf -> csrf.disable())
-			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-			.sessionManagement(
-				session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-			)
-			.authorizeHttpRequests(
-				auth -> auth
-					.requestMatchers(
-						"/auth/**",
-						"/codes/**",
-						"/depts/**"
-					)
-					.permitAll()
-					.requestMatchers("/admin/**").hasAuthority("ADMIN")
-					.anyRequest().authenticated()
-			).exceptionHandling(exception -> exception
-				.authenticationEntryPoint((request, response, authException) -> {
-					ErrorResponseUtil.setErrorResponse(response, UnauthorizedErrorCode.UNAUTHORIZED_ENTRY_POINT);
-				})
-				.accessDeniedHandler((request, response, accessDeniedException) -> {
-					ErrorResponseUtil.setErrorResponse(response, ForbiddenErrorCode.FORBIDDEN_NO_AUTHORITY);
-				})
-			)
-			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-			.build();
-	}
+    @Bean
+    fun corsConfigurationSource(): CorsConfigurationSource {
+        val config = CorsConfiguration()
 
-	@Bean
-	public CorsConfigurationSource corsConfigurationSource() {
-		CorsConfiguration config = new CorsConfiguration();
+        config.allowedOrigins = listOf("http://localhost:3000")
+        config.allowedMethods =
+            listOf("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
 
-		config.setAllowedOrigins(List.of("http://localhost:3000"));
-		config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        config.allowedHeaders = listOf("*")
+        config.allowCredentials = true
 
-		config.setAllowedHeaders(List.of("*"));
-		config.setAllowCredentials(true);
+        val source = UrlBasedCorsConfigurationSource()
+        source.registerCorsConfiguration("/**", config)
 
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", config);
-
-		return source;
-	}
-
+        return source
+    }
 }
