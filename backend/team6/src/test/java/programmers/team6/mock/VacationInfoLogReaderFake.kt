@@ -1,35 +1,19 @@
-package programmers.team6.mock;
+package programmers.team6.mock
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import io.mockk.mockk
+import programmers.team6.domain.admin.dto.request.VacationStatisticsRequest
+import programmers.team6.domain.admin.support.VacationInfoLogReader
+import programmers.team6.domain.admin.support.VacationInfoLogs
+import programmers.team6.domain.vacation.entity.VacationInfoLog
+import programmers.team6.domain.vacation.repository.VacationInfoLogRepository
+import java.util.*
 
-import programmers.team6.domain.admin.dto.request.VacationStatisticsRequest;
-import programmers.team6.domain.admin.support.VacationInfoLogReader;
-import programmers.team6.domain.admin.support.VacationInfoLogs;
-import programmers.team6.domain.vacation.entity.VacationInfoLog;
+class VacationInfoLogReaderFake(vararg logs: VacationInfoLog) :
+    VacationInfoLogReader(mockk<VacationInfoLogRepository>()) {
 
-public class VacationInfoLogReaderFake extends VacationInfoLogReader {
+    private val vacationInfoLogs: Map<Long, VacationInfoLog> = logs.associateBy { it.memberId }
 
-	private final Map<Long, VacationInfoLog> vacationInfoLogs;
-
-	public VacationInfoLogReaderFake(VacationInfoLog... logs) {
-		super(null);
-		this.vacationInfoLogs = toMap(Arrays.asList(logs));
-	}
-
-	private static Map<Long, VacationInfoLog> toMap(List<VacationInfoLog> vacationRequests) {
-		Map<Long, VacationInfoLog> map = new HashMap<>();
-		for (VacationInfoLog infoLog : vacationRequests) {
-			map.put(infoLog.getMemberId(), infoLog);
-		}
-		return map;
-	}
-
-	@Override
-	public VacationInfoLogs lastedLogsFrom(List<Long> ids, VacationStatisticsRequest request) {
-		return new VacationInfoLogs(vacationInfoLogs);
-	}
-
+    override fun lastedLogsFrom(ids: List<Long>, request: VacationStatisticsRequest): VacationInfoLogs {
+        return VacationInfoLogs(vacationInfoLogs)
+    }
 }
