@@ -1,43 +1,31 @@
-package programmers.team6.domain.admin.repository;
+package programmers.team6.domain.admin.repository
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import org.springframework.stereotype.Repository;
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
-import lombok.RequiredArgsConstructor;
-import programmers.team6.global.querybuilder.CriteriaCustomPredicateBuilder;
-import programmers.team6.global.querybuilder.CriteriaCustomQueryBuilder;
-import programmers.team6.domain.vacation.entity.VacationInfoLog;
-import programmers.team6.domain.vacation.entity.VacationInfoLog_;
+import jakarta.persistence.EntityManager
+import org.springframework.stereotype.Repository
+import programmers.team6.domain.vacation.entity.VacationInfoLog
+import programmers.team6.domain.vacation.entity.VacationInfoLog_
+import programmers.team6.global.querybuilder.CriteriaCustomPredicateBuilder
+import programmers.team6.global.querybuilder.CriteriaCustomQueryBuilder
+import java.time.LocalDateTime
 
 @Repository
-@RequiredArgsConstructor
-public class VacationInfoLogSearchRepository {
+class VacationInfoLogSearchRepository(private val entityManager: EntityManager) {
 
-	private final EntityManager entityManager;
+    fun queryContainVacationInfoMemberIds(localDateTime: LocalDateTime, code: String?): List<Long> {
+        val criteriaBuilder = entityManager.criteriaBuilder
+        val criteriaQuery = criteriaBuilder.createQuery(Long::class.java)
+        val from = criteriaQuery.from(VacationInfoLog::class.java)
 
-	public List<Long> queryContainVacationInfoMemberIds(LocalDateTime localDateTime, String code) {
-		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
-		Root<VacationInfoLog> from = criteriaQuery.from(VacationInfoLog.class);
+        val predicates = CriteriaCustomPredicateBuilder.builder<VacationInfoLog>(criteriaBuilder)
+            .applyEqualFilter(from, code, VacationInfoLog_.vacationType)
+            .build()
+        predicates.add(criteriaBuilder.lessThanOrEqualTo(from.get(VacationInfoLog_.logDate), localDateTime))
 
-		List<Predicate> predicates = CriteriaCustomPredicateBuilder.<VacationInfoLog>builder(criteriaBuilder)
-			.applyEqualFilter(from, code, VacationInfoLog_.vacationType)
-			.build();
-		predicates.add(criteriaBuilder.lessThanOrEqualTo(from.get(VacationInfoLog_.logDate), localDateTime));
-
-		TypedQuery<Long> build = CriteriaCustomQueryBuilder.builder(criteriaQuery, criteriaBuilder)
-			.applyDynamicPredicates(predicates)
-			.projection(Long.class, from.get(VacationInfoLog_.memberId))
-			.createQuery(entityManager)
-			.build();
-		return  build.getResultList();
-	}
+        val build = CriteriaCustomQueryBuilder.builder(criteriaQuery, criteriaBuilder)
+            .applyDynamicPredicates(predicates)
+            .projection(Long::class.java, from.get(VacationInfoLog_.memberId))
+            .createQuery(entityManager)
+            .build()
+        return build.resultList
+    }
 }
