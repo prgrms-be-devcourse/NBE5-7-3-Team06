@@ -12,9 +12,16 @@ import lombok.NoArgsConstructor;
 import programmers.team6.global.entity.BaseEntity;
 
 @Entity
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberInfo extends BaseEntity {
+
+	public MemberInfo( String birth, String email, String password) {
+		this.birth = birth;
+		this.email = email;
+		this.password = password;
+	}
+
+	public MemberInfo() {
+	}
 
 	@Id
 	@Column(name = "member_info_id")
@@ -30,10 +37,27 @@ public class MemberInfo extends BaseEntity {
 	@Column(nullable = false)
 	private String password;
 
-	@Builder
-	public MemberInfo(String birth, String email, String password) {
-		this.birth = birth;
-		this.email = email;
-		this.password = password;
+//	@Builder
+//	public MemberInfo(String birth, String email, String password) {
+//		this.birth = birth;
+//		this.email = email;
+//		this.password = password;
+//	}
+
+
+	public Long getId() {
+		return id;
+	}
+
+	public String getBirth() {
+		return birth;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public String getPassword() {
+		return password;
 	}
 }

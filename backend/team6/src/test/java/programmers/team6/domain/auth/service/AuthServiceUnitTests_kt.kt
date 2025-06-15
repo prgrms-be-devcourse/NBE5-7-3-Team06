@@ -28,7 +28,6 @@ import programmers.team6.domain.auth.dto.response.AuthTokenResponse
 import programmers.team6.domain.auth.token.JwtTokenProvider
 import programmers.team6.domain.auth.util.JwtUtils
 import programmers.team6.domain.auth.util.JwtUtils.calculateTtlMillis
-import programmers.team6.domain.member.entity.Member
 import programmers.team6.domain.member.enums.Role
 import programmers.team6.domain.member.repository.MemberInfoRepository
 import programmers.team6.domain.member.repository.MemberRepository

@@ -56,7 +56,7 @@ class AuthService(
 
         val encodedPassword = passwordEncoder.encode(request.password)
 
-        val member = MemberMapper.MemberCreateRequestToEntity(
+        val member = MemberMapper.toEntity(
             request, dept, position, encodedPassword
         )
 
@@ -70,7 +70,7 @@ class AuthService(
     @Transactional(readOnly = true)
     fun login(memberLoginRequest: MemberLoginRequest): LoginResponse {
 
-        val member:Member = memberRepository.findByEmail(memberLoginRequest.email!!) ?: throw NotFoundException(NotFoundErrorCode.NOT_FOUND_EMAIL)
+        val member: Member = memberRepository.findByEmail(memberLoginRequest.email!!) ?: throw NotFoundException(NotFoundErrorCode.NOT_FOUND_EMAIL)
 
         if (member.role == Role.PENDING) throw ForbiddenException(ForbiddenErrorCode.FORBIDDEN_PENDING)
 

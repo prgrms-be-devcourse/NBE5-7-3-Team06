@@ -8,25 +8,17 @@ import programmers.team6.domain.member.entity.MemberInfo
 import programmers.team6.domain.member.enums.Role
 
 object MemberMapper {
-    fun MemberCreateRequestToEntity(
+
+    fun toEntity(
         memberSignUpRequest: MemberSignUpRequest,
         dept: Dept,
         position: Code,
         encodedPassword: String
     ): Member {
-        val memberInfo = MemberInfo.builder()
-            .birth(memberSignUpRequest.birth)
-            .email(memberSignUpRequest.email)
-            .password(encodedPassword)
-            .build()
 
-        val member = Member.builder()
-            .name(memberSignUpRequest.name)
-            .dept(dept)
-            .position(position)
-            .joinDate(memberSignUpRequest.joinDate)
-            .role(Role.PENDING)
-            .build()
+        val memberInfo: MemberInfo = MemberInfo(memberSignUpRequest.birth,memberSignUpRequest.email,encodedPassword)
+
+        val member = Member(memberSignUpRequest.name,dept,position,memberSignUpRequest.joinDate,Role.PENDING)
 
         member.memberInfo = memberInfo
 
