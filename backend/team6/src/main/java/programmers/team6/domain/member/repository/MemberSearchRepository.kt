@@ -6,7 +6,6 @@ import jakarta.persistence.criteria.CriteriaBuilder
 import jakarta.persistence.criteria.Predicate
 import jakarta.persistence.criteria.Root
 import jakarta.persistence.metamodel.SingularAttribute
-import lombok.RequiredArgsConstructor
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
@@ -19,7 +18,6 @@ import programmers.team6.global.querybuilder.CriteriaCustomQueryBuilder
 import programmers.team6.global.querybuilder.QueryUtils
 
 @Repository
-@RequiredArgsConstructor
 class MemberSearchRepository(private val entityManager: EntityManager) {
 
     fun searchFrom(name: String? = null, deptId: Long? = null, pageable: Pageable): Page<Member> {
