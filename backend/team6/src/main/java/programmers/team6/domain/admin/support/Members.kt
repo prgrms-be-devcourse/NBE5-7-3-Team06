@@ -1,23 +1,27 @@
-package programmers.team6.domain.admin.support;
+package programmers.team6.domain.admin.support
 
-import java.util.List;
+import org.springframework.data.domain.Page
+import programmers.team6.domain.member.entity.Member
 
-import org.springframework.data.domain.Page;
+class Members(private val members: Page<Member>) {
+    fun toIds(): List<Long> {
+        return members.stream().map { obj: Member -> obj.getId() }.toList()
+    }
 
-import programmers.team6.domain.member.entity.Member;
+    fun toPages(): Page<Member> {
+        return members
+    }
 
-public class Members {
-	private final Page<Member> members;
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
 
-	public Members(Page<Member> members) {
-		this.members = members;
-	}
+        other as Members
 
-	public List<Long> toIds() {
-		return members.stream().map(Member::getId).toList();
-	}
+        return members == other.members
+    }
 
-	public Page<Member> toPages() {
-		return members;
-	}
+    override fun hashCode(): Int {
+        return members.hashCode()
+    }
 }

@@ -1,31 +1,28 @@
-package programmers.team6.domain.admin.support;
+package programmers.team6.domain.admin.support
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Component;
-
-import lombok.RequiredArgsConstructor;
-import programmers.team6.domain.admin.dto.request.VacationStatisticsRequest;
-import programmers.team6.domain.admin.repository.VacationInfoLogSearchRepository;
-import programmers.team6.domain.member.entity.Member;
-import programmers.team6.domain.member.repository.MemberSearchRepository;
+import lombok.RequiredArgsConstructor
+import org.springframework.data.domain.Pageable
+import org.springframework.stereotype.Component
+import programmers.team6.domain.admin.dto.request.VacationStatisticsRequest
+import programmers.team6.domain.admin.repository.VacationInfoLogSearchRepository
+import programmers.team6.domain.member.repository.MemberSearchRepository
+import java.time.LocalDateTime
 
 @Component
 @RequiredArgsConstructor
-public class MemberReader {
+open class MemberReader(
+    private val memberRepository: MemberSearchRepository,
+    private val vacationInfoLogSearchRepository: VacationInfoLogSearchRepository
+) {
 
-	private final MemberSearchRepository memberRepository;
-	private final VacationInfoLogSearchRepository vacationInfoLogSearchRepository;
+    open fun readHasVacationInfoMemberFrom(request: VacationStatisticsRequest, pageable: Pageable): Members {
+        val date = LocalDateTime.of(request.year, 12, 31, 23, 59)
 
-	public Members readHasVacationInfoMemberFrom(VacationStatisticsRequest request, Pageable pageable) {
-		LocalDateTime date = LocalDateTime.of(request.year, 12, 31, 23, 59);
-
-		List<Long> ids = vacationInfoLogSearchRepository.queryContainVacationInfoMemberIds(date,
-			request.vacationCode);
-		Page<Member> members = memberRepository.searchFrom(request.deptId, request.name, ids, pageable);
-		return new Members(members);
-	}
+        val ids = vacationInfoLogSearchRepository.queryContainVacationInfoMemberIds(
+            date,
+            request.vacationCode
+        )
+        val members = memberRepository.searchFrom(request.deptId, request.name, ids, pageable)
+        return Members(members)
+    }
 }

@@ -26,7 +26,7 @@ class VacationStatisticsService(
     @Transactional(readOnly = true)
     fun getMonthlyVacationStatistics(
         request: VacationStatisticsRequest,
-        pageable: Pageable?
+        pageable: Pageable
     ): Page<VacationMonthlyStatisticsResponse> {
         val members = memberReader.readHasVacationInfoMemberFrom(request, pageable)
         val vacationRequests = vacationRequestsReader.vacationRequestFrom(members.toIds(), request)

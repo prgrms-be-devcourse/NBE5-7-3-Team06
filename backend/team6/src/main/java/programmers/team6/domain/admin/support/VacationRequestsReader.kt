@@ -1,28 +1,24 @@
-package programmers.team6.domain.admin.support;
+package programmers.team6.domain.admin.support
 
-import java.util.List;
-
-import org.springframework.stereotype.Component;
-
-import lombok.RequiredArgsConstructor;
-import programmers.team6.domain.admin.dto.request.VacationStatisticsRequest;
-import programmers.team6.domain.vacation.repository.VacationRequestRepository;
+import lombok.RequiredArgsConstructor
+import org.springframework.stereotype.Component
+import programmers.team6.domain.admin.dto.request.VacationStatisticsRequest
+import programmers.team6.domain.vacation.repository.VacationRequestRepository
 
 @Component
 @RequiredArgsConstructor
-public class VacationRequestsReader {
+open class VacationRequestsReader(private val vacationRequestRepository: VacationRequestRepository) {
 
-	private final VacationRequestRepository vacationRequestRepository;
+    open fun vacationRequestFrom(ids: List<Long>, request: VacationStatisticsRequest): VacationRequests {
+        return VacationRequests(
+            vacationRequestRepository.findByMemberIdInAndYear(ids, request.year, codes(request.vacationCode))
+        )
+    }
 
-	public VacationRequests vacationRequestFrom(List<Long> ids, VacationStatisticsRequest request) {
-		return new VacationRequests(
-			vacationRequestRepository.findByMemberIdInAndYear(ids, request.year, codes(request.vacationCode)));
-	}
-
-	private List<String> codes(String code) {
-		if (code.equals("01")) {
-			return List.of("01", "05");
-		}
-		return List.of(code);
-	}
+    private fun codes(code: String): List<String> {
+        if (code == "01") {
+            return listOf("01", "05")
+        }
+        return listOf(code)
+    }
 }

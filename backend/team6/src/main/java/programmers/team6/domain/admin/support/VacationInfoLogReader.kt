@@ -11,7 +11,7 @@ import java.time.LocalDateTime
 @RequiredArgsConstructor
 open class VacationInfoLogReader(private val repository: VacationInfoLogRepository) {
 
-    open fun lastedLogsFrom(ids: List<Long?>?, request: VacationStatisticsRequest): VacationInfoLogs {
+    open fun lastedLogsFrom(ids: List<Long>, request: VacationStatisticsRequest): VacationInfoLogs {
         val date = LocalDateTime.of(request.year, 12, 31, 23, 59)
         val lastedByMemberIdInAndYear = repository.findLastedByMemberIdInAndYear(ids, date, request.vacationCode)
         return VacationInfoLogs(toLastedMap(lastedByMemberIdInAndYear))

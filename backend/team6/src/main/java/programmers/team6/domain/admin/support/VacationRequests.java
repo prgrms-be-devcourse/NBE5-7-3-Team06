@@ -5,8 +5,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import lombok.EqualsAndHashCode;
 import programmers.team6.domain.vacation.entity.VacationRequest;
 
+@EqualsAndHashCode
 public class VacationRequests {
 
 	private final Map<Long, List<VacationRequest>> requests;
