@@ -88,13 +88,13 @@ class ApprovalStepService(
         val firstStepApproval = findByIdAndMemberIdAndStep(approvalStepId, memberId, STEP1)
         firstStepApproval.validateApprovable()
 
-        val secondStepApproval = findByVacationRequestAndStep(firstStepApproval.getVacationRequest(), STEP2)
+        val secondStepApproval = findByVacationRequestAndStep(firstStepApproval.vacationRequest, STEP2)
 
         firstStepApproval.approve()
         secondStepApproval.pending()
 
         if (firstStepApproval.isHrApprover) {
-            approveSecondStep(secondStepApproval.getId(), memberId)
+            approveSecondStep(secondStepApproval.id!!, memberId)
         }
     }
 
@@ -103,7 +103,7 @@ class ApprovalStepService(
         val firstStepApproval = findByIdAndMemberIdAndStep(approvalStepId, memberId, STEP1)
         firstStepApproval.validateRejectable()
 
-        val secondStepApproval = findByVacationRequestAndStep(firstStepApproval.getVacationRequest(), STEP2)
+        val secondStepApproval = findByVacationRequestAndStep(firstStepApproval.vacationRequest, STEP2)
 
         firstStepApproval.reject(request.reason)
         secondStepApproval.reject(FIRST_STEP_REJECT_MESSAGE)

@@ -7,14 +7,8 @@ import programmers.team6.domain.vacation.enums.ApprovalStatus;
 
 public class ApprovalStepTestUtils {
 
-	public static ApprovalStep genApprovalStep(ApprovalStatus status){
-		return ApprovalStep.builder()
-			.step(1)
-			.member(Member.builder().build())
-			.approvalStatus(status)
-			.vacationRequest(VacationRequest.builder().build())
-			.build();
+	public static ApprovalStep genApprovalStep(ApprovalStatus status) {
+		return new ApprovalStep(null, Member.builder().build(), VacationRequest.builder().build(), status, 1, null);
 	}
-
 
 }

@@ -50,4 +50,20 @@ public class Code extends BaseEntity {
 		this.code = code;
 		this.name = name;
 	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public String getGroupCode() {
+		return groupCode;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public String getName() {
+		return name;
+	}
 }

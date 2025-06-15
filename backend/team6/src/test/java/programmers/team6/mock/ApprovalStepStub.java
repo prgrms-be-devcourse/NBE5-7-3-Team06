@@ -11,7 +11,7 @@ public class ApprovalStepStub extends ApprovalStep {
 
 	public ApprovalStepStub(Long id, Member member, VacationRequest vacationRequest,
 		ApprovalStatus approvalStatus, int step) {
-		super(step, approvalStatus, member, vacationRequest);
+		super(null, member, vacationRequest, approvalStatus, step, null);
 		this.id = id;
 	}
 

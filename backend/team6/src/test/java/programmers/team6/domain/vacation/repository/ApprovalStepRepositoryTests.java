@@ -119,17 +119,18 @@ class ApprovalStepRepositoryTests {
 		);
 
 		savedApprovalFirstStep = approvalStepRepository.save(
-			new ApprovalStep(1, ApprovalStatus.APPROVED, approver, savedVacation1)
+			new ApprovalStep(null, approver, savedVacation1, ApprovalStatus.APPROVED, 1, null)
 		);
 		approvalfirstStepId = savedApprovalFirstStep.getId();
-		approvalStepRepository.save(new ApprovalStep(1, ApprovalStatus.APPROVED, approver, savedVacation2));
-		approvalStepRepository.save(new ApprovalStep(1, ApprovalStatus.REJECTED, approver, savedVacation3));
-		approvalStepRepository.save(new ApprovalStep(1, ApprovalStatus.PENDING, approver, savedVacation4));
+		approvalStepRepository.save(new ApprovalStep(null, approver, savedVacation2, ApprovalStatus.APPROVED, 1, null));
+		approvalStepRepository.save(new ApprovalStep(null, approver, savedVacation3, ApprovalStatus.REJECTED, 1, null));
+		approvalStepRepository.save(new ApprovalStep(null, approver, savedVacation4, ApprovalStatus.PENDING, 1, null));
 		savedApprovalSecondStep =
-			approvalStepRepository.save(new ApprovalStep(2, ApprovalStatus.APPROVED, approver, savedVacation1));
-		approvalStepRepository.save(new ApprovalStep(2, ApprovalStatus.APPROVED, approver, savedVacation2));
-		approvalStepRepository.save(new ApprovalStep(2, ApprovalStatus.REJECTED, approver, savedVacation3));
-		approvalStepRepository.save(new ApprovalStep(2, ApprovalStatus.WAITING, approver, savedVacation4));
+			approvalStepRepository.save(
+				new ApprovalStep(null, approver, savedVacation1, ApprovalStatus.APPROVED, 2, null));
+		approvalStepRepository.save(new ApprovalStep(null, approver, savedVacation2, ApprovalStatus.APPROVED, 2, null));
+		approvalStepRepository.save(new ApprovalStep(null, approver, savedVacation3, ApprovalStatus.REJECTED, 2, null));
+		approvalStepRepository.save(new ApprovalStep(null, approver, savedVacation4, ApprovalStatus.WAITING, 2, null));
 
 	}
 

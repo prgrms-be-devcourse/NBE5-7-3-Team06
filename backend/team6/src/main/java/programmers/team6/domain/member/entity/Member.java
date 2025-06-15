@@ -87,4 +87,31 @@ public class Member extends BaseEntity {
 		return this.dept != null && this.dept.isHrDept();
 	}
 
+	public Dept getDept() {
+		return dept;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public LocalDateTime getJoinDate() {
+		return joinDate;
+	}
+
+	public MemberInfo getMemberInfo() {
+		return memberInfo;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public Code getPosition() {
+		return position;
+	}
+
+	public Role getRole() {
+		return role;
+	}
 }

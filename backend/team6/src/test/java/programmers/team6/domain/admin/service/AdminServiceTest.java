@@ -21,9 +21,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import programmers.team6.domain.admin.dto.request.VacationRequestDetailUpdateRequest;
+import programmers.team6.domain.admin.entity.Code;
 import programmers.team6.domain.admin.repository.AdminVacationRequestSearchCustom;
 import programmers.team6.domain.admin.repository.AdminVacationRequestSearchTestDataFactory;
-import programmers.team6.domain.admin.entity.Code;
 import programmers.team6.domain.admin.repository.CodeRepository;
 import programmers.team6.domain.vacation.entity.ApprovalStep;
 import programmers.team6.domain.vacation.entity.VacationRequest;
@@ -146,7 +146,9 @@ class AdminServiceTest {
 			when(codeRepository.findByIdAndGroupCode(anyLong(), eq("VACATION_TYPE"))).thenReturn(
 				Optional.of(vacationRequestType));
 			when(approvalStepRepository.findApprovalStepsByVacationRequest_IdOrderByStepAsc(anyLong())).thenReturn(
-				List.of(AdminVacationRequestSearchTestDataFactory.genTestApprovalStep(null, 0, null)));
+				List.of(
+					AdminVacationRequestSearchTestDataFactory.genTestApprovalStep(VacationRequest.builder().build(), 0,
+						null)));
 
 			// then
 			assertThatThrownBy(() -> adminService.updateVacationRequestDetailById(0L,

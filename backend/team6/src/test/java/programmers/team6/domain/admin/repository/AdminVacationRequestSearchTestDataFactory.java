@@ -15,7 +15,7 @@ import programmers.team6.domain.vacation.enums.VacationRequestStatus;
 
 public class AdminVacationRequestSearchTestDataFactory {
 	public static ApprovalStep genTestApprovalStep(VacationRequest vacationRequest, int step, String reason) {
-		return new ApprovalStep(null, vacationRequest, null, step, reason);
+		return new ApprovalStep(null, Member.builder().build(), vacationRequest, ApprovalStatus.PENDING, step, reason);
 	}
 
 	public static Code genTestCode(String groupCode, String code, String name) {
@@ -89,11 +89,8 @@ public class AdminVacationRequestSearchTestDataFactory {
 
 	public static ApprovalStep genApprovalStep(int step, ApprovalStatus approvalStatus, Member member,
 		VacationRequest vacationRequest) {
-		return ApprovalStep.builder()
-			.step(step)
-			.approvalStatus(approvalStatus)
-			.member(member)
-			.vacationRequest(vacationRequest)
-			.build();
+		return new ApprovalStep(
+			null, member, vacationRequest, approvalStatus, step, null
+		);
 	}
 }

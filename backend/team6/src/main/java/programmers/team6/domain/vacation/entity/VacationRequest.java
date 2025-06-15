@@ -169,4 +169,36 @@ public class VacationRequest extends BaseEntity {
 	public boolean isHalfDay() {
 		return this.type.getName().equals("반차");
 	}
+
+	public LocalDateTime getFrom() {
+		return from;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public Member getMember() {
+		return member;
+	}
+
+	public String getReason() {
+		return reason;
+	}
+
+	public VacationRequestStatus getStatus() {
+		return status;
+	}
+
+	public LocalDateTime getTo() {
+		return to;
+	}
+
+	public Code getType() {
+		return type;
+	}
+
+	public Integer getVersion() {
+		return version;
+	}
 }

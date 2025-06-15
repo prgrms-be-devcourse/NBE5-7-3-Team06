@@ -53,4 +53,11 @@ public class Dept extends BaseEntity {
 		return this.deptName.equals("인사팀");
 	}
 
+	public String getDeptName() {
+		return deptName;
+	}
+
+	public Long getId() {
+		return id;
+	}
 }

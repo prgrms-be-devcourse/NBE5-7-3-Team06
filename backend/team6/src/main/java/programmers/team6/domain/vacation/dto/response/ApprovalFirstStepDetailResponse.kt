@@ -14,5 +14,5 @@ data class ApprovalFirstStepDetailResponse(
     val to: LocalDateTime,
     val reason: String,
     val approverName: String,
-    val approvalReason: String
+    val approvalReason: String?
 )
