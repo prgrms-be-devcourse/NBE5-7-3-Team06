@@ -5,12 +5,12 @@ import jakarta.validation.constraints.Positive
 import programmers.team6.domain.vacation.enums.VacationCode
 import programmers.team6.global.validator.EnumValue
 
-@JvmRecord
+
 data class VacationStatisticsRequest(
-    @JvmField @field:Positive val year: Int,
-    @JvmField val name: String?,
-    @JvmField val deptId: Long?,
-    @JvmField @field:EnumValue(
+    @field:Positive val year: Int,
+    val name: String?,
+    val deptId: Long?,
+    @field:EnumValue(
         enumClass = VacationCode::class,
         fieldName = "code"
     ) val vacationCode: @NotEmpty String

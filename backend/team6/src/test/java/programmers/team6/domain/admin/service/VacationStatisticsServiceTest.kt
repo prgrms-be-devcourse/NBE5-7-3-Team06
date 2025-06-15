@@ -1,7 +1,6 @@
 package programmers.team6.domain.admin.service
 
 import io.mockk.mockk
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -22,7 +21,6 @@ import programmers.team6.mock.VacationRequestsReaderFake
 import programmers.team6.support.MemberMother
 import programmers.team6.support.TestVacationType
 import java.time.LocalDateTime
-import java.util.List
 
 internal class VacationStatisticsServiceTest {
 
