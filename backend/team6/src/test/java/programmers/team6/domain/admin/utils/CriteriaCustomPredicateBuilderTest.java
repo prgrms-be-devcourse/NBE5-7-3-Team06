@@ -30,13 +30,14 @@ class CriteriaCustomPredicateBuilderTest {
     private CriteriaBuilder cb;
     private From<Object, Object> root;
     private CriteriaCustomPredicateBuilder customPredicateBuilder;
-    private Predicate predicate = null;
+    private Predicate predicate;
 
     @BeforeEach
     void setUp() {
         this.cb = mock(CriteriaBuilder.class);
         this.root = mock(From.class);
         this.customPredicateBuilder = CriteriaCustomPredicateBuilder.builder(cb);
+        this.predicate = mock(Predicate.class);
     }
 
     @Nested
@@ -54,7 +55,7 @@ class CriteriaCustomPredicateBuilderTest {
             when(cb.greaterThanOrEqualTo(nullable(Path.class), any(LocalDateTime.class))).thenReturn(predicate);
             when(cb.lessThanOrEqualTo(nullable(Path.class), any(LocalDateTime.class))).thenReturn(predicate);
 
-            CriteriaCustomPredicateBuilder criteriaCustomPredicateBuilder = customPredicateBuilder.applyDateRangeFilter(root, null, null, from, to);
+            CriteriaCustomPredicateBuilder criteriaCustomPredicateBuilder = customPredicateBuilder.applyDateRangeFilter(root, mock(SingularAttribute.class), mock(SingularAttribute.class), from, to);
 
             // then
             assertThat(criteriaCustomPredicateBuilder.build()).hasSize(2);
@@ -65,7 +66,7 @@ class CriteriaCustomPredicateBuilderTest {
         @MethodSource("invalidFromAndToProvider")
         void fail_whenInvalidFromAndTo(LocalDateTime from, LocalDateTime to) {
             // when
-            CriteriaCustomPredicateBuilder criteriaCustomPredicateBuilder = customPredicateBuilder.applyDateRangeFilter(root, null, null, from, to);
+            CriteriaCustomPredicateBuilder criteriaCustomPredicateBuilder = customPredicateBuilder.applyDateRangeFilter(root, mock(SingularAttribute.class), mock(SingularAttribute.class), from, to);
 
             // then
             assertThat(criteriaCustomPredicateBuilder.build()).isEmpty();
@@ -83,7 +84,7 @@ class CriteriaCustomPredicateBuilderTest {
             when(cb.greaterThanOrEqualTo(nullable(Path.class), any(LocalDateTime.class))).thenReturn(predicate);
             when(cb.lessThanOrEqualTo(nullable(Path.class), any(LocalDateTime.class))).thenReturn(predicate);
 
-            CriteriaCustomPredicateBuilder criteriaCustomPredicateBuilder = customPredicateBuilder.applyDateRangeFilter(root, null, null, year, quarter);
+            CriteriaCustomPredicateBuilder criteriaCustomPredicateBuilder = customPredicateBuilder.applyDateRangeFilter(root, mock(SingularAttribute.class), mock(SingularAttribute.class), year, quarter);
 
             // then
             assertThat(criteriaCustomPredicateBuilder.build()).hasSize(2);
@@ -98,7 +99,7 @@ class CriteriaCustomPredicateBuilderTest {
         @MethodSource("invalidYearAndQuarterProvider")
         void fail_whenInvalidYearAndQuarter(Integer year, Quarter quarter) {
             // when
-            CriteriaCustomPredicateBuilder criteriaCustomPredicateBuilder = customPredicateBuilder.applyDateRangeFilter(root, null, null, year, quarter);
+            CriteriaCustomPredicateBuilder criteriaCustomPredicateBuilder = customPredicateBuilder.applyDateRangeFilter(root, mock(SingularAttribute.class), mock(SingularAttribute.class), year, quarter);
 
             // then
             assertThat(criteriaCustomPredicateBuilder.build()).isEmpty();
@@ -137,8 +138,8 @@ class CriteriaCustomPredicateBuilderTest {
         @DisplayName("조건 값이 유효하지 않을 때, 필터 무시")
         void fail_whenConditionValueIsInvalid() {
             // when
-            CriteriaCustomPredicateBuilder criteriaCustomPredicateBuilderAppliedEqualFilter = customPredicateBuilder.applyEqualFilter(root, null, null);
-            CriteriaCustomPredicateBuilder criteriaCustomPredicateBuilderAppliedNonEqualFilter = customPredicateBuilder.applyNonEqualFilter(root, null, null);
+            CriteriaCustomPredicateBuilder criteriaCustomPredicateBuilderAppliedEqualFilter = customPredicateBuilder.applyEqualFilter(root, null, mock(SingularAttribute.class));
+            CriteriaCustomPredicateBuilder criteriaCustomPredicateBuilderAppliedNonEqualFilter = customPredicateBuilder.applyNonEqualFilter(root, null, mock(SingularAttribute.class));
 
             // then
             assertThat(criteriaCustomPredicateBuilderAppliedEqualFilter.build()).isEmpty();
@@ -160,7 +161,7 @@ class CriteriaCustomPredicateBuilderTest {
 
             // when
             when(root.get(field)).thenReturn(path);
-
+            when(cb.notEqual(path, value)).thenReturn(predicate);
 
             CriteriaCustomPredicateBuilder<Object> criteriaCustomPredicateBuilder = CriteriaCustomPredicateBuilder.builder(cb).applyNonEqualFilter(root, value, field);
 
@@ -171,7 +172,7 @@ class CriteriaCustomPredicateBuilderTest {
         @DisplayName("조건 값이 유효하지 않을 때, 필터 무시")
         void fail_whenConditionValueIsInvalid() {
             // when
-            CriteriaCustomPredicateBuilder criteriaCustomPredicateBuilder = customPredicateBuilder.applyNonEqualFilter(root, null, null);
+            CriteriaCustomPredicateBuilder criteriaCustomPredicateBuilder = customPredicateBuilder.applyNonEqualFilter(root, null, mock(SingularAttribute.class));
 
             // then
             assertThat(criteriaCustomPredicateBuilder.build()).isEmpty();

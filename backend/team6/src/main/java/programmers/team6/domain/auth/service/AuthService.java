@@ -56,10 +56,7 @@ public class AuthService {
 			() -> new NotFoundException(NotFoundErrorCode.NOT_FOUND_DEPT)
 		);
 
-		Code position = codeRepository.findByGroupCodeAndCode("POSITION", memberSignUpRequest.position())
-			.orElseThrow(
-				() -> new NotFoundException(NotFoundErrorCode.NOT_FOUND_POSITION)
-			);
+		Code position = codeRepository.findByGroupCodeAndCode("POSITION", memberSignUpRequest.position());
 
 		if (isExistsByEmail(memberSignUpRequest.email())) {
 			throw new ConflictException(ConflictErrorCode.CONFLICT_EMAIL);

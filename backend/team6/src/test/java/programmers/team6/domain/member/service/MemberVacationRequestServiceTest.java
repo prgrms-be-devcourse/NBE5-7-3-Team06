@@ -3,6 +3,7 @@ package programmers.team6.domain.member.service;
 import static org.assertj.core.api.Assertions.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import programmers.team6.domain.admin.dto.response.ApprovalStepDetailUpdateResponse;
 import programmers.team6.domain.admin.dto.response.VacationRequestDetailReadResponse;
+import programmers.team6.domain.vacation.entity.ApprovalStep;
 import programmers.team6.domain.vacation.enums.ApprovalStatus;
 import programmers.team6.domain.vacation.enums.VacationRequestStatus;
 import programmers.team6.global.exception.code.NotFoundErrorCode;
@@ -50,7 +52,7 @@ class MemberVacationRequestServiceTest {
 		// when
 		vacationRequestReaderFake.putVacationRequestDetail(vacationRequestId,
 			new VacationRequestDetailReadResponse(vacationRequestId, from, to, memberId, name, deptName, posiiton,
-				reason, vacationType, status));
+				reason, vacationType, status,Collections.emptyList()));
 
 		vacationRequestReaderFake.putApprovalStep(vacationRequestId,
 			List.of(new ApprovalStepDetailUpdateResponse("name", "reason", ApprovalStatus.PENDING)));
@@ -60,13 +62,13 @@ class MemberVacationRequestServiceTest {
 		// then
 		VacationRequestDetailReadResponse result = memberVacationRequestService.selectVacationRequestDetailById(
 			vacationRequestId, memberId);
-		assertThat(result).extracting(VacationRequestDetailReadResponse::id, VacationRequestDetailReadResponse::from,
-				VacationRequestDetailReadResponse::to, VacationRequestDetailReadResponse::memberId,
-				VacationRequestDetailReadResponse::name, VacationRequestDetailReadResponse::deptName,
-				VacationRequestDetailReadResponse::position, VacationRequestDetailReadResponse::reason,
-				VacationRequestDetailReadResponse::vacationType, VacationRequestDetailReadResponse::vacationRequestStatus)
+		assertThat(result).extracting(VacationRequestDetailReadResponse::getId, VacationRequestDetailReadResponse::getFrom,
+				VacationRequestDetailReadResponse::getTo, VacationRequestDetailReadResponse::getMemberId,
+				VacationRequestDetailReadResponse::getName, VacationRequestDetailReadResponse::getDeptName,
+				VacationRequestDetailReadResponse::getPosition, VacationRequestDetailReadResponse::getReason,
+				VacationRequestDetailReadResponse::getVacationType, VacationRequestDetailReadResponse::getVacationRequestStatus)
 			.containsExactly(memberId, from, to, memberId, name, deptName, posiiton, reason, vacationType, status);
-		assertThat(result.approvalStepDetailUpdateResponses()).hasSize(1);
+		assertThat(result.getApprovalStepDetailUpdateResponses()).hasSize(1);
 	}
 
 	@Test
@@ -86,9 +88,8 @@ class MemberVacationRequestServiceTest {
 	void should_throwNotFoundException_when_vacationRequestHasEmptyApprovalSteps() {
 		// given & when
 		vacationRequestReaderFake.putVacationRequestDetail(0L,
-
-			new VacationRequestDetailReadResponse(0L, null, null, null, null, null, null, null, null, null));
-		vacationRequestReaderFake.putApprovalStep(0L, Collections.emptyList());
+			new VacationRequestDetailReadResponse(0L, LocalDateTime.now(), LocalDateTime.now().plusDays(1), 0l, "", "", "", "", "", VacationRequestStatus.IN_PROGRESS,
+				Collections.emptyList()));
 
 		MemberVacationRequestService memberVacationRequestService = new MemberVacationRequestService(
 			vacationRequestReaderFake);
@@ -104,7 +105,9 @@ class MemberVacationRequestServiceTest {
 		Long givenMemberId = 0L;
 		Long findMemberId = 1L;
 		vacationRequestReaderFake.putVacationRequestDetail(0L,
-			new VacationRequestDetailReadResponse(0L, null, null, findMemberId, null, null, null, null, null, null));
+			new VacationRequestDetailReadResponse(0L, LocalDateTime.now(), LocalDateTime.now().plusDays(1),
+				findMemberId, "", "", "", "", "", VacationRequestStatus.IN_PROGRESS,
+				List.of(new ApprovalStepDetailUpdateResponse("a", "b", ApprovalStatus.PENDING))));
 
 		vacationRequestReaderFake.putApprovalStep(0L, List.of(new ApprovalStepDetailUpdateResponse(null, null, null)));
 

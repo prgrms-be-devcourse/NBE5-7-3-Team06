@@ -19,11 +19,7 @@ public class AdminVacationRequestSearchTestDataFactory {
 	}
 
 	public static Code genTestCode(String groupCode, String code, String name) {
-		return Code.builder()
-			.groupCode(groupCode)
-			.code(code)
-			.name(name)
-			.build();
+		return new Code(groupCode, code, name);
 	}
 
 	public static List<Code> genTestCodeList(String groupCode, int cnt, String prefixName) {

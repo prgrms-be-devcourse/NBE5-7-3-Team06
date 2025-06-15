@@ -16,7 +16,7 @@ public class MemberVacationRequestService {
 
 	public VacationRequestDetailReadResponse selectVacationRequestDetailById(Long vacationRequestId, Long memberId) {
 		VacationRequestDetailReadResponse details = vacationRequestReader.readDetailFrom(vacationRequestId);
-		if (!memberId.equals(details.memberId())) {
+		if (!memberId.equals(details.getMemberId())) {
 			throw new ForbiddenException(ForbiddenErrorCode.FORBIDDEN_NO_AUTHORITY);
 		}
 		return details;
