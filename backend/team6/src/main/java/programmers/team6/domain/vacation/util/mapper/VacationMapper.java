@@ -11,7 +11,7 @@ import programmers.team6.domain.vacation.dto.request.VacationCreateRequestDto;
 import programmers.team6.domain.vacation.dto.response.VacationCreateResponseDto;
 import programmers.team6.domain.vacation.dto.response.VacationInfoSelectResponseDto;
 import programmers.team6.domain.vacation.dto.response.VacationListResponseDto;
-import programmers.team6.domain.vacation.dto.request.VacationUpdateResponseDto;
+import programmers.team6.domain.vacation.dto.response.VacationUpdateResponseDto;
 import programmers.team6.domain.vacation.entity.VacationInfo;
 import programmers.team6.domain.vacation.entity.VacationRequest;
 import programmers.team6.domain.vacation.enums.VacationRequestStatus;
@@ -20,10 +20,11 @@ import programmers.team6.domain.vacation.enums.VacationRequestStatus;
 public class VacationMapper {
 	// VacationInfo → VacationInfoSelectResponseDto
 	public VacationInfoSelectResponseDto toVacationInfoSelectResponseDto(VacationInfo vacationInfo) {
-		return VacationInfoSelectResponseDto.builder()
-			.totalCount(vacationInfo.getTotalCount())
-			.useCount(vacationInfo.getUseCount())
-			.build();
+		return new VacationInfoSelectResponseDto(
+			vacationInfo.getTotalCount(),
+			vacationInfo.getUseCount()
+			);
+
 	}
 
 	// VacationCreateRequestDto → VacationRequest

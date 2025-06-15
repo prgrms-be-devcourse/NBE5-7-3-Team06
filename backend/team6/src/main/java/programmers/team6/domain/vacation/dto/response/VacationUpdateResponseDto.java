@@ -1,4 +1,4 @@
-package programmers.team6.domain.vacation.dto.request;
+package programmers.team6.domain.vacation.dto.response;
 
 import java.time.LocalDateTime;
 

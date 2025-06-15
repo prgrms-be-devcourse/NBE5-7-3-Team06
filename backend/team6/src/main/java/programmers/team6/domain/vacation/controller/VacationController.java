@@ -25,7 +25,7 @@ import programmers.team6.domain.vacation.dto.response.VacationInfoSelectResponse
 import programmers.team6.domain.vacation.dto.response.VacationListResponseDto;
 import programmers.team6.domain.vacation.dto.response.VacationRequestCalendarResponse;
 import programmers.team6.domain.vacation.dto.request.VacationUpdateRequestDto;
-import programmers.team6.domain.vacation.dto.request.VacationUpdateResponseDto;
+import programmers.team6.domain.vacation.dto.response.VacationUpdateResponseDto;
 import programmers.team6.domain.vacation.service.VacationService;
 
 @Slf4j

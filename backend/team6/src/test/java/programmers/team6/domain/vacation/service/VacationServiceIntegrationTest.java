@@ -25,7 +25,7 @@ import programmers.team6.domain.vacation.dto.response.VacationCreateResponseDto;
 import programmers.team6.domain.vacation.dto.response.VacationInfoSelectResponseDto;
 import programmers.team6.domain.vacation.dto.response.VacationRequestCalendarResponse;
 import programmers.team6.domain.vacation.dto.request.VacationUpdateRequestDto;
-import programmers.team6.domain.vacation.dto.request.VacationUpdateResponseDto;
+import programmers.team6.domain.vacation.dto.response.VacationUpdateResponseDto;
 import programmers.team6.domain.vacation.entity.VacationInfo;
 import programmers.team6.domain.vacation.entity.VacationRequest;
 import programmers.team6.domain.vacation.enums.VacationCode;
