@@ -92,11 +92,11 @@ public class VacationController {
 
 		boolean success = vacationService.cancelVacationRequest(memberId, requestId);
 
-		VacationCancelResponseDto response = VacationCancelResponseDto.builder()
-			.requestId(requestId)
-			.success(success)
-			.message("휴가 신청이 성공적으로 취소되었습니다.")
-			.build();
+		VacationCancelResponseDto response = new VacationCancelResponseDto(
+			requestId,
+			success,
+			"휴가 신청이 성공적으로 취소되었습니다."
+			);
 		return ResponseEntity.ok(response);
 	}
 
