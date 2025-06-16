@@ -63,4 +63,5 @@ open class Member(
 
     val isHrMember: Boolean
         get() = this.dept != null && dept!!.isHrDept
+
 }
