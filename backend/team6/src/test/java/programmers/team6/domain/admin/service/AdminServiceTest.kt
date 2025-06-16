@@ -100,7 +100,7 @@ internal class AdminServiceTest {
             vacationRequest.reason shouldBe vacationRequestDetailUpdateRequest.reason
 
             assertThat(approvalSteps).hasSize(3)
-                .extracting<String?, RuntimeException?>(ThrowingExtractor { obj: ApprovalStep? -> obj!!.getReason() })
+                .extracting<String?, RuntimeException?>(ThrowingExtractor { obj: ApprovalStep? -> obj!!.reason })
                 .containsExactly("r1", "r2", "r3")
         }
 
@@ -195,7 +195,7 @@ internal class AdminServiceTest {
             )
 
             // then
-            assertThatThrownBy( {
+            assertThatThrownBy({
                 adminService.updateVacationRequestDetailById(
                     0L,
                     vacationRequestDetailUpdateRequest

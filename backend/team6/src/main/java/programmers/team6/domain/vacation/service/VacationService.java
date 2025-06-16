@@ -68,7 +68,7 @@ public class VacationService {
 		getMemberById(memberId);
 
 		VacationInfo vacationInfo = vacationInfoRepository.findByMemberIdAndVacationType(memberId,
-			VacationCode.ANNUAL.getCode()).orElseThrow(() -> new RuntimeException("휴가 정보를 찾을 수 없습니다."));
+			VacationCode.ANNUAL.getCode());
 
 		return vacationMapper.toVacationInfoSelectResponseDto(vacationInfo);
 	}
@@ -231,8 +231,8 @@ public class VacationService {
 
 		// 결재자 정보 조회
 		ApprovalStep approvalStep = approvalStepRepository.findFirstByVacationRequestOrderByStepAsc(
-				vacationRequest)
-			.orElseThrow(() -> new RuntimeException("결재 단계 정보를 찾을 수 없습니다."));
+			vacationRequest);
+		// .orElseThrow(() -> new RuntimeException("결재 단계 정보를 찾을 수 없습니다."));
 
 		// 응답 DTO 생성
 		return vacationMapper.toVacationUpdateResponseDto(

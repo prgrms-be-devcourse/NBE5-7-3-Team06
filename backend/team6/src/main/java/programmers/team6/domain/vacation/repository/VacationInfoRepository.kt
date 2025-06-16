@@ -44,7 +44,7 @@ interface VacationInfoRepository : JpaRepository<VacationInfo, Int> {
         excludeRequestId: Long?
     ): Optional<Double?>?
 
-    fun findByMemberIdAndVacationType(memberId: Long, vacationType: String): Optional<VacationInfo>
+    fun findByMemberIdAndVacationType(memberId: Long, vacationType: String): VacationInfo?
 
     @Query(
         ("SELECT vi "

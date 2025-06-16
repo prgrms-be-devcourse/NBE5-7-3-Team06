@@ -12,7 +12,7 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "members")
-open class Member (
+open class Member(
 
     @field:Column(nullable = false)
     val name: String,
@@ -30,7 +30,7 @@ open class Member (
 
     role: Role,
 
-) : BaseEntity() {
+    ) : BaseEntity() {
     @Id
     @Column(name = "member_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,7 +52,7 @@ open class Member (
         if (_role != Role.PENDING) {
             throw BadRequestException(BadRequestErrorCode.BAD_REQUEST_MEMBER_ROLE)
         }
-       _role =  Role.USER
+        _role = Role.USER
     }
 
     fun validateDeletableOnReject() {

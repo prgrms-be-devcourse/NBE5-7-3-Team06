@@ -9,31 +9,35 @@ public enum TestVacationType {
 	ANNUAL {
 		@Override
 		public Code toCode() {
-			return new Code(GroupCode.VACATION_TYPE.getCode(), VacationCode.ANNUAL.getCode(), VacationCode.ANNUAL.name());
+			return new Code(GroupCode.VACATION_TYPE.getCode(), VacationCode.ANNUAL.getCode(),
+				VacationCode.ANNUAL.name());
 		}
 	},
 	REWARD {
 		@Override
 		public Code toCode() {
-			return new Code(GroupCode.VACATION_TYPE.getCode(), VacationCode.REWARD.getCode(), VacationCode.REWARD.name());
+			return new Code(GroupCode.VACATION_TYPE.getCode(), VacationCode.REWARD.getCode(),
+				VacationCode.REWARD.name());
 		}
 	},
 	OFFICIAL {
 		@Override
 		public Code toCode() {
-			return new Code(GroupCode.VACATION_TYPE.getCode(), VacationCode.OFFICIAL.getCode(), VacationCode.OFFICIAL.name());
+			return new Code(GroupCode.VACATION_TYPE.getCode(), VacationCode.OFFICIAL.getCode(),
+				VacationCode.OFFICIAL.name());
 		}
 	},
 	CONGRATULATORY {
 		@Override
 		public Code toCode() {
-			return new Code(GroupCode.VACATION_TYPE.getCode(), VacationCode.CONGRATULATORY.getCode(), VacationCode.CONGRATULATORY.name());
+			return new Code(GroupCode.VACATION_TYPE.getCode(), VacationCode.CONGRATULATORY.getCode(),
+				VacationCode.CONGRATULATORY.name());
 		}
 	},
 	HALP {
 		@Override
 		public Code toCode() {
-			return new Code(GroupCode.VACATION_TYPE.getCode(),"05", "반차");
+			return new Code(GroupCode.VACATION_TYPE.getCode(), "05", "반차");
 		}
 	};
 

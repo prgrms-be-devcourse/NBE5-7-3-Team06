@@ -51,7 +51,6 @@ class ApprovalStepRepositoryTests {
 	@Autowired
 	private VacationRequestRepository vacationRequestRepository;
 
-	private Long memberId;
 	private Long approverId;
 	private Long approvalfirstStepId;
 	private VacationRequest savedVacation1;
@@ -77,7 +76,6 @@ class ApprovalStepRepositoryTests {
 		Member approver = memberRepository.save(
 			new Member("홍길동", dept, savePosition04, LocalDateTime.of(2025, 1, 1, 0, 0), Role.USER)
 		);
-		memberId = member.getId();
 		approverId = approver.getId();
 		savedVacation1 = vacationRequestRepository.save(
 			VacationRequest.builder()
@@ -121,17 +119,18 @@ class ApprovalStepRepositoryTests {
 		);
 
 		savedApprovalFirstStep = approvalStepRepository.save(
-			new ApprovalStep(1, ApprovalStatus.APPROVED, approver, savedVacation1)
+			new ApprovalStep(null, approver, savedVacation1, ApprovalStatus.APPROVED, 1, null)
 		);
 		approvalfirstStepId = savedApprovalFirstStep.getId();
-		approvalStepRepository.save(new ApprovalStep(1, ApprovalStatus.APPROVED, approver, savedVacation2));
-		approvalStepRepository.save(new ApprovalStep(1, ApprovalStatus.REJECTED, approver, savedVacation3));
-		approvalStepRepository.save(new ApprovalStep(1, ApprovalStatus.PENDING, approver, savedVacation4));
+		approvalStepRepository.save(new ApprovalStep(null, approver, savedVacation2, ApprovalStatus.APPROVED, 1, null));
+		approvalStepRepository.save(new ApprovalStep(null, approver, savedVacation3, ApprovalStatus.REJECTED, 1, null));
+		approvalStepRepository.save(new ApprovalStep(null, approver, savedVacation4, ApprovalStatus.PENDING, 1, null));
 		savedApprovalSecondStep =
-			approvalStepRepository.save(new ApprovalStep(2, ApprovalStatus.APPROVED, approver, savedVacation1));
-		approvalStepRepository.save(new ApprovalStep(2, ApprovalStatus.APPROVED, approver, savedVacation2));
-		approvalStepRepository.save(new ApprovalStep(2, ApprovalStatus.REJECTED, approver, savedVacation3));
-		approvalStepRepository.save(new ApprovalStep(2, ApprovalStatus.WAITING, approver, savedVacation4));
+			approvalStepRepository.save(
+				new ApprovalStep(null, approver, savedVacation1, ApprovalStatus.APPROVED, 2, null));
+		approvalStepRepository.save(new ApprovalStep(null, approver, savedVacation2, ApprovalStatus.APPROVED, 2, null));
+		approvalStepRepository.save(new ApprovalStep(null, approver, savedVacation3, ApprovalStatus.REJECTED, 2, null));
+		approvalStepRepository.save(new ApprovalStep(null, approver, savedVacation4, ApprovalStatus.WAITING, 2, null));
 
 	}
 
@@ -209,7 +208,7 @@ class ApprovalStepRepositoryTests {
 
 		// when
 		ApprovalStep findApproval = approvalStepRepository.findByIdAndMemberIdAndStep(
-			approvalfirstStepId, approverId, 1).orElseThrow();
+			approvalfirstStepId, approverId, 1);
 
 		// then
 		assertThat(findApproval.getId()).isEqualTo(savedApprovalFirstStep.getId());
@@ -225,8 +224,7 @@ class ApprovalStepRepositoryTests {
 	void findByVacationRequestAndStep_test() {
 
 		// when
-		ApprovalStep findApproval = approvalStepRepository.findByVacationRequestAndStep(savedVacation1, 2)
-			.orElseThrow();
+		ApprovalStep findApproval = approvalStepRepository.findByVacationRequestAndStep(savedVacation1, 2);
 
 		// then
 		assertThat(findApproval.getId()).isEqualTo(savedApprovalSecondStep.getId());

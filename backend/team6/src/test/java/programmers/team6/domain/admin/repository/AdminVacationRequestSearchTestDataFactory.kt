@@ -8,11 +8,18 @@ import programmers.team6.domain.vacation.entity.ApprovalStep
 import programmers.team6.domain.vacation.entity.VacationRequest
 import programmers.team6.domain.vacation.enums.ApprovalStatus
 import programmers.team6.domain.vacation.enums.VacationRequestStatus
+import programmers.team6.support.MemberMother
 import java.time.LocalDateTime
 
 object AdminVacationRequestSearchTestDataFactory {
     fun genTestApprovalStep(vacationRequest: VacationRequest, step: Int, reason: String): ApprovalStep {
-        return ApprovalStep(null, vacationRequest, null, step, reason)
+        return ApprovalStep(
+            vacationRequest = vacationRequest,
+            member = MemberMother.withId(1),
+            step = step,
+            approvalStatus = ApprovalStatus.PENDING,
+            reason = reason
+        )
     }
 
     fun genTestCode(groupCode: String, code: String, name: String): Code {
@@ -86,6 +93,12 @@ object AdminVacationRequestSearchTestDataFactory {
         step: Int, approvalStatus: ApprovalStatus, member: Member,
         vacationRequest: VacationRequest
     ): ApprovalStep {
-        return ApprovalStep(member, vacationRequest, approvalStatus, step, "")
+        return ApprovalStep(
+            vacationRequest = vacationRequest,
+            member = member,
+            step = step,
+            approvalStatus = approvalStatus,
+            reason = ""
+        )
     }
 }
