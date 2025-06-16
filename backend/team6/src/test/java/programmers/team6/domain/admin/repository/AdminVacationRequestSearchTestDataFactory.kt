@@ -1,95 +1,91 @@
-package programmers.team6.domain.admin.repository;
+package programmers.team6.domain.admin.repository
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import programmers.team6.domain.admin.entity.Code
+import programmers.team6.domain.admin.entity.Dept
+import programmers.team6.domain.member.entity.Member
+import programmers.team6.domain.member.enums.Role
+import programmers.team6.domain.vacation.entity.ApprovalStep
+import programmers.team6.domain.vacation.entity.VacationRequest
+import programmers.team6.domain.vacation.enums.ApprovalStatus
+import programmers.team6.domain.vacation.enums.VacationRequestStatus
+import java.time.LocalDateTime
 
-import programmers.team6.domain.admin.entity.Code;
-import programmers.team6.domain.admin.entity.Dept;
-import programmers.team6.domain.member.entity.Member;
-import programmers.team6.domain.member.enums.Role;
-import programmers.team6.domain.vacation.entity.ApprovalStep;
-import programmers.team6.domain.vacation.entity.VacationRequest;
-import programmers.team6.domain.vacation.enums.ApprovalStatus;
-import programmers.team6.domain.vacation.enums.VacationRequestStatus;
+object AdminVacationRequestSearchTestDataFactory {
+    fun genTestApprovalStep(vacationRequest: VacationRequest, step: Int, reason: String): ApprovalStep {
+        return ApprovalStep(null, vacationRequest, null, step, reason)
+    }
 
-public class AdminVacationRequestSearchTestDataFactory {
-	public static ApprovalStep genTestApprovalStep(VacationRequest vacationRequest, int step, String reason) {
-		return new ApprovalStep(null, vacationRequest, null, step, reason);
-	}
+    fun genTestCode(groupCode: String, code: String, name: String): Code {
+        return Code(groupCode, code, name)
+    }
 
-	public static Code genTestCode(String groupCode, String code, String name) {
-		return new Code(groupCode, code, name);
-	}
+    fun genTestCodeList(groupCode: String, cnt: Int, prefixName: String): MutableList<Code> {
+        val result: MutableList<Code> = mutableListOf()
+        for (i in 0..cnt) {
+            result.add(genTestCode(groupCode, String.format("%02d", i), String.format("%s%d", prefixName, i)))
+        }
+        return result
+    }
 
-	public static List<Code> genTestCodeList(String groupCode, int cnt, String prefixName) {
-		List<Code> result = new ArrayList<>();
-		for (int i = 0; i <= cnt; i++) {
-			result.add(genTestCode(groupCode, String.format("%02d", i), String.format("%s%d", prefixName, i)));
-		}
-		return result;
-	}
+    fun genTestDept(deptName: String): Dept {
+        return Dept(deptName, null)
+    }
 
-	public static Dept genTestDept(String deptName) {
-		return Dept.builder()
-			.deptName(deptName)
-			.build();
-	}
+    fun genTestDeptList(cnt: Int, prefixDeptName: String): MutableList<Dept> {
+        val result: MutableList<Dept> = mutableListOf()
+        for (i in 0..<cnt) {
+            result.add(genTestDept(String.format("%s%d", prefixDeptName, i)))
+        }
+        return result
+    }
 
-	public static List<Dept> genTestDeptList(int cnt, String prefixDeptName) {
-		List<Dept> result = new ArrayList<>();
-		for (int i = 0; i < cnt; i++) {
-			result.add(genTestDept(String.format("%s%d", prefixDeptName, i)));
-		}
-		return result;
-	}
+    fun genTestMember(name: String, dept: Dept, positionCode: Code): Member {
+        return Member(name, dept, positionCode, LocalDateTime.now(), Role.USER)
+    }
 
-	public static Member genTestMember(String name, Dept dept, Code positionCode) {
-		return Member.builder()
-			.name(name)
-			.dept(dept)
-			.position(positionCode)
-			.role(Role.USER)
-			.joinDate(LocalDateTime.now())
-			.build();
-	}
+    fun genTestMemberList(
+        cnt: Int,
+        startName: Char,
+        depts: List<Dept>,
+        positionCodes: List<Code>
+    ): MutableList<Member> {
+        val result: MutableList<Member> = mutableListOf()
+        for (i in 0..<cnt) {
+            result.add(
+                genTestMember(
+                    String.format("%s%d", (startName.code + i).toChar(), i),
+                    depts.get(i),
+                    positionCodes.get(i)
+                )
+            )
+        }
+        return result
+    }
 
-	public static List<Member> genTestMemberList(int cnt, char startName, List<Dept> depts, List<Code> positionCodes) {
-		List<Member> result = new ArrayList<>();
-		for (int i = 0; i < cnt; i++) {
-			result.add(
-				genTestMember(String.format("%s%d", (char)(startName + i), i), depts.get(i), positionCodes.get(i)));
-		}
-		return result;
-	}
+    fun genTestMemberList(
+        cnt: Int,
+        prefixName: String,
+        depts: List<Dept>,
+        positionCode: Code
+    ): MutableList<Member> {
+        val result: MutableList<Member> = mutableListOf()
+        for (i in 0..<cnt) {
+            result.add(genTestMember(String.format("%s%d", prefixName, i), depts.get(i), positionCode))
+        }
+        return result
+    }
 
-	public static List<Member> genTestMemberList(int cnt, String prefixName, List<Dept> depts, Code positionCode) {
-		List<Member> result = new ArrayList<>();
-		for (int i = 0; i < cnt; i++) {
-			result.add(genTestMember(String.format("%s%d", prefixName, i), depts.get(i), positionCode));
-		}
-		return result;
-	}
+    fun genVacationRequest(
+        member: Member, start: LocalDateTime, end: LocalDateTime,
+        reason: String, type: Code, status: VacationRequestStatus
+    ): VacationRequest {
+        return VacationRequest(member, start, end, reason, type, status, 0)
+    }
 
-	public static VacationRequest genVacationRequest(Member member, LocalDateTime start, LocalDateTime end,
-		String reason, Code type, VacationRequestStatus status) {
-		return VacationRequest.builder()
-			.member(member)
-			.from(start)
-			.to(end)
-			.reason(reason)
-			.type(type)
-			.status(status)
-			.build();
-	}
-
-	public static ApprovalStep genApprovalStep(int step, ApprovalStatus approvalStatus, Member member,
-		VacationRequest vacationRequest) {
-		return ApprovalStep.builder()
-			.step(step)
-			.approvalStatus(approvalStatus)
-			.member(member)
-			.vacationRequest(vacationRequest)
-			.build();
-	}
+    fun genApprovalStep(
+        step: Int, approvalStatus: ApprovalStatus, member: Member,
+        vacationRequest: VacationRequest
+    ): ApprovalStep {
+        return ApprovalStep(member, vacationRequest, approvalStatus, step, "")
+    }
 }

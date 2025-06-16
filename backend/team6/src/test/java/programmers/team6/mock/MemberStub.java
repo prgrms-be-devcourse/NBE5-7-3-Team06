@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import programmers.team6.domain.admin.entity.Code;
 import programmers.team6.domain.admin.entity.Dept;
+import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.member.enums.Role;
 
 public class MemberStub extends Member {
