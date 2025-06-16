@@ -1,18 +1,11 @@
-package programmers.team6.domain.admin.dto.request;
+package programmers.team6.domain.admin.dto.request
 
-import java.util.List;
+import jakarta.validation.constraints.NotEmpty
+import jakarta.validation.constraints.NotNull
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-
-public record VacationInfoUpdateTotalCountRequestsList(
-	@NotEmpty @NotNull List<@Valid VacationInfoUpdateTotalCountRequests> requests) {
-
-	public List<Integer> vacationIds() {
-		return requests.stream()
-			.map(VacationInfoUpdateTotalCountRequests::getIds)
-			.flatMap(List::stream)
-			.toList();
-	}
+data class VacationInfoUpdateTotalCountRequestsList(
+    @field:NotEmpty @field:NotNull
+    val requests: List<VacationInfoUpdateTotalCountRequests>
+) {
+    fun vacationIds(): List<Int> = requests.map { it.ids }.flatten()
 }

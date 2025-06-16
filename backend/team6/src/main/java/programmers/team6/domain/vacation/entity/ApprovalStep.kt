@@ -82,7 +82,7 @@ class ApprovalStep(
     fun cancelVacation() = vacationRequest.cancel()
 
     val isHalfDay: Boolean
-        get() = vacationRequest.isHalfDay
+        get() = vacationRequest.isHalfDay()
 
     val isHrApprover: Boolean
         get() = member.isHrMember

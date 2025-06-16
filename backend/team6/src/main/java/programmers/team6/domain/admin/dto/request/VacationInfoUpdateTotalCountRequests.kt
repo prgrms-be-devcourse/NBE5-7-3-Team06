@@ -1,27 +1,18 @@
-package programmers.team6.domain.admin.dto.request;
+package programmers.team6.domain.admin.dto.request
 
-import java.util.List;
-import java.util.Optional;
+import jakarta.validation.constraints.NotEmpty
+import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.PositiveOrZero
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
+data class VacationInfoUpdateTotalCountRequests(
+    @field:NotNull @field:PositiveOrZero
+    val memberId: Long,
+    @field:NotNull @field:NotEmpty
+    val vacations: List<VacationInfoUpdateTotalCountRequest>
+) {
+    val ids: List<Int>
+        get() = vacations.stream().map(VacationInfoUpdateTotalCountRequest::id).toList()
 
-public record VacationInfoUpdateTotalCountRequests(
-	@NotNull @PositiveOrZero Long memberId,
-	@NotNull @NotEmpty List<@Valid VacationInfoUpdateTotalCountRequest> vacations) {
+    fun getTarget(type: String): VacationInfoUpdateTotalCountRequest? = vacations.firstOrNull { it.isSameType(type) }
 
-	public List<Integer> getIds() {
-		return vacations.stream().map(VacationInfoUpdateTotalCountRequest::id).toList();
-	}
-
-	public Optional<VacationInfoUpdateTotalCountRequest> getTarget(String type) {
-		for (VacationInfoUpdateTotalCountRequest vacation : vacations) {
-			if (vacation.isSameType(type)) {
-				return Optional.of(vacation);
-			}
-		}
-		return Optional.empty();
-	}
 }

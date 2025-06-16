@@ -1,6 +1,9 @@
-package programmers.team6.domain.admin.dto.response;
+package programmers.team6.domain.admin.dto.response
 
-import programmers.team6.domain.vacation.enums.ApprovalStatus;
+import programmers.team6.domain.vacation.enums.ApprovalStatus
 
-public record ApprovalStepDetailUpdateResponse(String name, String reason, ApprovalStatus approvalStatus) {
-}
+data class ApprovalStepDetailUpdateResponse(
+    val name: String,
+    val reason: String,
+    val approvalStatus: ApprovalStatus
+)

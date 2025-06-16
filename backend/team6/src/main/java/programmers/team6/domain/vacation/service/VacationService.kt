@@ -47,7 +47,7 @@ class VacationService(
         val vacationInfo = vacationInfoRepository.findByMemberIdAndVacationType(
             memberId,
             VacationCode.ANNUAL.code
-        ).orElse(null) ?: throw RuntimeException("휴가 정보를 찾을 수 없습니다.")
+        ) ?: throw RuntimeException("휴가 정보를 찾을 수 없습니다.")
 
         return vacationMapper.toVacationInfoSelectResponseDto(vacationInfo)
     }
@@ -56,7 +56,7 @@ class VacationService(
     fun requestVacation(memberId: Long, requestDto: VacationCreateRequestDto): VacationCreateResponseDto {
         // 신청자 정보 조회
         val member = memberRepository.findByIdWithDeptAndLeader(memberId)
-            ?.orElse(null) ?: throw RuntimeException("멤버 정보를 찾을 수 없습니다.")
+            .orElse(null) ?: throw RuntimeException("멤버 정보를 찾을 수 없습니다.")
 
         // 시작일(from)과 종료일(to) 설정 (진행중이거나 승인된 휴가 기간내에 신청 불가능하게)
         if (vacationRequestRepository.countInRangeFromBetweenToBy(
@@ -86,11 +86,11 @@ class VacationService(
 
         // 부서장 조회 (결재자)
         val dept = member.dept
-        val approver = dept.deptLeader
+        val approver = dept!!.deptLeader
 
         // 휴가 유형 코드 조회
         val vacationType = codeRepository.findByGroupCodeAndCode("VACATION_TYPE", requestDto.vacationType)
-            .orElse(null) ?: throw RuntimeException("잘못된 휴가 유형입니다.")
+            ?: throw RuntimeException("잘못된 휴가 유형입니다.")
 
         // 휴가 요청 상태 코드 (기본 대기 상태)
         val status = VacationRequestStatus.IN_PROGRESS
@@ -102,7 +102,7 @@ class VacationService(
         vacationRequestRepository.save(vacationRequest)
 
         // 결재 단계 생성
-        approvalStepService.saveApprovalStep(approver, vacationRequest)
+        approvalStepService.saveApprovalStep(approver!!, vacationRequest)
 
         // 응답 DTO 생성
         return vacationMapper.toVacationCreateResponseDto(
@@ -144,8 +144,9 @@ class VacationService(
         // 3. 결재 단계 정보 일괄 조회
         val requestIds: List<Long> = vacationRequests.mapNotNull { it.id }
 
-        val approvalStepMap: Map<Long, ApprovalStep> = approvalStepRepository.findFirstStepsByVacationRequestIds(requestIds)
-            .associateBy { it.vacationRequest.id!! }
+        val approvalStepMap: Map<Long, ApprovalStep> =
+            approvalStepRepository.findFirstStepsByVacationRequestIds(requestIds)
+                .associateBy { it.vacationRequest.id!! }
 
         // 4. DTO 변환
         val content = vacationRequests.map { request ->
@@ -201,7 +202,7 @@ class VacationService(
                 memberId,
                 getVacationInfoType(requestDto.vacationType),
                 requestId
-            ).orElse(null) ?: throw NotFoundException(NotFoundErrorCode.NOT_FOUND_VACATION_INFO)
+            )!!.orElse(null) ?: throw NotFoundException(NotFoundErrorCode.NOT_FOUND_VACATION_INFO)
 
         // 잔여 일수 초과 검증
         if (actualRemainCount < requestDays) {
@@ -210,14 +211,14 @@ class VacationService(
 
         // 휴가 유형 코드 조회
         val vacationType = codeRepository.findByGroupCodeAndCode("VACATION_TYPE", requestDto.vacationType)
-            .orElse(null) ?: throw RuntimeException("잘못된 휴가 유형입니다.")
+            ?: throw RuntimeException("잘못된 휴가 유형입니다.")
 
         // 수정 권한 검증 및 수정 처리
         vacationRequest.updateByMember(memberId, requestDto.from, requestDto.to, requestDto.reason, vacationType)
 
         // 결재자 정보 조회
         val approvalStep = approvalStepRepository.findFirstByVacationRequestOrderByStepAsc(vacationRequest)
-            .orElse(null) ?: throw RuntimeException("결재 단계 정보를 찾을 수 없습니다.")
+            ?: throw RuntimeException("결재 단계 정보를 찾을 수 없습니다.")
 
         // 응답 DTO 생성
         return vacationMapper.toVacationUpdateResponseDto(
