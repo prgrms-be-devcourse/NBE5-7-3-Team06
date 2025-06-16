@@ -267,8 +267,8 @@ public class VacationService {
 		MonthRange monthRange = getMonthRange(yearMonthStr);
 
 		return vacationRequestSearchRepository.findApprovedVacationsByMonth(VacationRequestStatus.APPROVED,
-			monthRange.start(),
-			monthRange.end(),
+			monthRange.start,
+			monthRange.end,
 			deptId);
 	}
 

@@ -1,34 +1,34 @@
+package programmers.team6.global.util
 
-package programmers.team6.global.util;
-
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.temporal.ChronoUnit;
-
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.AccessLevel
+import lombok.NoArgsConstructor
+import java.time.LocalDate
+import java.time.Period
+import java.time.temporal.ChronoUnit
+import kotlin.math.abs
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class DateUtil {
+object DateUtil {
+    @JvmStatic
+	fun isEqualsOrBefore(left: LocalDate, right: LocalDate): Boolean {
+        return left.isBefore(right) || left.isEqual(right)
+    }
 
-	public static boolean isEqualsOrBefore(LocalDate left, LocalDate right) {
-		return left.isBefore(right) || left.isEqual(right);
-	}
+    @JvmStatic
+	fun calcYearsOfService(now: LocalDate, joinDate: LocalDate): Int {
+        val period = Period.between(joinDate, now)
+        return abs(period.getYears())
+    }
 
-	public static int calcYearsOfService(LocalDate now, LocalDate joinDate) {
-		Period period = Period.between(joinDate, now);
-		return Math.abs(period.getYears());
-	}
+    fun calcDaysOfService(now: LocalDate, joinDate: LocalDate): Int {
+        return abs(ChronoUnit.DAYS.between(joinDate, now)).toInt()
+    }
 
-	public static int calcDaysOfService(LocalDate now, LocalDate joinDate) {
-		return (int) Math.abs(ChronoUnit.DAYS.between(joinDate, now));
-	}
+    fun lastDateFrom(date: LocalDate): LocalDate {
+        return date.withDayOfMonth(date.lengthOfMonth())
+    }
 
-	public static LocalDate lastDateFrom(LocalDate date){
-		return date.withDayOfMonth(date.lengthOfMonth());
-	}
-
-	public static LocalDate startDateFrom(LocalDate date){
-		return date.withDayOfMonth(1);
-	}
+    fun startDateFrom(date: LocalDate): LocalDate {
+        return date.withDayOfMonth(1)
+    }
 }
