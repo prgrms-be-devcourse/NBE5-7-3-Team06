@@ -9,9 +9,9 @@ import programmers.team6.global.exception.code.NotFoundErrorCode
 import programmers.team6.global.exception.customException.NotFoundException
 
 internal class DeptServiceTest {
-    var deptRepository = mockk<DeptRepository>()
+    private var deptRepository = mockk<DeptRepository>()
 
-    var deptService = DeptService(deptRepository)
+    private var deptService = DeptService(deptRepository)
 
     @Test
     fun should_throwNotFoundException_when_givenNotExistDeptName() {
