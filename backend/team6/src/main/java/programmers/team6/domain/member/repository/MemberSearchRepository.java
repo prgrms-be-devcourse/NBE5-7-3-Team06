@@ -20,7 +20,6 @@ import programmers.team6.global.querybuilder.CriteriaCustomPredicateBuilder;
 import programmers.team6.global.querybuilder.CriteriaCustomQueryBuilder;
 import programmers.team6.global.querybuilder.QueryUtils;
 import programmers.team6.domain.member.entity.Member;
-import programmers.team6.domain.member.entity.Member_;
 import programmers.team6.domain.member.enums.Role;
 
 @Repository
@@ -93,7 +92,7 @@ public class MemberSearchRepository {
 
 		List<Predicate> predicates = CriteriaCustomPredicateBuilder.<Member>builder(criteriaBuilder)
 			.applyLikeFilter(from, name, Member_.name)
-			.applyEqualFilter(from, Role.USER, Member_.role)
+			.applyEqualFilter(from, Role.USER, Member_._role)
 			.applyEqualFilter(from, deptId, Member_.dept, Dept_.id)
 			.build();
 
@@ -108,7 +107,7 @@ public class MemberSearchRepository {
 		return count(rootBuilder -> rootBuilder.from(Member.class),
 			(predicatesBuilder, from) ->
 				predicatesBuilder.applyLikeFilter(from, name, Member_.name)
-					.applyNonEqualFilter(from, Role.PENDING, Member_.role));
+					.applyNonEqualFilter(from, Role.PENDING, Member_._role));
 	}
 
 	private <T> long count(Function<CriteriaQuery<Long>, Root<T>> rootBuilder,
