@@ -1,82 +1,51 @@
-package programmers.team6.domain.vacation.rule;
+package programmers.team6.domain.vacation.rule
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.stereotype.Component
+import programmers.team6.domain.member.entity.Member
+import programmers.team6.domain.vacation.entity.VacationInfo
+import programmers.team6.domain.vacation.entity.VacationInfoLog
+import programmers.team6.domain.vacation.enums.VacationCode
+import java.time.LocalDate
 
-import org.springframework.stereotype.Component;
 
-import programmers.team6.domain.member.entity.Member;
-import programmers.team6.domain.vacation.entity.VacationInfo;
-import programmers.team6.domain.vacation.entity.VacationInfoLog;
-import programmers.team6.domain.vacation.enums.VacationCode;
+private const val DEFAULT_GRANT_DAYS = 0
+private const val DEFAULT_INIT_SERVICE_YEARS = 1
 
 @Component
-public class VacationGrantRuleFinder {
+open class VacationGrantRuleFinder {
 
-	public VacationGrantRule find(String type) {
-		VacationCode vacationCode = VacationCode.findByCode(type).orElseThrow();
-		return find(vacationCode);
-	}
+    fun find(type: String): VacationGrantRule {
+        val vacationCode = VacationCode.findByCode(type).orElseThrow()
+        return find(vacationCode)
+    }
 
-	public VacationGrantRule find(VacationCode type) {
-		switch (type) {
-			case VacationCode.ANNUAL -> {
-				return AnnualVacationGrantRule.statutory();
-			}
-			default -> {
-				return new DefaultRule(type);
-			}
-		}
-	}
+    fun find(type: VacationCode): VacationGrantRule =
+        when (type) {
+            VacationCode.ANNUAL -> AnnualVacationGrantRule.statutory()
+            else -> DefaultRule(type)
+        }
 
-	public VacationGrantRules findAll() {
-		List<VacationGrantRule> rules = new ArrayList<>();
-		for (VacationCode value : VacationCode.values()) {
-			rules.add(find(value));
-		}
-		return new VacationGrantRules(rules);
-	}
+    open fun findAll(): VacationGrantRules =
+        VacationGrantRules(VacationCode.entries.map(::find))
 
-	public static class DefaultRule implements VacationGrantRule {
+    class DefaultRule(private val type: VacationCode) : VacationGrantRule {
 
-		private static final Integer DEFAULT_GRANT_DAYS = 0;
-		private static final Integer DEFAULT_INITSERVICE_YEARS = 1;
+        override fun canUpdate(totalCount: Double) = true
 
-		private final VacationCode type;
+        override fun createVacationInfo(memberId: Long): VacationInfo =
+            VacationInfo(0.0, type.code, memberId)
 
-		public DefaultRule(VacationCode type) {
-			this.type = type;
-		}
+        override fun isSameType(vacationCode: VacationCode?): Boolean =
+            this.type == vacationCode
 
-		@Override
-		public boolean canUpdate(double totalCount) {
-			return true;
-		}
+        override fun getBaseLineDates(date: LocalDate): List<LocalDate> =
+            listOf(date.minusYears(DEFAULT_INIT_SERVICE_YEARS.toLong()))
 
-		@Override
-		public VacationInfo createVacationInfo(Long memberId) {
-			return new VacationInfo(0, type.getCode(), memberId);
-		}
+        override val typeCode: String
+            get() = type.code
 
-		@Override
-		public boolean isSameType(VacationCode vacationCode) {
-			return this.type == vacationCode;
-		}
+        override fun grant(date: LocalDate, member: Member, info: VacationInfo): VacationInfoLog =
+            info.init(DEFAULT_GRANT_DAYS.toDouble())
 
-		@Override
-		public List<LocalDate> getBaseLineDates(LocalDate date) {
-			return List.of(date.minusYears(DEFAULT_INITSERVICE_YEARS));
-		}
-
-		@Override
-		public String getTypeCode() {
-			return type.getCode();
-		}
-
-		@Override
-		public VacationInfoLog grant(LocalDate date, Member member, VacationInfo info) {
-			return info.init(DEFAULT_GRANT_DAYS);
-		}
-	}
+    }
 }

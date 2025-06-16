@@ -1,23 +1,21 @@
-package programmers.team6.domain.vacation.rule;
+package programmers.team6.domain.vacation.rule
 
-import java.time.LocalDate;
-import java.util.List;
+import programmers.team6.domain.member.entity.Member
+import programmers.team6.domain.vacation.entity.VacationInfo
+import programmers.team6.domain.vacation.entity.VacationInfoLog
+import programmers.team6.domain.vacation.enums.VacationCode
+import java.time.LocalDate
 
-import programmers.team6.domain.member.entity.Member;
-import programmers.team6.domain.vacation.entity.VacationInfo;
-import programmers.team6.domain.vacation.entity.VacationInfoLog;
-import programmers.team6.domain.vacation.enums.VacationCode;
+interface VacationGrantRule {
+    fun canUpdate(totalCount: Double): Boolean
 
-public interface VacationGrantRule {
-	boolean canUpdate(double totalCount);
+    fun createVacationInfo(memberId: Long): VacationInfo
 
-	VacationInfo createVacationInfo(Long memberId);
+    fun isSameType(vacationCode: VacationCode?): Boolean
 
-	boolean isSameType(VacationCode vacationCode);
+    fun getBaseLineDates(date: LocalDate): List<LocalDate>
 
-	List<LocalDate> getBaseLineDates(LocalDate date);
+	val typeCode: String
 
-	String getTypeCode();
-
-	VacationInfoLog grant(LocalDate date, Member member, VacationInfo info);
+    fun grant(date: LocalDate, member: Member, info: VacationInfo): VacationInfoLog
 }

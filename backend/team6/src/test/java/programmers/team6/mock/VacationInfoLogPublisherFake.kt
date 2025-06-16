@@ -1,55 +1,48 @@
-package programmers.team6.mock;
+package programmers.team6.mock
 
-import java.util.ArrayList;
-import java.util.List;
+import io.mockk.mockk
+import programmers.team6.domain.vacation.entity.VacationInfoLog
+import programmers.team6.domain.vacation.repository.VacationInfoLogRepository
+import programmers.team6.domain.vacation.support.VacationInfoLogPublisher
 
-import programmers.team6.domain.vacation.entity.VacationInfoLog;
-import programmers.team6.domain.vacation.support.VacationInfoLogPublisher;
+class VacationInfoLogPublisherFake : VacationInfoLogPublisher(mockk<VacationInfoLogRepository>()) {
+    private val vacationInfoLogs: MutableList<VacationInfoLog> = mutableListOf();
 
-public class VacationInfoLogPublisherFake  extends VacationInfoLogPublisher {
+    override fun publish(logs: List<VacationInfoLog>) {
+        vacationInfoLogs.addAll(logs)
+    }
 
-	private List<VacationInfoLog> vacationInfoLogs = new ArrayList<>();
+    fun isSameInput(logs: List<VacationInfoLog>): Boolean {
+        for (log in logs) {
+            if (!contains(log)) {
+                return false
+            }
+        }
+        return true
+    }
 
-	public VacationInfoLogPublisherFake() {
-		super(null);
-	}
+    private fun contains(log: VacationInfoLog): Boolean {
+        for (vacationInfoLog in vacationInfoLogs) {
+            if (isSameInput(vacationInfoLog, log)) {
+                return true
+            }
+        }
+        return false
+    }
 
-	@Override
-	public void publish(List<VacationInfoLog> logs) {
-		vacationInfoLogs.addAll(logs);
-	}
-
-	public boolean isSameInput(List<VacationInfoLog> logs) {
-		for (VacationInfoLog log : logs) {
-			if (!contains(log)) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	private boolean contains(VacationInfoLog log) {
-		for (VacationInfoLog vacationInfoLog : vacationInfoLogs) {
-			if (isSameInput(vacationInfoLog, log)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private boolean isSameInput(VacationInfoLog log1, VacationInfoLog log2) {
-		if (!log1.getMemberId().equals(log2.getMemberId())) {
-			return false;
-		}
-		if (!log1.getVacationType().equals(log2.getVacationType())) {
-			return false;
-		}
-		if (log1.getTotalCount() != log2.getTotalCount()) {
-			return false;
-		}
-		if (log1.getUseCount() != log2.getUseCount()) {
-			return false;
-		}
-		return true;
-	}
+    private fun isSameInput(log1: VacationInfoLog, log2: VacationInfoLog): Boolean {
+        if (log1.memberId != log2.memberId) {
+            return false
+        }
+        if (log1.vacationType != log2.vacationType) {
+            return false
+        }
+        if (log1.totalCount != log2.totalCount) {
+            return false
+        }
+        if (log1.useCount != log2.useCount) {
+            return false
+        }
+        return true
+    }
 }

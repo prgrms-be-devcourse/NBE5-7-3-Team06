@@ -1,53 +1,37 @@
-package programmers.team6.mock;
+package programmers.team6.mock
 
-import java.time.LocalDate;
-import java.util.List;
+import programmers.team6.domain.member.entity.Member
+import programmers.team6.domain.vacation.entity.VacationInfo
+import programmers.team6.domain.vacation.entity.VacationInfoLog
+import programmers.team6.domain.vacation.enums.VacationCode
+import programmers.team6.domain.vacation.rule.VacationGrantRule
+import programmers.team6.support.TestVacationInfoBuilder
+import java.time.LocalDate
 
-import programmers.team6.domain.member.entity.Member;
-import programmers.team6.domain.vacation.entity.VacationInfo;
-import programmers.team6.domain.vacation.entity.VacationInfoLog;
-import programmers.team6.domain.vacation.enums.VacationCode;
-import programmers.team6.domain.vacation.rule.VacationGrantRule;
-import programmers.team6.support.TestVacationInfoBuilder;
+class VacationGrantRuleFake(private val vacationCode: VacationCode) : VacationGrantRule {
+    override fun canUpdate(totalCount: Double): Boolean {
+        return true
+    }
 
-public class VacationGrantRuleFake implements VacationGrantRule {
+    override fun createVacationInfo(memberId: Long): VacationInfo {
+        return TestVacationInfoBuilder()
+            .memberId(memberId)
+            .totalCount(15.0)
+            .vacationType(vacationCode.code).build()
+    }
 
-	private final VacationCode vacationCode;
+    override fun isSameType(vacationCode: VacationCode?): Boolean {
+        return vacationCode == this.vacationCode
+    }
 
-	public VacationGrantRuleFake(VacationCode vacationCode) {
-		this.vacationCode = vacationCode;
-	}
+    override fun getBaseLineDates(date: LocalDate): List<LocalDate> {
+        return java.util.List.of(date)
+    }
 
-	@Override
-	public boolean canUpdate(double totalCount) {
-		return true;
-	}
+    override val typeCode: String
+        get() = vacationCode.code
 
-	@Override
-	public VacationInfo createVacationInfo(Long memberId) {
-		return new TestVacationInfoBuilder()
-			.memberId(memberId)
-			.totalCount(15)
-			.vacationType(vacationCode.getCode()).build();
-	}
-
-	@Override
-	public boolean isSameType(VacationCode vacationCode) {
-		return vacationCode == this.vacationCode;
-	}
-
-	@Override
-	public List<LocalDate> getBaseLineDates(LocalDate date) {
-		return List.of(date);
-	}
-
-	@Override
-	public String getTypeCode() {
-		return vacationCode.getCode();
-	}
-
-	@Override
-	public VacationInfoLog grant(LocalDate date, Member member, VacationInfo info) {
-		return info.init(10L);
-	}
+    override fun grant(date: LocalDate, member: Member, info: VacationInfo): VacationInfoLog {
+        return info.init(10.0)
+    }
 }
