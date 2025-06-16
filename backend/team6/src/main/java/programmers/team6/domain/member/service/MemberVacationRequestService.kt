@@ -1,24 +1,19 @@
-package programmers.team6.domain.member.service;
+package programmers.team6.domain.member.service
 
-import org.springframework.stereotype.Service;
-
-import lombok.RequiredArgsConstructor;
-import programmers.team6.domain.admin.dto.response.VacationRequestDetailReadResponse;
-import programmers.team6.domain.vacation.support.VacationRequestReader;
-import programmers.team6.global.exception.code.ForbiddenErrorCode;
-import programmers.team6.global.exception.customException.ForbiddenException;
+import org.springframework.stereotype.Service
+import programmers.team6.domain.admin.dto.response.VacationRequestDetailReadResponse
+import programmers.team6.domain.vacation.support.VacationRequestReader
+import programmers.team6.global.exception.code.ForbiddenErrorCode
+import programmers.team6.global.exception.customException.ForbiddenException
 
 @Service
-@RequiredArgsConstructor
-public class MemberVacationRequestService {
+class MemberVacationRequestService(val vacationRequestReader: VacationRequestReader) {
 
-	private final VacationRequestReader vacationRequestReader;
-
-	public VacationRequestDetailReadResponse selectVacationRequestDetailById(Long vacationRequestId, Long memberId) {
-		VacationRequestDetailReadResponse details = vacationRequestReader.readDetailFrom(vacationRequestId);
-		if (!memberId.equals(details.getMemberId())) {
-			throw new ForbiddenException(ForbiddenErrorCode.FORBIDDEN_NO_AUTHORITY);
-		}
-		return details;
-	}
+    fun selectVacationRequestDetailById(vacationRequestId: Long, memberId: Long): VacationRequestDetailReadResponse {
+        val details = vacationRequestReader.readDetailFrom(vacationRequestId)
+        if (memberId != details.memberId) {
+            throw ForbiddenException(ForbiddenErrorCode.FORBIDDEN_NO_AUTHORITY)
+        }
+        return details
+    }
 }
