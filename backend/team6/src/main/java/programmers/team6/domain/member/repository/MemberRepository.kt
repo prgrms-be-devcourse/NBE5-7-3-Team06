@@ -12,7 +12,7 @@ import programmers.team6.domain.member.enums.Role
 import java.time.LocalDateTime
 import java.util.*
 
-interface MemberRepository : JpaRepository<Member?, Long?> {
+interface MemberRepository : JpaRepository<Member, Long> {
     @Query(
         """
 		select new programmers.team6.domain.admin.dto.response.MemberApprovalResponse(
@@ -34,7 +34,7 @@ interface MemberRepository : JpaRepository<Member?, Long?> {
                 "LEFT JOIN FETCH d.deptLeader " +
                 "WHERE m.id = :memberId")
     )
-    fun findByIdWithDeptAndLeader(@Param("memberId") memberId: Long?): Optional<Member?>?
+    fun findByIdWithDeptAndLeader(@Param("memberId") memberId: Long): Optional<Member>
 
     @Query(
         """
@@ -62,10 +62,10 @@ interface MemberRepository : JpaRepository<Member?, Long?> {
 		"""
     )
     fun findAllHasVacationInfoTargetYear(
-        localDateTime: LocalDateTime?,
-        code: String?,
-        pageable: Pageable?
-    ): Page<Member?>?
+        localDateTime: LocalDateTime,
+        code: String,
+        pageable: Pageable
+    ): Page<Member>
 
     @Query(
         """
@@ -77,7 +77,7 @@ interface MemberRepository : JpaRepository<Member?, Long?> {
 		"""
     )
     fun findAllHasVacationInfoTargetYear(
-        localDateTime: LocalDateTime?, code: String?, name: String?,
-        pageable: Pageable?
-    ): Page<Member?>?
+        localDateTime: LocalDateTime, code: String, name: String,
+        pageable: Pageable
+    ): Page<Member>
 }

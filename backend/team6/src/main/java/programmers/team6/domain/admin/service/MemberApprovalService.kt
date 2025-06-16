@@ -38,7 +38,7 @@ class MemberApprovalService(
         //TODO : 추후 batch insert를 고민해봐야 할듯
         for (type in VacationCode.entries) {
             val vacationRule = vacationGrantRuleFinder.find(type)
-            val vacationInfo = vacationRule.createVacationInfo(member.id)
+            val vacationInfo = vacationRule.createVacationInfo(member.id!!)
 //            val vacationInfo = vacationRule.createVacationInfo(member.id)
             vacationInfoRepository.save(vacationInfo)
             vacationInfoLogPublisher.publish(vacationInfo.toLog())

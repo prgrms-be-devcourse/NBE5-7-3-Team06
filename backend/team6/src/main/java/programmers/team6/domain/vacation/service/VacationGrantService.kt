@@ -1,5 +1,6 @@
 package programmers.team6.domain.vacation.service
 
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import programmers.team6.domain.member.repository.MemberRepository
@@ -32,8 +33,7 @@ class VacationGrantService(
 
         vacationInfos.memberIds.forEach { id ->
             val memberInfos = vacationInfos.getByMemberId(id)
-            val member = memberRepository.findById(id)
-                .orElseThrow { RuntimeException("Member not found: $id") }
+            val member = memberRepository.findByIdOrNull(id) ?: throw RuntimeException("Member not found: $id")
             val logs = rules.grant(date, member, VacationInfos(memberInfos))
             vacationInfoLogPublisher.publish(logs)
         }
