@@ -12,7 +12,7 @@ class ApprovalStep(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "approval_step_id")
-    var id: Long? = null,
+    val id: Long? = null,
 
     @ManyToOne
     @JoinColumn(name = "member_id", nullable = false)
@@ -20,7 +20,7 @@ class ApprovalStep(
 
     @ManyToOne
     @JoinColumn(name = "vacation_request_id", nullable = false)
-    var vacationRequest: VacationRequest,
+    val vacationRequest: VacationRequest,
 
     @Column(name = "approval_status", nullable = false)
     @Enumerated(value = EnumType.STRING)
