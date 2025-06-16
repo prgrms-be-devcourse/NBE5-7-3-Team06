@@ -1,40 +1,39 @@
-package programmers.team6.support;
+package programmers.team6.support
 
-import programmers.team6.domain.member.enums.GroupCode;
-import programmers.team6.domain.vacation.enums.VacationCode;
+import programmers.team6.domain.admin.entity.Code
+import programmers.team6.domain.member.enums.GroupCode
+import programmers.team6.domain.vacation.enums.VacationCode
 
-public enum TestVacationType {
+enum class TestVacationType {
+    ANNUAL {
+        override fun toCode(): Code {
+            return Code(GroupCode.VACATION_TYPE.code, VacationCode.ANNUAL.code, VacationCode.ANNUAL.name)
+        }
+    },
+    REWARD {
+        override fun toCode(): Code {
+            return Code(GroupCode.VACATION_TYPE.code, VacationCode.REWARD.code, VacationCode.REWARD.name)
+        }
+    },
+    OFFICIAL {
+        override fun toCode(): Code {
+            return Code(GroupCode.VACATION_TYPE.code, VacationCode.OFFICIAL.code, VacationCode.OFFICIAL.name)
+        }
+    },
+    CONGRATULATORY {
+        override fun toCode(): Code {
+            return Code(
+                GroupCode.VACATION_TYPE.code,
+                VacationCode.CONGRATULATORY.code,
+                VacationCode.CONGRATULATORY.name
+            )
+        }
+    },
+    HALF {
+        override fun toCode(): Code {
+            return Code(GroupCode.VACATION_TYPE.code, "05", "반차")
+        }
+    };
 
-	ANNUAL {
-		@Override
-		public Code toCode() {
-			return new Code(GroupCode.VACATION_TYPE.getCode(), VacationCode.ANNUAL.getCode(), VacationCode.ANNUAL.name());
-		}
-	},
-	REWARD {
-		@Override
-		public Code toCode() {
-			return new Code(GroupCode.VACATION_TYPE.getCode(), VacationCode.REWARD.getCode(), VacationCode.REWARD.name());
-		}
-	},
-	OFFICIAL {
-		@Override
-		public Code toCode() {
-			return new Code(GroupCode.VACATION_TYPE.getCode(), VacationCode.OFFICIAL.getCode(), VacationCode.OFFICIAL.name());
-		}
-	},
-	CONGRATULATORY {
-		@Override
-		public Code toCode() {
-			return new Code(GroupCode.VACATION_TYPE.getCode(), VacationCode.CONGRATULATORY.getCode(), VacationCode.CONGRATULATORY.name());
-		}
-	},
-	HALP {
-		@Override
-		public Code toCode() {
-			return new Code(GroupCode.VACATION_TYPE.getCode(),"05", "반차");
-		}
-	};
-
-	public abstract Code toCode();
+    abstract fun toCode(): Code
 }

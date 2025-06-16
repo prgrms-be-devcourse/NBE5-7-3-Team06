@@ -1,42 +1,39 @@
-package programmers.team6.mock;
+package programmers.team6.mock
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import programmers.team6.domain.admin.dto.response.ApprovalStepDetailUpdateResponse
+import programmers.team6.domain.admin.dto.response.VacationRequestDetailReadResponse
+import programmers.team6.domain.vacation.repository.ApprovalStepRepository
+import programmers.team6.domain.vacation.repository.VacationRequestRepository
+import programmers.team6.domain.vacation.support.VacationRequestReader
+import programmers.team6.global.exception.code.NotFoundErrorCode
+import programmers.team6.global.exception.customException.NotFoundException
 
-import programmers.team6.domain.admin.dto.response.ApprovalStepDetailUpdateResponse;
-import programmers.team6.domain.admin.dto.response.VacationRequestDetailReadResponse;
-import programmers.team6.domain.vacation.support.VacationRequestReader;
-import programmers.team6.global.exception.code.NotFoundErrorCode;
-import programmers.team6.global.exception.customException.NotFoundException;
+class VacationRequestReaderFake(
+    vacationRequestRepository: VacationRequestRepository,
+    approvalStepRepository: ApprovalStepRepository
+) : VacationRequestReader(vacationRequestRepository, approvalStepRepository) {
+    private val vacationRequestRepository: MutableMap<Long, VacationRequestDetailReadResponse> =
+        mutableMapOf()
+    private val approvalStepRepository: MutableMap<Long, MutableList<ApprovalStepDetailUpdateResponse>> =
+        mutableMapOf()
 
-public class VacationRequestReaderFake extends VacationRequestReader {
-	private final Map<Long, VacationRequestDetailReadResponse> vacationRequestRepository = new HashMap<>();
-	private final Map<Long, List<ApprovalStepDetailUpdateResponse>> approvalStepRepository = new HashMap<>();
+    override fun readDetailFrom(id: Long): VacationRequestDetailReadResponse {
+        if (!vacationRequestRepository.containsKey(id)) {
+            throw NotFoundException(NotFoundErrorCode.NOT_FOUND_VACATION_REQUEST)
+        }
 
-	public VacationRequestReaderFake() {
-		super(null, null);
-	}
+        if (!approvalStepRepository.containsKey(id) || approvalStepRepository.get(id)!!.isEmpty()) {
+            throw NotFoundException(NotFoundErrorCode.NOT_FOUND_APPROVAL_STEP)
+        }
 
-	@Override
-	public VacationRequestDetailReadResponse readDetailFrom(Long id) {
-		if (!vacationRequestRepository.containsKey(id)) {
-			throw new NotFoundException(NotFoundErrorCode.NOT_FOUND_VACATION_REQUEST);
-		}
+        return vacationRequestRepository.get(id)!!.injectApprovalStepDetails(approvalStepRepository.get(id)!!.toList())
+    }
 
-		if (!approvalStepRepository.containsKey(id) || approvalStepRepository.get(id).isEmpty()) {
-			throw new NotFoundException(NotFoundErrorCode.NOT_FOUND_APPROVAL_STEP);
-		}
+    fun putVacationRequestDetail(key: Long, value: VacationRequestDetailReadResponse) {
+        vacationRequestRepository.put(key, value)
+    }
 
-		return vacationRequestRepository.get(id).injectApprovalStepDetails(approvalStepRepository.get(id));
-	}
-
-	public void putVacationRequestDetail(Long key, VacationRequestDetailReadResponse value) {
-		vacationRequestRepository.put(key, value);
-	}
-
-	public void putApprovalStep(Long key, List<ApprovalStepDetailUpdateResponse> value) {
-		approvalStepRepository.put(key, value);
-	}
-
+    fun putApprovalStep(key: Long, value: MutableList<ApprovalStepDetailUpdateResponse>) {
+        approvalStepRepository.put(key, value)
+    }
 }

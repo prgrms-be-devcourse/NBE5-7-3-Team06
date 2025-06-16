@@ -1,67 +1,57 @@
-package programmers.team6.domain.vacation.repository;
+package programmers.team6.domain.vacation.repository
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.stereotype.Repository;
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
-import lombok.RequiredArgsConstructor;
-import programmers.team6.domain.admin.entity.Code;
-import programmers.team6.domain.admin.entity.Dept;
-import programmers.team6.domain.member.entity.Member;
-import programmers.team6.domain.vacation.dto.response.VacationRequestCalendarResponse;
-import programmers.team6.domain.vacation.entity.VacationRequest;
-import programmers.team6.domain.vacation.enums.VacationRequestStatus;
-import programmers.team6.global.querybuilder.CriteriaCustomQueryBuilder;
+import jakarta.persistence.EntityManager
+import jakarta.persistence.criteria.Predicate
+import org.springframework.stereotype.Repository
+import programmers.team6.domain.admin.entity.Code
+import programmers.team6.domain.admin.entity.Dept
+import programmers.team6.domain.member.entity.Member
+import programmers.team6.domain.vacation.dto.response.VacationRequestCalendarResponse
+import programmers.team6.domain.vacation.entity.VacationRequest
+import programmers.team6.domain.vacation.enums.VacationRequestStatus
+import programmers.team6.global.querybuilder.CriteriaCustomQueryBuilder.Companion.builder
+import java.time.LocalDateTime
 
 @Repository
-@RequiredArgsConstructor
-public class VacationRequestSearchRepository {
+class VacationRequestSearchRepository(
+    private val em: EntityManager
+) {
 
-	private final EntityManager em;
+    fun findApprovedVacationsByMonth(
+        status: VacationRequestStatus?, start: LocalDateTime?, end: LocalDateTime?, deptId: Long?
+    ): List<VacationRequestCalendarResponse> {
+        val cb = em.getCriteriaBuilder()
+        val cq = cb.createQuery(VacationRequestCalendarResponse::class.java)
 
-	public List<VacationRequestCalendarResponse> findApprovedVacationsByMonth(
-		VacationRequestStatus status, LocalDateTime start, LocalDateTime end, Long deptId
-	) {
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<VacationRequestCalendarResponse> cq = cb.createQuery(VacationRequestCalendarResponse.class);
+        val vr = cq.from(VacationRequest::class.java)
+        val m = vr.join<VacationRequest, Member>("member")
+        val d = m.join<Member, Dept>("dept")
+        val p = m.join<Member, Code>("position")
+        val type = vr.join<VacationRequest, Code>("type")
 
-		Root<VacationRequest> vr = cq.from(VacationRequest.class);
-		Join<VacationRequest, Member> m = vr.join("member");
-		Join<Member, Dept> d = m.join("dept");
-		Join<Member, Code> p = m.join("position");
-		Join<VacationRequest, Code> type = vr.join("type");
+        val predicates: MutableList<Predicate> = mutableListOf()
 
-		List<Predicate> predicates = new ArrayList<>();
+        predicates.add(cb.equal(vr.get<Any?>("status"), status))
+        predicates.add(cb.greaterThanOrEqualTo<LocalDateTime?>(vr.get<LocalDateTime?>("from"), start))
+        predicates.add(cb.lessThan<LocalDateTime?>(vr.get<LocalDateTime?>("to"), end))
 
-		predicates.add(cb.equal(vr.get("status"), status));
-		predicates.add(cb.greaterThanOrEqualTo(vr.get("from"), start));
-		predicates.add(cb.lessThan(vr.get("to"), end));
+        if (deptId != 0L) {
+            predicates.add(cb.equal(d.get<Any?>("id"), deptId))
+        }
 
-		if (deptId != 0) {
-			predicates.add(cb.equal(d.get("id"), deptId));
-		}
-
-		return CriteriaCustomQueryBuilder.builder(cq, cb)
-			.applyDynamicPredicates(predicates)
-			.projection(
-				VacationRequestCalendarResponse.class,
-				m.get("name"),
-				d.get("deptName"),
-				type.get("name"),
-				p.get("name"),
-				vr.get("from"),
-				vr.get("to")
-			)
-			.createQuery(em)
-			.build()
-			.getResultList();
-	}
+        return builder<VacationRequestCalendarResponse>(cq, cb)
+            .applyDynamicPredicates(predicates.toList())
+            .projection(
+                VacationRequestCalendarResponse::class.java,
+                m.get<Any?>("name"),
+                d.get<Any?>("deptName"),
+                type.get<Any?>("name"),
+                p.get<Any?>("name"),
+                vr.get<Any?>("from"),
+                vr.get<Any?>("to")
+            )
+            .createQuery(em)
+            .build()
+            .getResultList()
+    }
 }
