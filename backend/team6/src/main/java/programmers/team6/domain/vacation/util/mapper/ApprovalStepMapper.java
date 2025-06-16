@@ -2,6 +2,7 @@ package programmers.team6.domain.vacation.util.mapper;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.vacation.dto.response.ApprovalFirstStepDetailResponse;
 import programmers.team6.domain.vacation.dto.response.ApprovalSecondStepDetailResponse;
 import programmers.team6.domain.vacation.entity.ApprovalStep;

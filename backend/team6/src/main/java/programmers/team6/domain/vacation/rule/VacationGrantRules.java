@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.vacation.entity.VacationInfo;
 import programmers.team6.domain.vacation.entity.VacationInfoLog;
 import programmers.team6.domain.vacation.support.VacationInfos;

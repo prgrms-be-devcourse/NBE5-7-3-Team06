@@ -75,7 +75,7 @@ internal class CodeServiceIntegrationTest {
             )
         }).isInstanceOf(
             BadRequestException::class.java
-        ).hasMessage(BadRequestErrorCode.BAD_REQUEST_DUPLICATE_CODE.getMessage())
+        ).hasMessage(BadRequestErrorCode.BAD_REQUEST_DUPLICATE_CODE.message)
     }
 
     @Test
@@ -128,7 +128,7 @@ internal class CodeServiceIntegrationTest {
         Assertions.assertThatThrownBy( {
             codeService.updateCode(0L, CodeCreateRequest("", "", ""))
             codeService.deleteCode(0L)
-        }).isInstanceOf(NotFoundException::class.java).hasMessage(NotFoundErrorCode.NOT_FOUND_CODE.getMessage())
+        }).isInstanceOf(NotFoundException::class.java).hasMessage(NotFoundErrorCode.NOT_FOUND_CODE.message)
     }
 
     @Test

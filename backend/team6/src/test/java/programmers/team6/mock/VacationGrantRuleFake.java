@@ -3,6 +3,7 @@ package programmers.team6.mock;
 import java.time.LocalDate;
 import java.util.List;
 
+import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.vacation.entity.VacationInfo;
 import programmers.team6.domain.vacation.entity.VacationInfoLog;
 import programmers.team6.domain.vacation.enums.VacationCode;

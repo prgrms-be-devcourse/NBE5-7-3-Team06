@@ -120,7 +120,7 @@ internal class AdminServiceTest {
                     vacationRequestDetailUpdateRequest
                 )
             }).isInstanceOf(NotFoundException::class.java)
-                .hasMessage(NotFoundErrorCode.NOT_FOUND_VACATION_REQUEST.getMessage())
+                .hasMessage(NotFoundErrorCode.NOT_FOUND_VACATION_REQUEST.message)
         }
 
         @Test
@@ -145,7 +145,7 @@ internal class AdminServiceTest {
                     vacationRequestDetailUpdateRequest
                 )
             }).isInstanceOf(NotFoundException::class.java)
-                .hasMessage(NotFoundErrorCode.NOT_FOUND_CODE.getMessage())
+                .hasMessage(NotFoundErrorCode.NOT_FOUND_CODE.message)
         }
 
         @Test
@@ -173,7 +173,7 @@ internal class AdminServiceTest {
                     vacationRequestDetailUpdateRequest
                 )
             }).isInstanceOf(ConflictException::class.java)
-                .hasMessage(ConflictErrorCode.CONFLICT_APPROVAL_STEP.getMessage())
+                .hasMessage(ConflictErrorCode.CONFLICT_APPROVAL_STEP.message)
         }
 
         @Test
@@ -201,7 +201,7 @@ internal class AdminServiceTest {
                     vacationRequestDetailUpdateRequest
                 )
             }).isInstanceOf(ConflictException::class.java)
-                .hasMessage(ConflictErrorCode.CONFLICT_APPROVAL_STEP.getMessage())
+                .hasMessage(ConflictErrorCode.CONFLICT_APPROVAL_STEP.message)
         }
     }
 }

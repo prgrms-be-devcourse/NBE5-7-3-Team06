@@ -22,11 +22,17 @@ import programmers.team6.domain.admin.dto.response.VacationRequestSearchResponse
 import programmers.team6.domain.admin.entity.Code
 import programmers.team6.domain.admin.entity.Dept
 import programmers.team6.domain.admin.enums.Quarter
-import programmers.team6.domain.admin.repository.AdminVacationRequestSearchTestDataFactory.*
+import programmers.team6.domain.admin.repository.AdminVacationRequestSearchTestDataFactory.genApprovalStep
+import programmers.team6.domain.admin.repository.AdminVacationRequestSearchTestDataFactory.genTestCodeList
+import programmers.team6.domain.admin.repository.AdminVacationRequestSearchTestDataFactory.genTestDeptList
+import programmers.team6.domain.admin.repository.AdminVacationRequestSearchTestDataFactory.genTestMember
+import programmers.team6.domain.admin.repository.AdminVacationRequestSearchTestDataFactory.genTestMemberList
+import programmers.team6.domain.admin.repository.AdminVacationRequestSearchTestDataFactory.genVacationRequest
 import programmers.team6.domain.admin.repository.TestVacationRequestSearchConditionFactory.createByApplicant
 import programmers.team6.domain.admin.repository.TestVacationRequestSearchConditionFactory.createByDateRange
 import programmers.team6.domain.member.entity.Member
 import programmers.team6.domain.member.repository.MemberRepository
+import programmers.team6.domain.vacation.entity.ApprovalStep_.vacationRequest
 import programmers.team6.domain.vacation.enums.ApprovalStatus
 import programmers.team6.domain.vacation.enums.VacationRequestStatus
 import programmers.team6.domain.vacation.repository.ApprovalStepRepository
@@ -148,14 +154,15 @@ internal class AdminVacationRequestSearchCustomTest {
     }
 
     private fun createVacationRequestForMonth(vacationRequesterIdx: Int, year: Int, month: Int) {
-        val vacationRequest = genVacationRequest(
-            vacationRequesters.get(vacationRequesterIdx),
-            YearMonth.of(year, month).atDay(1).atStartOfDay(),
-            YearMonth.of(year, month).atEndOfMonth().atTime(23, 59, 59), "testReason",
-            vacationTypeCodes.get(vacationRequesterIdx),
-            if (month == 1) VacationRequestStatus.APPROVED else VacationRequestStatus.IN_PROGRESS
+        val vacationRequest = vacationRequestRepository.save(
+            genVacationRequest(
+                vacationRequesters.get(vacationRequesterIdx),
+                YearMonth.of(year, month).atDay(1).atStartOfDay(),
+                YearMonth.of(year, month).atEndOfMonth().atTime(23, 59, 59), "testReason",
+                vacationTypeCodes.get(vacationRequesterIdx),
+                if (month == 1) VacationRequestStatus.APPROVED else VacationRequestStatus.IN_PROGRESS
+            )
         )
-        vacationRequestRepository.save(vacationRequest)
 
         // 결재 단계 생성
         val approvalStatus = if (month == 1) ApprovalStatus.APPROVED else ApprovalStatus.PENDING

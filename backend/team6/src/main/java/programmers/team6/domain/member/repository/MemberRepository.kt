@@ -23,7 +23,7 @@ interface MemberRepository : JpaRepository<Member?, Long?> {
 		
 		"""
     )
-    fun findPendingMembers(role: Role?): List<MemberApprovalResponse?>?
+    fun findPendingMembers(role: Role?): List<MemberApprovalResponse>
 
     @Query("select m from Member m join fetch m.memberInfo mi where mi.email = :email")
     fun findByEmail(@Param("email") email: String): Member?
