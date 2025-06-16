@@ -6,6 +6,7 @@ import programmers.team6.domain.admin.dto.response.DeptDropdownResponse
 import programmers.team6.domain.admin.entity.Dept
 
 interface DeptRepository : JpaRepository<Dept, Long> {
+
     @Query(
         """
 		  SELECT new programmers.team6.domain.admin.dto.response.DeptDropdownResponse(d.id,d.deptName)
@@ -13,5 +14,6 @@ interface DeptRepository : JpaRepository<Dept, Long> {
 		"""
     )
     fun findAllDept(): List<DeptDropdownResponse>
+
     fun findByDeptName(deptName: String): Dept?
 }
