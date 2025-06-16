@@ -11,7 +11,7 @@ class Dept(
     @Id
     @Column(name = "dept_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null,
+    val id: Long? = null,
 
     @Column(nullable = false)
     var deptName: String,
