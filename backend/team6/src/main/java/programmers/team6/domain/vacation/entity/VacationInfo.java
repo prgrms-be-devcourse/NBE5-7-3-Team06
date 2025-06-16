@@ -8,7 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Version;
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import programmers.team6.global.entity.BaseEntity;
 import programmers.team6.global.exception.code.BadRequestErrorCode;
@@ -104,5 +103,29 @@ public class VacationInfo extends BaseEntity {
 
 	public VacationInfoLog toLog() {
 		return VacationInfoLog.from(this);
+	}
+
+	public int getVacationId() {
+		return vacationId;
+	}
+
+	public double getTotalCount() {
+		return totalCount;
+	}
+
+	public double getUseCount() {
+		return useCount;
+	}
+
+	public String getVacationType() {
+		return vacationType;
+	}
+
+	public Long getMemberId() {
+		return memberId;
+	}
+
+	public int getVersion() {
+		return version;
 	}
 }

@@ -15,9 +15,9 @@ class JwtConfigurationTests {
 
 	@Test
 	@DisplayName("jwtConfiguration test")
-	void jwtConfiguration_test() throws Exception {
+	void jwtConfiguration_test() {
 
 		assertThat(jwtConfiguration).isNotNull();
-		assertThat(jwtConfiguration.secret()).isNotNull();
+		assertThat(jwtConfiguration.getSecret()).isNotNull();
 	}
 }

@@ -8,10 +8,10 @@ import org.springframework.stereotype.Component;
 
 import programmers.team6.domain.admin.entity.Code;
 import programmers.team6.domain.admin.entity.Dept;
-import programmers.team6.domain.member.entity.Member;
-import programmers.team6.domain.member.enums.Role;
 import programmers.team6.domain.admin.repository.CodeRepository;
 import programmers.team6.domain.admin.repository.DeptRepository;
+import programmers.team6.domain.member.entity.Member;
+import programmers.team6.domain.member.enums.Role;
 import programmers.team6.domain.member.repository.MemberRepository;
 
 @Component
@@ -27,7 +27,7 @@ public class TestMemberFactory {
 	public Member defaultMember() {
 		LocalDateTime joinDate = LocalDateTime.of(2025, 10, 31, 0, 0);
 		Code code = getOrCreate();
-		Dept dept = deptRepository.save(new Dept("code", null));
+		Dept dept = deptRepository.save(new Dept(null, "code", null));
 		Member member = new Member("test1", dept, code, joinDate, Role.USER);
 		return memberRepository.save(member);
 	}

@@ -1,7 +1,6 @@
 package programmers.team6.domain.vacation.service;
 
 import static org.assertj.core.api.Assertions.*;
-import static programmers.team6.domain.admin.repository.AdminVacationRequestSearchTestDataFactory.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,7 +12,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
-import programmers.team6.domain.admin.entity.Code;
 import programmers.team6.domain.admin.entity.Dept;
 import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.admin.repository.CodeRepository;

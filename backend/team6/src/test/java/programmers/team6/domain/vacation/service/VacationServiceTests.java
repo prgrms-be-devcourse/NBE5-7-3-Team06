@@ -17,8 +17,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.admin.repository.CodeRepository;
+import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.member.repository.MemberRepository;
 import programmers.team6.domain.vacation.dto.request.VacationCreateRequestDto;
 import programmers.team6.domain.vacation.dto.response.VacationListResponseDto;
@@ -193,7 +193,7 @@ class VacationServiceTests {
 		when(vacationInfoRepository.findActualRemainingVacationDays(member.getId(),
 			vacationCreateRequestDto.getVacationType())).thenReturn(Optional.of(30d));
 		when(codeRepository.findByGroupCodeAndCode("VACATION_TYPE",
-			vacationCreateRequestDto.getVacationType())).thenReturn(Optional.empty());
+			vacationCreateRequestDto.getVacationType())).thenReturn(null);
 
 		// then
 		assertThatThrownBy(
