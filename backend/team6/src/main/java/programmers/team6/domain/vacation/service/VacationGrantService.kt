@@ -23,7 +23,7 @@ class VacationGrantService(
     @Transactional
     fun grantAnnualVacations(date: LocalDate) {
         val rules = vacationGrantRuleFinder.findAll()
-        val vacationInfos = rules.rules
+        val vacationInfos = rules.getRules()
             .flatMap { rule ->
                 val baseLineDates = rule.getBaseLineDates(date)
                 selectVacationInfo(rule, baseLineDates)
