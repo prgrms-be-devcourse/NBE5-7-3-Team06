@@ -71,7 +71,7 @@ internal class VacationStatisticsServiceTest {
         vacationInfoLog: VacationInfoLog
     ): VacationMonthlyStatisticsResponse =
         VacationMonthlyStatisticsResponse(
-            member.id,
+            member.id!!,
             member.name,
             vacationInfoLog.totalCount,
             vacationInfoLog.useCount,

@@ -5,7 +5,7 @@ import programmers.team6.domain.member.entity.Member
 
 class Members(private val members: Page<Member>) {
     fun toIds(): List<Long> {
-        return members.stream().map { obj: Member -> obj.getId() }.toList()
+        return members.stream().map { member: Member -> member.id!! }.toList()
     }
 
     fun toPages(): Page<Member> {

@@ -39,7 +39,7 @@ class MemberSearchRepository(private val entityManager: EntityManager) {
 
         val predicates = CriteriaCustomPredicateBuilder.builder<Member>(cb).apply {
             applyLikeFilter(from, name, Member_.name)
-            applyEqualFilter(from, Role.USER, Member_.role)
+            applyEqualFilter(from, Role.USER, Member_._role)
             applyEqualFilter(from, deptId, Member_.dept, Dept_.id)
         }.build()
 
@@ -54,7 +54,7 @@ class MemberSearchRepository(private val entityManager: EntityManager) {
         return countQuery<Member> { cb, root ->
             CriteriaCustomPredicateBuilder.builder<Member>(cb)
                 .applyLikeFilter(root, name, Member_.name)
-                .applyNonEqualFilter(root, Role.PENDING, Member_.role)
+                .applyNonEqualFilter(root, Role.PENDING, Member_._role)
                 .build()
         }
     }

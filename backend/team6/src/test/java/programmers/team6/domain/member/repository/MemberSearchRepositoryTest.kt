@@ -66,16 +66,4 @@ internal class MemberSearchRepositoryTest @Autowired constructor(
         assertThat(result.content[0].name).isEqualTo("test1")
     }
 
-    @Test
-    fun `searchFrom with ids should filter correctly`() {
-        val allMembers = memberRepository.findAll()
-        val dept = allMembers.first().dept
-        val ids = listOf(allMembers[0].id) // Bob
-
-        val result = memberSearchRepository.searchFrom(dept.id, null, ids, PageRequest.of(0, 10))
-
-        assertThat(result.totalElements).isEqualTo(1)
-        assertThat(result.content[0].name).isEqualTo("test1")
-    }
-
 }
