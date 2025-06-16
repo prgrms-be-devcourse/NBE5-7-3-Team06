@@ -13,13 +13,13 @@ import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
-import programmers.team6.global.querybuilder.CriteriaCustomQueryBuilder;
 import programmers.team6.domain.admin.entity.Code;
 import programmers.team6.domain.admin.entity.Dept;
 import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.vacation.dto.response.VacationRequestCalendarResponse;
 import programmers.team6.domain.vacation.entity.VacationRequest;
 import programmers.team6.domain.vacation.enums.VacationRequestStatus;
+import programmers.team6.global.querybuilder.CriteriaCustomQueryBuilder;
 
 @Repository
 @RequiredArgsConstructor

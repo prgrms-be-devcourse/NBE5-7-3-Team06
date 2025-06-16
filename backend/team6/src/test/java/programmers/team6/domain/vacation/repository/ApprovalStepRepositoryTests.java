@@ -69,7 +69,7 @@ class ApprovalStepRepositoryTests {
 		Code savePosition01 = codeRepository.save(new Code("POSITION", "01", "사원"));
 		Code savePosition04 = codeRepository.save(new Code("POSITION", "04", "부장"));
 		Code saveVacationType01 = codeRepository.save(new Code("VACATION_TYPE", "01", "연차"));
-		Dept dept = deptRepository.save(new Dept("인사팀", null));
+		Dept dept = deptRepository.save(new Dept(null, "인사팀", null));
 		Member member = memberRepository.save(
 			new Member("민경준", dept, savePosition01, LocalDateTime.of(2025, 1, 1, 0, 0), Role.USER)
 		);

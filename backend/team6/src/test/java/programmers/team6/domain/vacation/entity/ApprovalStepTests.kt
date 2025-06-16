@@ -74,7 +74,7 @@ internal class ApprovalStepTests {
     @ParameterizedTest
     @EnumSource(mode = EnumSource.Mode.EXCLUDE, names = ["PENDING"])
     @DisplayName("상태가 PENDING이 아니면 승인검증 시 예외가 발생할 것이다.")
-    fun un_approvable_test(status: ApprovalStatus?) {
+    fun un_approvable_test(status: ApprovalStatus) {
         val approvalStep = ApprovalStepTestUtils.genApprovalStep(status)
 
         Assertions.assertThrows(
@@ -93,7 +93,7 @@ internal class ApprovalStepTests {
     @ParameterizedTest
     @EnumSource(mode = EnumSource.Mode.EXCLUDE, names = ["PENDING"])
     @DisplayName("상태가 PENDING이 아니면 반려검증 시 예외가 발생할 것이다.")
-    fun un_rejectable_test(status: ApprovalStatus?) {
+    fun un_rejectable_test(status: ApprovalStatus) {
         val approvalStep = ApprovalStepTestUtils.genApprovalStep(status)
 
         Assertions.assertThrows(

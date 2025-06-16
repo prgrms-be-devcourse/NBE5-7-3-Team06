@@ -127,7 +127,7 @@ internal class ApprovalStepServiceTests {
         // given
         val failedNum = 99999L
         val firstApproverId = 2L
-        every { approvalStepRepository.findByIdAndMemberIdAndStep(failedNum, firstApproverId, 1) } returns mockk()
+        every { approvalStepRepository.findByIdAndMemberIdAndStep(failedNum, firstApproverId, 1) } returns null
 
         // then
         AssertionsForClassTypes.assertThatThrownBy {
@@ -187,7 +187,7 @@ internal class ApprovalStepServiceTests {
                 1
             )
         } returns firstApprovalStep
-        every { approvalStepRepository.findByVacationRequestAndStep(vacationRequest, 2) } returns mockk()
+        every { approvalStepRepository.findByVacationRequestAndStep(vacationRequest, 2) } returns null
 
         //then
         AssertionsForClassTypes.assertThatThrownBy {
@@ -240,7 +240,7 @@ internal class ApprovalStepServiceTests {
         val failedNum = 99999L
         val firstApproverId = 2L
 
-        every { approvalStepRepository.findByIdAndMemberIdAndStep(failedNum, firstApproverId, 1) } returns mockk()
+        every { approvalStepRepository.findByIdAndMemberIdAndStep(failedNum, firstApproverId, 1) } returns null
 
         // then
         AssertionsForClassTypes.assertThatThrownBy {
@@ -300,7 +300,7 @@ internal class ApprovalStepServiceTests {
                 1
             )
         } returns firstApprovalStep
-        every { approvalStepRepository.findByVacationRequestAndStep(vacationRequest, 2) } returns mockk()
+        every { approvalStepRepository.findByVacationRequestAndStep(vacationRequest, 2) } returns null
 
         //then
         AssertionsForClassTypes.assertThatThrownBy {
@@ -355,7 +355,7 @@ internal class ApprovalStepServiceTests {
         val failedNum = 99999L
         val secondApproverId = 2L
 
-        every { approvalStepRepository.findByIdAndMemberIdAndStep(failedNum, secondApproverId, 2) } returns mockk()
+        every { approvalStepRepository.findByIdAndMemberIdAndStep(failedNum, secondApproverId, 2) } returns null
 
         // then
         AssertionsForClassTypes.assertThatThrownBy {
@@ -505,7 +505,7 @@ internal class ApprovalStepServiceTests {
         val failedNum = 99999L
         val secondApproverId = 2L
 
-        every { approvalStepRepository.findByIdAndMemberIdAndStep(failedNum, secondApproverId, 2) }
+        every { approvalStepRepository.findByIdAndMemberIdAndStep(failedNum, secondApproverId, 2) } returns null
 
         // then
         AssertionsForClassTypes.assertThatThrownBy {

@@ -3,9 +3,6 @@ package programmers.team6.domain.vacation.enums;
 import java.util.Arrays;
 import java.util.Optional;
 
-import lombok.Getter;
-
-@Getter
 public enum VacationCode {
 	ANNUAL("VACATION_TYPE", "01", "연차"),
 	REWARD("VACATION_TYPE", "02", "포상 휴가"),
@@ -24,5 +21,17 @@ public enum VacationCode {
 
 	public static Optional<VacationCode> findByCode(String type) {
 		return Arrays.stream(values()).filter(vacationCode -> vacationCode.getCode().equals(type)).findFirst();
+	}
+
+	public String getGroupCode() {
+		return groupCode;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public String getDescription() {
+		return description;
 	}
 }

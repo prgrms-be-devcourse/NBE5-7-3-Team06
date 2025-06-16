@@ -68,7 +68,7 @@ public class VacationService {
 		getMemberById(memberId);
 
 		VacationInfo vacationInfo = vacationInfoRepository.findByMemberIdAndVacationType(memberId,
-			VacationCode.ANNUAL.getCode()).orElseThrow(() -> new RuntimeException("휴가 정보를 찾을 수 없습니다."));
+			VacationCode.ANNUAL.getCode());
 
 		return vacationMapper.toVacationInfoSelectResponseDto(vacationInfo);
 	}
@@ -101,11 +101,10 @@ public class VacationService {
 
 		// 부서장 조회 (결재자)
 		Dept dept = member.getDept();
-		Member approver = dept.getDeptLeader();
+		Member approver = dept.deptLeaderOrThrow();
 
 		// 휴가 유형 코드 조회
-		Code vacationType = codeRepository.findByGroupCodeAndCode("VACATION_TYPE", requestDto.getVacationType())
-			.orElseThrow(() -> new RuntimeException("잘못된 휴가 유형입니다."));
+		Code vacationType = codeRepository.findByGroupCodeAndCode("VACATION_TYPE", requestDto.getVacationType());
 
 		// 휴가 요청 상태 코드 (기본 대기 상태)
 		VacationRequestStatus status = VacationRequestStatus.IN_PROGRESS;
@@ -224,8 +223,7 @@ public class VacationService {
 		}
 
 		// 휴가 유형 코드 조회
-		Code vacationType = codeRepository.findByGroupCodeAndCode("VACATION_TYPE", requestDto.getVacationType())
-			.orElseThrow(() -> new RuntimeException("잘못된 휴가 유형입니다."));
+		Code vacationType = codeRepository.findByGroupCodeAndCode("VACATION_TYPE", requestDto.getVacationType());
 
 		// 수정 권한 검증 및 수정 처리
 		vacationRequest.updateByMember(memberId, requestDto.getFrom(), requestDto.getTo(), requestDto.getReason(),

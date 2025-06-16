@@ -16,7 +16,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Version;
 import lombok.AccessLevel;
 import lombok.Builder;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import programmers.team6.domain.admin.entity.Code;
 import programmers.team6.domain.member.entity.Member;
@@ -24,7 +23,6 @@ import programmers.team6.domain.vacation.enums.VacationRequestStatus;
 import programmers.team6.global.entity.BaseEntity;
 
 @Entity
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class VacationRequest extends BaseEntity {
 
@@ -170,10 +168,6 @@ public class VacationRequest extends BaseEntity {
 		return this.type.getName().equals("반차");
 	}
 
-	public LocalDateTime getFrom() {
-		return from;
-	}
-
 	public Long getId() {
 		return id;
 	}
@@ -182,20 +176,24 @@ public class VacationRequest extends BaseEntity {
 		return member;
 	}
 
-	public String getReason() {
-		return reason;
-	}
-
-	public VacationRequestStatus getStatus() {
-		return status;
+	public LocalDateTime getFrom() {
+		return from;
 	}
 
 	public LocalDateTime getTo() {
 		return to;
 	}
 
+	public String getReason() {
+		return reason;
+	}
+
 	public Code getType() {
 		return type;
+	}
+
+	public VacationRequestStatus getStatus() {
+		return status;
 	}
 
 	public Integer getVersion() {

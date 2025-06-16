@@ -11,15 +11,15 @@ object ApprovalStepMapper {
     fun fromFirstStepEntity(approvalStep: ApprovalStep): ApprovalFirstStepDetailResponse {
         return ApprovalFirstStepDetailResponse(
             approvalStepId = approvalStep.id!!,
-            name = approvalStep.vacationRequest.getMember().getName(),
-            deptName = approvalStep.vacationRequest.getMember().getDept().getDeptName(),
-            positionName = approvalStep.vacationRequest.getMember().getPosition().getName(),
+            name = approvalStep.vacationRequest.member.name,
+            deptName = approvalStep.vacationRequest.member.dept!!.deptName,
+            positionName = approvalStep.vacationRequest.member.position.name,
             status = approvalStep.approvalStatus,
-            type = approvalStep.vacationRequest.getType().getName(),
-            from = approvalStep.vacationRequest.getFrom(),
-            to = approvalStep.vacationRequest.getTo(),
-            reason = approvalStep.vacationRequest.getReason(),
-            approverName = approvalStep.member.getName(),
+            type = approvalStep.vacationRequest.type.name,
+            from = approvalStep.vacationRequest.from,
+            to = approvalStep.vacationRequest.to,
+            reason = approvalStep.vacationRequest.reason,
+            approverName = approvalStep.member.name,
             approvalReason = approvalStep.reason
         )
     }
@@ -27,15 +27,15 @@ object ApprovalStepMapper {
     fun fromSecondStepEntity(approvalStep: ApprovalStep): ApprovalSecondStepDetailResponse {
         return ApprovalSecondStepDetailResponse(
             approvalStepId = approvalStep.id!!,
-            name = approvalStep.vacationRequest.getMember().getName(),
-            deptName = approvalStep.vacationRequest.getMember().getDept().getDeptName(),
-            positionName = approvalStep.vacationRequest.getMember().getPosition().getName(),
+            name = approvalStep.vacationRequest.member.name,
+            deptName = approvalStep.vacationRequest.member.dept!!.deptName,
+            positionName = approvalStep.vacationRequest.member.position.name,
             status = approvalStep.approvalStatus,
-            type = approvalStep.vacationRequest.getType().getName(),
-            from = approvalStep.vacationRequest.getFrom(),
-            to = approvalStep.vacationRequest.getTo(),
-            reason = approvalStep.vacationRequest.getReason(),
-            approverName = approvalStep.member.getName(),
+            type = approvalStep.vacationRequest.type.name,
+            from = approvalStep.vacationRequest.from,
+            to = approvalStep.vacationRequest.to,
+            reason = approvalStep.vacationRequest.reason,
+            approverName = approvalStep.member.name,
             approvalReason = approvalStep.reason
         )
     }

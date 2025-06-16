@@ -115,19 +115,10 @@ class ApprovalStepService(
         val findApprovalStep = findByIdAndMemberIdAndStep(approvalStepId, memberId, STEP2)
         findApprovalStep.validateApprovable()
 
-        // todo: VacationInfoRepository 코틀린 변환 후 아래 주석으로 변경해야 함
         val findVacationInfo = vacationInfoRepository.findByMemberIdAndVacationType(
             findApprovalStep.vacationMemberId,
-            if (findApprovalStep.isHalfDay) "HALF_DAY_CODE" else findApprovalStep.vacationCode
-        ).orElseThrow {
-            NotFoundException(
-                NotFoundErrorCode.NOT_FOUND_VACATION_INFO
-            )
-        }
-//        val findVacationInfo = vacationInfoRepository.findByMemberIdAndVacationType(
-//            findApprovalStep.vacationMemberId,
-//            if (findApprovalStep.isHalfDay) HALF_DAY_CODE else findApprovalStep.vacationCode
-//        ) ?: throw NotFoundException(NotFoundErrorCode.NOT_FOUND_VACATION_INFO)
+            if (findApprovalStep.isHalfDay) HALF_DAY_CODE else findApprovalStep.vacationCode
+        ) ?: throw NotFoundException(NotFoundErrorCode.NOT_FOUND_VACATION_INFO)
 
         val count = if (findApprovalStep.isHalfDay) HALF_DAY_COUNT else findApprovalStep.calcVacationDays().toDouble()
 
@@ -158,7 +149,7 @@ class ApprovalStepService(
         // todo: 2차 결재자 지정 기능 (시스템상 구현 필요)
         val findDept = deptService.findByDeptName(HR_DEPT_NAME)
         approvalStepRepository.save(ApprovalStepMapper.toEntity(firstApprover, vacationRequest, STEP1))
-        approvalStepRepository.save(ApprovalStepMapper.toEntity(findDept.deptLeader, vacationRequest, STEP2))
+        approvalStepRepository.save(ApprovalStepMapper.toEntity(findDept.deptLeaderOrThrow(), vacationRequest, STEP2))
     }
 
     // 휴가 요청 취소될 경우, 관련 결재 단계 상태 CANCELED
