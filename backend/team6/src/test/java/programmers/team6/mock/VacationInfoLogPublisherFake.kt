@@ -6,7 +6,7 @@ import programmers.team6.domain.vacation.repository.VacationInfoLogRepository
 import programmers.team6.domain.vacation.support.VacationInfoLogPublisher
 
 class VacationInfoLogPublisherFake : VacationInfoLogPublisher(mockk<VacationInfoLogRepository>()) {
-    private val vacationInfoLogs: MutableList<VacationInfoLog> = mutableListOf();
+    private val vacationInfoLogs: MutableList<VacationInfoLog> = mutableListOf()
 
     override fun publish(logs: List<VacationInfoLog>) {
         vacationInfoLogs.addAll(logs)

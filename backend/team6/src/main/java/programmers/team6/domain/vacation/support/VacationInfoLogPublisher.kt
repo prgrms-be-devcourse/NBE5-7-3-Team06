@@ -11,7 +11,7 @@ open class VacationInfoLogPublisher(private val vacationInfoRepository: Vacation
         vacationInfoRepository.save(vacationInfoLog)
     }
 
-    open fun publish(logs: List<VacationInfoLog>) {
+    fun publish(logs: List<VacationInfoLog>) {
         vacationInfoRepository.saveAll(logs)
     }
 }

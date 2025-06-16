@@ -25,7 +25,7 @@ open class VacationGrantRuleFinder {
             else -> DefaultRule(type)
         }
 
-    open fun findAll(): VacationGrantRules =
+    fun findAll(): VacationGrantRules =
         VacationGrantRules(VacationCode.entries.map(::find))
 
     class DefaultRule(private val type: VacationCode) : VacationGrantRule {
