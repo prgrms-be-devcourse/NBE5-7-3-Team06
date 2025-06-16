@@ -105,7 +105,8 @@ public class VacationService {
 
 		// 휴가 유형 코드 조회
 		Code vacationType = codeRepository.findByGroupCodeAndCode("VACATION_TYPE", requestDto.getVacationType());
-			// .orElseThrow(() -> new RuntimeException("잘못된 휴가 유형입니다."));
+
+
 
 		// 휴가 요청 상태 코드 (기본 대기 상태)
 		VacationRequestStatus status = VacationRequestStatus.IN_PROGRESS;
@@ -225,7 +226,6 @@ public class VacationService {
 
 		// 휴가 유형 코드 조회
 		Code vacationType = codeRepository.findByGroupCodeAndCode("VACATION_TYPE", requestDto.getVacationType());
-			// .orElseThrow(() -> new RuntimeException("잘못된 휴가 유형입니다."));
 
 		// 수정 권한 검증 및 수정 처리
 		vacationRequest.updateByMember(memberId, requestDto.getFrom(), requestDto.getTo(), requestDto.getReason(),
