@@ -3,7 +3,6 @@ package programmers.team6.support;
 import java.time.LocalDateTime;
 
 import programmers.team6.domain.admin.entity.Dept;
-import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.member.entity.MemberInfo;
 import programmers.team6.domain.member.enums.Role;
 import programmers.team6.mock.MemberStub;
@@ -19,7 +18,7 @@ public class MemberMother {
 			.joinDate(LocalDateTime.of(2025, 6, 12, 10, 11))
 			.role(Role.USER)
 			.build();
-		member.setMemberInfo(new MemberInfo("birth","test@gmail.com","testPassword"));
+		member.setMemberInfo(new MemberInfo("birth", "test@gmail.com", "testPassword"));
 		return member;
 	}
 
@@ -32,8 +31,8 @@ public class MemberMother {
 			.joinDate(LocalDateTime.of(2025, 6, 12, 10, 11))
 			.role(role)
 			.build();
-  }
-  
+	}
+
 	public static Member withIdAndDeptName(Long id, String deptName) {
 		return MemberStub.subBuilder()
 			.id(id)
@@ -43,9 +42,9 @@ public class MemberMother {
 			.joinDate(LocalDateTime.of(2025, 6, 12, 10, 11))
 			.role(Role.USER)
 			.build();
-  }
-	
-  public static Member member() {
+	}
+
+	public static Member member() {
 		return withId(0L);
 	}
 }

@@ -1,6 +1,5 @@
 package programmers.team6.mock;
 
-import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.vacation.entity.ApprovalStep;
 import programmers.team6.domain.vacation.entity.VacationRequest;
 import programmers.team6.domain.vacation.enums.ApprovalStatus;
