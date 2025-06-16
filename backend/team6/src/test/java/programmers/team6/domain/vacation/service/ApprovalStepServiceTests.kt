@@ -9,8 +9,6 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
-import org.mockito.ArgumentMatchers
-import org.mockito.Mockito
 import programmers.team6.domain.admin.service.DeptService
 import programmers.team6.domain.vacation.dto.request.ApprovalStepRejectRequest
 import programmers.team6.domain.vacation.entity.ApprovalStep
@@ -28,8 +26,6 @@ import programmers.team6.domain.vacation.support.VacationInfoLogPublisher
 import programmers.team6.global.exception.customException.BadRequestException
 import programmers.team6.global.exception.customException.NotFoundException
 import programmers.team6.support.MemberMother
-import java.util.*
-import java.util.List
 
 internal class ApprovalStepServiceTests {
 
@@ -219,7 +215,7 @@ internal class ApprovalStepServiceTests {
         val secondApprovalStep: ApprovalStep = genSecondStep(secondStepId, secondApprover, vacationRequest)
 
         every {
-            approvalStepRepository!!.findByIdAndMemberIdAndStep(
+            approvalStepRepository.findByIdAndMemberIdAndStep(
                 firstStepId,
                 firstApproverId,
                 1
@@ -244,7 +240,7 @@ internal class ApprovalStepServiceTests {
         val failedNum = 99999L
         val firstApproverId = 2L
 
-        every { approvalStepRepository!!.findByIdAndMemberIdAndStep(failedNum, firstApproverId, 1) } returns mockk()
+        every { approvalStepRepository.findByIdAndMemberIdAndStep(failedNum, firstApproverId, 1) } returns mockk()
 
         // then
         AssertionsForClassTypes.assertThatThrownBy {
@@ -339,15 +335,10 @@ internal class ApprovalStepServiceTests {
             )
         } returns secondApprovalStep
         every { vacationInfoRepository.findByMemberIdAndVacationType(memberId, "01") } returns vacationInfo
-
-        Mockito.doNothing().`when`(vacationInfoLogPublisher).publish(
-            ArgumentMatchers.any(
-                VacationInfoLog::class.java
-            )
-        )
+        every { vacationInfoLogPublisher.publish(any<VacationInfoLog>()) } just Runs
 
         // when
-        val tf = approvalStepService!!.approveSecondStep(secondStepId, secondApproverId)
+        val tf = approvalStepService.approveSecondStep(secondStepId, secondApproverId)
 
         //then
         AssertionsForClassTypes.assertThat(tf).isEqualTo(true)
@@ -363,12 +354,12 @@ internal class ApprovalStepServiceTests {
 
         val failedNum = 99999L
         val secondApproverId = 2L
-        Mockito.`when`(approvalStepRepository!!.findByIdAndMemberIdAndStep(failedNum, secondApproverId, 2))
-            .thenReturn(null)
+
+        every { approvalStepRepository.findByIdAndMemberIdAndStep(failedNum, secondApproverId, 2) } returns mockk()
 
         // then
         AssertionsForClassTypes.assertThatThrownBy {
-            approvalStepService!!.approveSecondStep(failedNum, secondApproverId)
+            approvalStepService.approveSecondStep(failedNum, secondApproverId)
         }.isInstanceOf(NotFoundException::class.java)
     }
 
@@ -388,12 +379,17 @@ internal class ApprovalStepServiceTests {
         val secondStepId = 2L
         val secondApprovalStep: ApprovalStep = genFirstStep(secondStepId, secondApprover, vacationRequest, status)
 
-        Mockito.`when`(approvalStepRepository!!.findByIdAndMemberIdAndStep(secondStepId, secondApproverId, 2))
-            .thenReturn(secondApprovalStep)
+        every {
+            approvalStepRepository.findByIdAndMemberIdAndStep(
+                secondStepId,
+                secondApproverId,
+                2
+            )
+        } returns secondApprovalStep
 
         // then
         AssertionsForClassTypes.assertThatThrownBy {
-            approvalStepService!!.approveSecondStep(secondStepId, secondApproverId)
+            approvalStepService.approveSecondStep(secondStepId, secondApproverId)
         }.isInstanceOf(BadRequestException::class.java)
     }
 
@@ -415,14 +411,18 @@ internal class ApprovalStepServiceTests {
             ApprovalStatus.PENDING
         )
 
-        Mockito.`when`(approvalStepRepository!!.findByIdAndMemberIdAndStep(secondStepId, secondApproverId, 2))
-            .thenReturn(secondApprovalStep)
-        Mockito.`when`(vacationInfoRepository!!.findByMemberIdAndVacationType(memberId, "01"))
-            .thenReturn(Optional.empty())
+        every {
+            approvalStepRepository.findByIdAndMemberIdAndStep(
+                secondStepId,
+                secondApproverId,
+                2
+            )
+        } returns secondApprovalStep
+        every { vacationInfoRepository.findByMemberIdAndVacationType(memberId, "01") } returns null
 
         //then
         AssertionsForClassTypes.assertThatThrownBy {
-            approvalStepService!!.approveSecondStep(secondStepId, secondApproverId)
+            approvalStepService.approveSecondStep(secondStepId, secondApproverId)
         }.isInstanceOf(NotFoundException::class.java)
     }
 
@@ -445,13 +445,17 @@ internal class ApprovalStepServiceTests {
             ApprovalStatus.PENDING
         )
 
-        Mockito.`when`(approvalStepRepository!!.findByIdAndMemberIdAndStep(secondStepId, secondApproverId, 2))
-            .thenReturn(secondApprovalStep)
-        Mockito.`when`(vacationInfoRepository!!.findByMemberIdAndVacationType(memberId, "01"))
-            .thenReturn(Optional.of(vacationInfo))
+        every {
+            approvalStepRepository.findByIdAndMemberIdAndStep(
+                secondStepId,
+                secondApproverId,
+                2
+            )
+        } returns secondApprovalStep
+        every { vacationInfoRepository.findByMemberIdAndVacationType(memberId, "01") } returns vacationInfo
 
         // when
-        val tf = approvalStepService!!.approveSecondStep(secondStepId, secondApproverId)
+        val tf = approvalStepService.approveSecondStep(secondStepId, secondApproverId)
 
         //then
         AssertionsForClassTypes.assertThat(tf).isEqualTo(false)
@@ -477,11 +481,16 @@ internal class ApprovalStepServiceTests {
             ApprovalStatus.PENDING
         )
 
-        Mockito.`when`(approvalStepRepository!!.findByIdAndMemberIdAndStep(secondStepId, secondApproverId, 2))
-            .thenReturn(secondApprovalStep)
+        every {
+            approvalStepRepository.findByIdAndMemberIdAndStep(
+                secondStepId,
+                secondApproverId,
+                2
+            )
+        } returns secondApprovalStep
 
         // when
-        approvalStepService!!.rejectSecondStep(secondStepId, secondApproverId, ApprovalStepRejectRequest("안됨"))
+        approvalStepService.rejectSecondStep(secondStepId, secondApproverId, ApprovalStepRejectRequest("안됨"))
 
         //then
         AssertionsForClassTypes.assertThat(secondApprovalStep.approvalStatus).isEqualTo(ApprovalStatus.REJECTED)
@@ -495,12 +504,12 @@ internal class ApprovalStepServiceTests {
 
         val failedNum = 99999L
         val secondApproverId = 2L
-        Mockito.`when`(approvalStepRepository!!.findByIdAndMemberIdAndStep(failedNum, secondApproverId, 2))
-            .thenReturn(null)
+
+        every { approvalStepRepository.findByIdAndMemberIdAndStep(failedNum, secondApproverId, 2) }
 
         // then
         AssertionsForClassTypes.assertThatThrownBy {
-            approvalStepService!!.rejectSecondStep(failedNum, secondApproverId, ApprovalStepRejectRequest("안됨"))
+            approvalStepService.rejectSecondStep(failedNum, secondApproverId, ApprovalStepRejectRequest("안됨"))
         }.isInstanceOf(NotFoundException::class.java)
     }
 
@@ -520,12 +529,17 @@ internal class ApprovalStepServiceTests {
         val secondStepId = 2L
         val secondApprovalStep: ApprovalStep = genFirstStep(secondStepId, secondApprover, vacationRequest, status)
 
-        Mockito.`when`(approvalStepRepository!!.findByIdAndMemberIdAndStep(secondStepId, secondApproverId, 2))
-            .thenReturn(secondApprovalStep)
+        every {
+            approvalStepRepository.findByIdAndMemberIdAndStep(
+                secondStepId,
+                secondApproverId,
+                2
+            )
+        } returns secondApprovalStep
 
         // then
         AssertionsForClassTypes.assertThatThrownBy {
-            approvalStepService!!.rejectSecondStep(
+            approvalStepService.rejectSecondStep(
                 secondStepId, secondApproverId,
                 ApprovalStepRejectRequest("안됨")
             )
@@ -551,11 +565,15 @@ internal class ApprovalStepServiceTests {
         val firstApprovalStep: ApprovalStep = genFirstStep(firstStepId, firstApprover, vacationRequest)
         val secondApprovalStep: ApprovalStep = genSecondStep(secondStepId, secondApprover, vacationRequest)
 
-        Mockito.`when`(approvalStepRepository!!.findByVacationRequest(vacationRequest))
-            .thenReturn(List.of(firstApprovalStep, secondApprovalStep))
+        every {
+            approvalStepRepository.findByVacationRequest(vacationRequest)
+        } returns listOf(
+            firstApprovalStep,
+            secondApprovalStep
+        )
 
         // when
-        approvalStepService!!.cancelApprovalStep(vacationRequest)
+        approvalStepService.cancelApprovalStep(vacationRequest)
 
         //then
         AssertionsForClassTypes.assertThat(firstApprovalStep.approvalStatus).isEqualTo(ApprovalStatus.CANCELED)
