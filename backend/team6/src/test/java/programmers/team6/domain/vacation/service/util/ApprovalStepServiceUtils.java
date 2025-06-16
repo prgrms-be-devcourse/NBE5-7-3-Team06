@@ -2,7 +2,6 @@ package programmers.team6.domain.vacation.service.util;
 
 import java.time.LocalDateTime;
 
-import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.vacation.entity.ApprovalStep;
 import programmers.team6.domain.vacation.entity.VacationRequest;
 import programmers.team6.domain.vacation.enums.ApprovalStatus;

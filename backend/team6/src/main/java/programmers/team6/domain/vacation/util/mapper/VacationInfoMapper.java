@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.vacation.dto.response.MemberVacationInfoSelectResponse;
 import programmers.team6.domain.vacation.dto.response.VacationInfoSelectResponse;
 import programmers.team6.domain.vacation.entity.VacationInfo;

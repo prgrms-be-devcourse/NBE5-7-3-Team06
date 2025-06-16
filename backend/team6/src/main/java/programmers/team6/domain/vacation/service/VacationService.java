@@ -19,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import programmers.team6.domain.admin.entity.Code;
 import programmers.team6.domain.admin.entity.Dept;
-import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.admin.repository.CodeRepository;
 import programmers.team6.domain.member.repository.MemberRepository;
 import programmers.team6.domain.vacation.support.MonthRange;
@@ -105,8 +104,6 @@ public class VacationService {
 
 		// 휴가 유형 코드 조회
 		Code vacationType = codeRepository.findByGroupCodeAndCode("VACATION_TYPE", requestDto.getVacationType());
-
-
 
 		// 휴가 요청 상태 코드 (기본 대기 상태)
 		VacationRequestStatus status = VacationRequestStatus.IN_PROGRESS;

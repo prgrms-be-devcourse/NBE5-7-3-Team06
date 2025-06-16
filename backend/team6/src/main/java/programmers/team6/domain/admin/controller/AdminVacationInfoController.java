@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import programmers.team6.domain.admin.dto.request.VacationInfoUpdateTotalCountRequestsList;
-import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.member.repository.MemberSearchRepository;
 import programmers.team6.domain.vacation.dto.response.MemberVacationInfoSelectResponse;
 import programmers.team6.domain.vacation.entity.VacationInfo;
