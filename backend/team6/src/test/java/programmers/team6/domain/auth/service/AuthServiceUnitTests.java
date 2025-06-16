@@ -20,6 +20,10 @@ import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import programmers.team6.domain.admin.entity.Code;
+import programmers.team6.domain.admin.entity.Dept;
+import programmers.team6.domain.admin.repository.CodeRepository;
+import programmers.team6.domain.admin.repository.DeptRepository;
 import programmers.team6.domain.auth.dto.JwtMemberInfo;
 import programmers.team6.domain.auth.dto.TokenBody;
 import programmers.team6.domain.auth.dto.TokenPairWithExpiration;
@@ -30,13 +34,9 @@ import programmers.team6.domain.auth.dto.response.AuthTokenResponse;
 import programmers.team6.domain.auth.dto.response.LoginResponse;
 import programmers.team6.domain.auth.token.JwtTokenProvider;
 import programmers.team6.domain.auth.util.JwtUtils;
-import programmers.team6.domain.admin.entity.Code;
-import programmers.team6.domain.admin.entity.Dept;
 import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.member.entity.MemberInfo;
 import programmers.team6.domain.member.enums.Role;
-import programmers.team6.domain.admin.repository.CodeRepository;
-import programmers.team6.domain.admin.repository.DeptRepository;
 import programmers.team6.domain.member.repository.MemberInfoRepository;
 import programmers.team6.domain.member.repository.MemberRepository;
 import programmers.team6.global.exception.code.ConflictErrorCode;
@@ -74,9 +74,7 @@ class AuthServiceUnitTests {
 
 		String encodedPassword = "encoded1234";
 
-		Dept dept = Dept.builder()
-			.deptName("개발팀")
-			.build();
+		Dept dept = new Dept(null, "개발팀", null);
 
 		Code position = employee();
 
@@ -128,9 +126,7 @@ class AuthServiceUnitTests {
 
 		MemberSignUpRequest memberReq = genMemberSignUpRequest();
 
-		Dept dept = Dept.builder()
-			.deptName("개발팀")
-			.build();
+		Dept dept = new Dept(null, "개발팀", null);
 
 		when(deptRepository.findById(memberReq.dept())).thenReturn(Optional.of(dept));
 		when(codeRepository.findByGroupCodeAndCode("POSITION", memberReq.position())).thenReturn(Optional.empty());
@@ -147,9 +143,7 @@ class AuthServiceUnitTests {
 
 		MemberSignUpRequest memberReq = genMemberSignUpRequest();
 
-		Dept dept = Dept.builder()
-			.deptName("개발팀")
-			.build();
+		Dept dept = new Dept(null, "개발팀", null);
 
 		Code position = employee();
 

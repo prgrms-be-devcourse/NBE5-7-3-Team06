@@ -35,9 +35,7 @@ public class AdminVacationRequestSearchTestDataFactory {
 	}
 
 	public static Dept genTestDept(String deptName) {
-		return Dept.builder()
-			.deptName(deptName)
-			.build();
+		return new Dept(null, deptName, null);
 	}
 
 	public static List<Dept> genTestDeptList(int cnt, String prefixDeptName) {

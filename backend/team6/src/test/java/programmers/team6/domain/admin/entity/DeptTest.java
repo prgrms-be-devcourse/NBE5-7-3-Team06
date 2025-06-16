@@ -14,7 +14,7 @@ class DeptTest {
 	@DisplayName("부서장이 제공되었을때, 성공적으로 부서의 부서장으로 지정")
 	void should_successAppointLeader_when_givenLeaderMember() {
 		// given
-		Dept dept = Dept.builder().deptName("testDeptName").build();
+		Dept dept = new Dept(null, "deptName", null);
 		Member leader = Member.builder().build();
 
 		// when
@@ -28,10 +28,10 @@ class DeptTest {
 	@DisplayName("부서장이 null일 경우, NotFoundException 발생")
 	void should_throwNotFoundException_when_deptLeaderIsNull() {
 		// given & when
-		Dept dept = Dept.builder().deptName("testDeptName").build();
+		Dept dept = new Dept(null, "deptName", null);
 
 		// then
-		assertThatThrownBy(() -> dept.getDeptLeader()).isInstanceOf(NotFoundException.class).hasMessage(
+		assertThatThrownBy(() -> dept.deptLeaderOrThrow()).isInstanceOf(NotFoundException.class).hasMessage(
 			NotFoundErrorCode.NOT_FOUND_DEPT_LEADER.getMessage());
 	}
 }

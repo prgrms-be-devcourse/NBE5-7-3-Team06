@@ -14,11 +14,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import jakarta.transaction.Transactional;
 import programmers.team6.domain.admin.entity.Code;
 import programmers.team6.domain.admin.entity.Dept;
+import programmers.team6.domain.admin.repository.CodeRepository;
+import programmers.team6.domain.admin.repository.DeptRepository;
 import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.member.entity.MemberInfo;
 import programmers.team6.domain.member.enums.Role;
-import programmers.team6.domain.admin.repository.CodeRepository;
-import programmers.team6.domain.admin.repository.DeptRepository;
 import programmers.team6.domain.member.repository.MemberRepository;
 import programmers.team6.support.PositionMother;
 
@@ -39,7 +39,7 @@ class MemberRepositorySliceTest {
 	@Test
 	@DisplayName("이메일로 회원을 조회하면 존재하는 회원이 반환된다")
 	void returns_member_when_email_exists() {
-		Dept dept = deptRepository.save(new Dept("test", null));
+		Dept dept = deptRepository.save(new Dept(null, "test", null));
 		Code position = codeRepository.save(PositionMother.employee());
 
 		Member member = Member.builder()
@@ -61,7 +61,7 @@ class MemberRepositorySliceTest {
 	@Test
 	@DisplayName("존재하지 않는 이메일로 조회하면 빈 Optional이 반환된다")
 	void returns_empty_optional_when_email_does_not_exist() {
-		Dept dept = deptRepository.save(new Dept("test", null));
+		Dept dept = deptRepository.save(new Dept(null, "test", null));
 		Code position = codeRepository.save(PositionMother.employee());
 
 		Member member = Member.builder()
