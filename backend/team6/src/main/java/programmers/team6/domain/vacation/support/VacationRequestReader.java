@@ -20,8 +20,8 @@ public class VacationRequestReader {
 	private final ApprovalStepRepository approvalStepRepository;
 
 	public VacationRequestDetailReadResponse readDetailFrom(Long id) {
-		return vacationRequestRepository.findVacationRequestDetailById(id)
-			// .orElseThrow(() -> new NotFoundException(NotFoundErrorCode.NOT_FOUND_VACATION_REQUEST))
+		return vacationRequestRepository.findVacationRequestDetailById2(id)
+			.orElseThrow(() -> new NotFoundException(NotFoundErrorCode.NOT_FOUND_VACATION_REQUEST))
 			.injectApprovalStepDetails(readApprovalFrom(id));
 	}
 

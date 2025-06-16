@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import programmers.team6.domain.admin.entity.Code;
 import programmers.team6.domain.vacation.enums.VacationCode;
 import programmers.team6.domain.vacation.enums.VacationRequestStatus;
 import programmers.team6.support.MemberMother;
@@ -19,15 +18,16 @@ class VacationRequestTests {
 	@Test
 	@DisplayName("업데이트 성공테스트")
 	void update_success() {
-		VacationRequest vacationRequest = VacationRequest.builder()
-			.member(MemberMother.withId(1L))
-			.from(LocalDateTime.now())
-			.to(LocalDateTime.now())
-			.reason("reason")
-			.type(TestVacationType.ANNUAL.toCode())
-			.status(VacationRequestStatus.IN_PROGRESS)
-			.version(1)
-			.build();
+		VacationRequest vacationRequest = VacationRequest.Companion.create(
+			MemberMother.withId(1L),
+			LocalDateTime.now(),
+			LocalDateTime.now(),
+			"reason",
+			TestVacationType.ANNUAL.toCode(),
+			VacationRequestStatus.IN_PROGRESS,
+			1
+		);
+
 		Code type = new Code(VacationCode.REWARD.getGroupCode(), VacationCode.REWARD.getCode(),
 			VacationCode.REWARD.name());
 		LocalDateTime start = LocalDate.of(2024, 10, 18).atStartOfDay();
@@ -47,15 +47,16 @@ class VacationRequestTests {
 	@Test
 	@DisplayName("상태업데이트 성공테스트")
 	void updateStatus_success() {
-		VacationRequest vacationRequest = VacationRequest.builder()
-			.member(MemberMother.withId(1L))
-			.from(LocalDateTime.now())
-			.to(LocalDateTime.now())
-			.reason("reason")
-			.type(TestVacationType.ANNUAL.toCode())
-			.status(VacationRequestStatus.IN_PROGRESS)
-			.version(1)
-			.build();
+		VacationRequest vacationRequest = VacationRequest.Companion.create(
+			MemberMother.withId(1L),
+			LocalDateTime.now(),
+			LocalDateTime.now(),
+			"reason",
+			TestVacationType.ANNUAL.toCode(),
+			VacationRequestStatus.IN_PROGRESS,
+			1
+		);
+
 		VacationRequestStatus vacationRequestStatus = VacationRequestStatus.APPROVED;
 
 		vacationRequest.updateStatus(vacationRequestStatus);
@@ -66,15 +67,15 @@ class VacationRequestTests {
 	@Test
 	@DisplayName("업데이트 가능 검증 성공 테스트")
 	void canCancel_success() {
-		VacationRequest vacationRequest = VacationRequest.builder()
-			.member(MemberMother.withId(1L))
-			.from(LocalDateTime.now())
-			.to(LocalDateTime.now())
-			.reason("reason")
-			.type(TestVacationType.ANNUAL.toCode())
-			.status(VacationRequestStatus.IN_PROGRESS)
-			.version(1)
-			.build();
+		VacationRequest vacationRequest = VacationRequest.Companion.create(
+			MemberMother.withId(1L),
+			LocalDateTime.now(),
+			LocalDateTime.now(),
+			"reason",
+			TestVacationType.ANNUAL.toCode(),
+			VacationRequestStatus.IN_PROGRESS,
+			1
+		);
 
 		boolean result = vacationRequest.canCancel(1L);
 
@@ -84,15 +85,15 @@ class VacationRequestTests {
 	@Test
 	@DisplayName("프로그래스상태가 아니면 업데이트는 실패한다")
 	void canUpdate_shouldFailed_ifStatusIsNotProgress() {
-		VacationRequest vacationRequest = VacationRequest.builder()
-			.member(MemberMother.withId(1L))
-			.from(LocalDateTime.now())
-			.to(LocalDateTime.now())
-			.reason("reason")
-			.type(TestVacationType.ANNUAL.toCode())
-			.status(VacationRequestStatus.APPROVED)
-			.version(1)
-			.build();
+		VacationRequest vacationRequest = VacationRequest.Companion.create(
+			MemberMother.withId(1L),
+			LocalDateTime.now(),
+			LocalDateTime.now(),
+			"reason",
+			TestVacationType.ANNUAL.toCode(),
+			VacationRequestStatus.IN_PROGRESS,
+			1
+		);
 
 		boolean result = vacationRequest.canCancel(1L);
 
@@ -102,15 +103,15 @@ class VacationRequestTests {
 	@Test
 	@DisplayName("작성자가 아니면 업데이트는 실패한다")
 	void canUpdate_shouldFailed_ifAnotherMember() {
-		VacationRequest vacationRequest = VacationRequest.builder()
-			.member(MemberMother.withId(1L))
-			.from(LocalDateTime.now())
-			.to(LocalDateTime.now())
-			.reason("reason")
-			.type(TestVacationType.ANNUAL.toCode())
-			.status(VacationRequestStatus.IN_PROGRESS)
-			.version(1)
-			.build();
+		VacationRequest vacationRequest = VacationRequest.Companion.create(
+			MemberMother.withId(1L),
+			LocalDateTime.now(),
+			LocalDateTime.now(),
+			"reason",
+			TestVacationType.ANNUAL.toCode(),
+			VacationRequestStatus.IN_PROGRESS,
+			1
+		);
 
 		boolean result = vacationRequest.canCancel(2L);
 
@@ -120,15 +121,16 @@ class VacationRequestTests {
 	@Test
 	@DisplayName("작성자면 업데이트에 성공한다")
 	void update_shouldSuccess_ifAnotherMember() {
-		VacationRequest vacationRequest = VacationRequest.builder()
-			.member(MemberMother.withId(1L))
-			.from(LocalDateTime.now())
-			.to(LocalDateTime.now())
-			.reason("reason")
-			.type(TestVacationType.ANNUAL.toCode())
-			.status(VacationRequestStatus.IN_PROGRESS)
-			.version(1)
-			.build();
+		VacationRequest vacationRequest = VacationRequest.Companion.create(
+			MemberMother.withId(1L),
+			LocalDateTime.now(),
+			LocalDateTime.now(),
+			"reason",
+			TestVacationType.ANNUAL.toCode(),
+			VacationRequestStatus.IN_PROGRESS,
+			1
+		);
+
 		Code type = new Code(VacationCode.REWARD.getGroupCode(), VacationCode.REWARD.getCode(),
 			VacationCode.REWARD.name());
 		LocalDateTime start = LocalDate.of(2024, 10, 18).atStartOfDay();
@@ -146,15 +148,16 @@ class VacationRequestTests {
 	@Test
 	@DisplayName("프로그래스상태가 아니면 업데이트는 실패한다")
 	void update_shouldFailed_ifStatusIsNotProgress() {
-		VacationRequest vacationRequest = VacationRequest.builder()
-			.member(MemberMother.withId(1L))
-			.from(LocalDateTime.now())
-			.to(LocalDateTime.now())
-			.reason("reason")
-			.type(TestVacationType.ANNUAL.toCode())
-			.status(VacationRequestStatus.APPROVED)
-			.version(1)
-			.build();
+		VacationRequest vacationRequest = VacationRequest.Companion.create(
+			MemberMother.withId(1L),
+			LocalDateTime.now(),
+			LocalDateTime.now(),
+			"reason",
+			TestVacationType.ANNUAL.toCode(),
+			VacationRequestStatus.IN_PROGRESS,
+			1
+		);
+
 		Code type = new Code(VacationCode.REWARD.getGroupCode(), VacationCode.REWARD.getCode(),
 			VacationCode.REWARD.name());
 		LocalDateTime start = LocalDate.of(2024, 10, 18).atStartOfDay();
@@ -168,15 +171,16 @@ class VacationRequestTests {
 	@Test
 	@DisplayName("다른사용자가 업데이트하려면 업데이트는 실패한다")
 	void update_shouldFailed_ifAnotherMember() {
-		VacationRequest vacationRequest = VacationRequest.builder()
-			.member(MemberMother.withId(1L))
-			.from(LocalDateTime.now())
-			.to(LocalDateTime.now())
-			.reason("reason")
-			.type(TestVacationType.ANNUAL.toCode())
-			.status(VacationRequestStatus.IN_PROGRESS)
-			.version(1)
-			.build();
+		VacationRequest vacationRequest = VacationRequest.Companion.create(
+			MemberMother.withId(1L),
+			LocalDateTime.now(),
+			LocalDateTime.now(),
+			"reason",
+			TestVacationType.ANNUAL.toCode(),
+			VacationRequestStatus.IN_PROGRESS,
+			1
+		);
+
 		Code type = new Code(VacationCode.REWARD.getGroupCode(), VacationCode.REWARD.getCode(),
 			VacationCode.REWARD.name());
 		LocalDateTime start = LocalDate.of(2024, 10, 18).atStartOfDay();
@@ -190,15 +194,15 @@ class VacationRequestTests {
 	@Test
 	@DisplayName("취소가 성공한다")
 	void canCancel_shouldSuccess() {
-		VacationRequest vacationRequest = VacationRequest.builder()
-			.member(MemberMother.withId(1L))
-			.from(LocalDateTime.now())
-			.to(LocalDateTime.now())
-			.reason("reason")
-			.type(TestVacationType.ANNUAL.toCode())
-			.status(VacationRequestStatus.IN_PROGRESS)
-			.version(1)
-			.build();
+		VacationRequest vacationRequest = VacationRequest.Companion.create(
+			MemberMother.withId(1L),
+			LocalDateTime.now(),
+			LocalDateTime.now(),
+			"reason",
+			TestVacationType.ANNUAL.toCode(),
+			VacationRequestStatus.IN_PROGRESS,
+			1
+		);
 
 		boolean result = vacationRequest.canCancel(1L);
 
@@ -208,15 +212,15 @@ class VacationRequestTests {
 	@Test
 	@DisplayName("작성자가 아니면 취소할 수 없다")
 	void canCancel_shouldFailed_ifAnotherMember() {
-		VacationRequest vacationRequest = VacationRequest.builder()
-			.member(MemberMother.withId(1L))
-			.from(LocalDateTime.now())
-			.to(LocalDateTime.now())
-			.reason("reason")
-			.type(TestVacationType.ANNUAL.toCode())
-			.status(VacationRequestStatus.IN_PROGRESS)
-			.version(1)
-			.build();
+		VacationRequest vacationRequest = VacationRequest.Companion.create(
+			MemberMother.withId(1L),
+			LocalDateTime.now(),
+			LocalDateTime.now(),
+			"reason",
+			TestVacationType.ANNUAL.toCode(),
+			VacationRequestStatus.IN_PROGRESS,
+			1
+		);
 
 		boolean result = vacationRequest.canCancel(2L);
 
@@ -226,15 +230,15 @@ class VacationRequestTests {
 	@Test
 	@DisplayName("프로그래스 상태가 아니면 취소할 수 없다")
 	void canCancel_shouldFailed_ifStatusIsNotProgress() {
-		VacationRequest vacationRequest = VacationRequest.builder()
-			.member(MemberMother.withId(1L))
-			.from(LocalDateTime.now())
-			.to(LocalDateTime.now())
-			.reason("reason")
-			.type(TestVacationType.ANNUAL.toCode())
-			.status(VacationRequestStatus.APPROVED)
-			.version(1)
-			.build();
+		VacationRequest vacationRequest = VacationRequest.Companion.create(
+			MemberMother.withId(1L),
+			LocalDateTime.now(),
+			LocalDateTime.now(),
+			"reason",
+			TestVacationType.ANNUAL.toCode(),
+			VacationRequestStatus.IN_PROGRESS,
+			1
+		);
 
 		boolean result = vacationRequest.canCancel(1L);
 
@@ -244,15 +248,15 @@ class VacationRequestTests {
 	@Test
 	@DisplayName("취소한다")
 	void cancel_shouldSuccess() {
-		VacationRequest vacationRequest = VacationRequest.builder()
-			.member(MemberMother.withId(1L))
-			.from(LocalDateTime.now())
-			.to(LocalDateTime.now())
-			.reason("reason")
-			.type(TestVacationType.ANNUAL.toCode())
-			.status(VacationRequestStatus.IN_PROGRESS)
-			.version(1)
-			.build();
+		VacationRequest vacationRequest = VacationRequest.Companion.create(
+			MemberMother.withId(1L),
+			LocalDateTime.now(),
+			LocalDateTime.now(),
+			"reason",
+			TestVacationType.ANNUAL.toCode(),
+			VacationRequestStatus.IN_PROGRESS,
+			1
+		);
 
 		vacationRequest.validateAndCancel(1L);
 
@@ -263,15 +267,15 @@ class VacationRequestTests {
 	@Test
 	@DisplayName("프로그래스 상태가 아니면 취소에 실패한다")
 	void cancel_shouldFailed_ifStatusIsNotProgress() {
-		VacationRequest vacationRequest = VacationRequest.builder()
-			.member(MemberMother.withId(1L))
-			.from(LocalDateTime.now())
-			.to(LocalDateTime.now())
-			.reason("reason")
-			.type(TestVacationType.ANNUAL.toCode())
-			.status(VacationRequestStatus.APPROVED)
-			.version(1)
-			.build();
+		VacationRequest vacationRequest = VacationRequest.Companion.create(
+			MemberMother.withId(1L),
+			LocalDateTime.now(),
+			LocalDateTime.now(),
+			"reason",
+			TestVacationType.ANNUAL.toCode(),
+			VacationRequestStatus.IN_PROGRESS,
+			1
+		);
 
 		assertThatIllegalStateException().isThrownBy(() -> vacationRequest.validateAndCancel(1L));
 	}
@@ -279,15 +283,15 @@ class VacationRequestTests {
 	@Test
 	@DisplayName("작성자가 아니면 취소에 실패한다")
 	void cancel_shouldFailed_ifAnotherMember() {
-		VacationRequest vacationRequest = VacationRequest.builder()
-			.member(MemberMother.withId(1L))
-			.from(LocalDateTime.now())
-			.to(LocalDateTime.now())
-			.reason("reason")
-			.type(TestVacationType.ANNUAL.toCode())
-			.status(VacationRequestStatus.IN_PROGRESS)
-			.version(1)
-			.build();
+		VacationRequest vacationRequest = VacationRequest.Companion.create(
+			MemberMother.withId(1L),
+			LocalDateTime.now(),
+			LocalDateTime.now(),
+			"reason",
+			TestVacationType.ANNUAL.toCode(),
+			VacationRequestStatus.IN_PROGRESS,
+			1
+		);
 
 		assertThatRuntimeException().isThrownBy(() -> vacationRequest.validateAndCancel(2L));
 	}
@@ -295,15 +299,15 @@ class VacationRequestTests {
 	@Test
 	@DisplayName("휴가를 허가한다")
 	void approve_shouldSuccess() {
-		VacationRequest vacationRequest = VacationRequest.builder()
-			.member(MemberMother.withId(1L))
-			.from(LocalDateTime.now())
-			.to(LocalDateTime.now())
-			.reason("reason")
-			.type(TestVacationType.ANNUAL.toCode())
-			.status(VacationRequestStatus.IN_PROGRESS)
-			.version(1)
-			.build();
+		VacationRequest vacationRequest = VacationRequest.Companion.create(
+			MemberMother.withId(1L),
+			LocalDateTime.now(),
+			LocalDateTime.now(),
+			"reason",
+			TestVacationType.ANNUAL.toCode(),
+			VacationRequestStatus.IN_PROGRESS,
+			1
+		);
 
 		vacationRequest.approve();
 
@@ -313,15 +317,15 @@ class VacationRequestTests {
 	@Test
 	@DisplayName("휴가를 반려한다")
 	void reject_shouldSuccess() {
-		VacationRequest vacationRequest = VacationRequest.builder()
-			.member(MemberMother.withId(1L))
-			.from(LocalDateTime.now())
-			.to(LocalDateTime.now())
-			.reason("reason")
-			.type(TestVacationType.ANNUAL.toCode())
-			.status(VacationRequestStatus.IN_PROGRESS)
-			.version(1)
-			.build();
+		VacationRequest vacationRequest = VacationRequest.Companion.create(
+			MemberMother.withId(1L),
+			LocalDateTime.now(),
+			LocalDateTime.now(),
+			"reason",
+			TestVacationType.ANNUAL.toCode(),
+			VacationRequestStatus.IN_PROGRESS,
+			1
+		);
 
 		vacationRequest.reject();
 
@@ -331,15 +335,15 @@ class VacationRequestTests {
 	@Test
 	@DisplayName("휴가를 반려한다")
 	void cancel_shouldSuccess2() {
-		VacationRequest vacationRequest = VacationRequest.builder()
-			.member(MemberMother.withId(1L))
-			.from(LocalDateTime.now())
-			.to(LocalDateTime.now())
-			.reason("reason")
-			.type(TestVacationType.ANNUAL.toCode())
-			.status(VacationRequestStatus.IN_PROGRESS)
-			.version(1)
-			.build();
+		VacationRequest vacationRequest = VacationRequest.Companion.create(
+			MemberMother.withId(1L),
+			LocalDateTime.now(),
+			LocalDateTime.now(),
+			"reason",
+			TestVacationType.ANNUAL.toCode(),
+			VacationRequestStatus.IN_PROGRESS,
+			1
+		);
 
 		vacationRequest.cancel();
 
@@ -349,15 +353,15 @@ class VacationRequestTests {
 	@Test
 	@DisplayName("휴가 사용 일수 계산")
 	void calc_vactions_days() {
-		VacationRequest vacationRequest = VacationRequest.builder()
-			.member(MemberMother.withId(1L))
-			.from(LocalDateTime.now())
-			.to(LocalDateTime.now())
-			.reason("reason")
-			.type(TestVacationType.ANNUAL.toCode())
-			.status(VacationRequestStatus.IN_PROGRESS)
-			.version(1)
-			.build();
+		VacationRequest vacationRequest = VacationRequest.Companion.create(
+			MemberMother.withId(1L),
+			LocalDateTime.now(),
+			LocalDateTime.now(),
+			"reason",
+			TestVacationType.ANNUAL.toCode(),
+			VacationRequestStatus.IN_PROGRESS,
+			1
+		);
 
 		int vacationDays = vacationRequest.calcVacationDays();
 
@@ -367,15 +371,15 @@ class VacationRequestTests {
 	@Test
 	@DisplayName("반차인 경우 true를 반환한다")
 	void is_half_true() {
-		VacationRequest vacationRequest = VacationRequest.builder()
-			.member(MemberMother.withId(1L))
-			.from(LocalDateTime.now())
-			.to(LocalDateTime.now())
-			.reason("reason")
-			.type(TestVacationType.HALP.toCode())
-			.status(VacationRequestStatus.IN_PROGRESS)
-			.version(1)
-			.build();
+		VacationRequest vacationRequest = VacationRequest.Companion.create(
+			MemberMother.withId(1L),
+			LocalDateTime.now(),
+			LocalDateTime.now(),
+			"reason",
+			TestVacationType.ANNUAL.toCode(),
+			VacationRequestStatus.IN_PROGRESS,
+			1
+		);
 
 		boolean result = vacationRequest.isHalfDay();
 
@@ -385,15 +389,15 @@ class VacationRequestTests {
 	@Test
 	@DisplayName("반차가 아닌경우 false를 반환한다")
 	void is_half_false() {
-		VacationRequest vacationRequest = VacationRequest.builder()
-			.member(MemberMother.withId(1L))
-			.from(LocalDateTime.now())
-			.to(LocalDateTime.now())
-			.reason("reason")
-			.type(TestVacationType.ANNUAL.toCode())
-			.status(VacationRequestStatus.IN_PROGRESS)
-			.version(1)
-			.build();
+		VacationRequest vacationRequest = VacationRequest.Companion.create(
+			MemberMother.withId(1L),
+			LocalDateTime.now(),
+			LocalDateTime.now(),
+			"reason",
+			TestVacationType.ANNUAL.toCode(),
+			VacationRequestStatus.IN_PROGRESS,
+			1
+		);
 
 		boolean result = vacationRequest.isHalfDay();
 
