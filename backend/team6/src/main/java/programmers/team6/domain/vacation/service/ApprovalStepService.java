@@ -10,14 +10,14 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import programmers.team6.domain.admin.entity.Dept;
-import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.admin.service.DeptService;
+import programmers.team6.domain.member.entity.Member;
+import programmers.team6.domain.vacation.dto.request.ApprovalStepRejectRequest;
+import programmers.team6.domain.vacation.dto.request.ApprovalStepSelectRequest;
 import programmers.team6.domain.vacation.dto.response.ApprovalFirstStepDetailResponse;
 import programmers.team6.domain.vacation.dto.response.ApprovalFirstStepSelectResponse;
 import programmers.team6.domain.vacation.dto.response.ApprovalSecondStepDetailResponse;
 import programmers.team6.domain.vacation.dto.response.ApprovalSecondStepSelectResponse;
-import programmers.team6.domain.vacation.dto.request.ApprovalStepRejectRequest;
-import programmers.team6.domain.vacation.dto.request.ApprovalStepSelectRequest;
 import programmers.team6.domain.vacation.entity.ApprovalStep;
 import programmers.team6.domain.vacation.entity.VacationInfo;
 import programmers.team6.domain.vacation.entity.VacationInfoLog;
@@ -150,7 +150,8 @@ public class ApprovalStepService {
 		// todo: 2차 결재자 지정 기능 (시스템상 구현 필요)
 		Dept findDept = deptService.findByDeptName("인사팀");
 		approvalStepRepository.save(ApprovalStepMapper.toEntity(firstApprover, vacationRequest, STEP1));
-		approvalStepRepository.save(ApprovalStepMapper.toEntity(findDept.getDeptLeader(), vacationRequest, STEP2));
+		approvalStepRepository.save(
+			ApprovalStepMapper.toEntity(findDept.deptLeaderOrThrow(), vacationRequest, STEP2));
 	}
 
 	// 휴가 요청 취소될 경우, 관련 결재 단계 상태 CANCELED
