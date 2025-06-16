@@ -29,8 +29,8 @@ internal class MemberSearchRepositoryTest @Autowired constructor(
 
     @BeforeEach
     fun setUp() {
-        val dept1 = deptRepository.save(Dept("name", null))
-        val dept2 = deptRepository.save(Dept("name2", null))
+        val dept1 = deptRepository.save(Dept(null, "name1", null))
+        val dept2 = deptRepository.save(Dept(null, "name2", null))
 
         val employee = codeRepository.save(PositionMother.employee())
 

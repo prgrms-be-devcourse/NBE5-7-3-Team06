@@ -3,9 +3,9 @@ package programmers.team6.domain.admin.entity
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import programmers.team6.domain.member.entity.Member
 import programmers.team6.global.exception.code.NotFoundErrorCode
 import programmers.team6.global.exception.customException.NotFoundException
+import programmers.team6.support.MemberMother
 
 internal class DeptTest {
     @Test
@@ -13,7 +13,7 @@ internal class DeptTest {
     fun should_successAppointLeader_when_givenLeaderMember() {
         // given
         val dept = Dept(null, "deptName", null)
-        val leader = Member.builder().build()
+        val leader = MemberMother.withId(1L)
 
         // when
         dept.appointLeader(leader)

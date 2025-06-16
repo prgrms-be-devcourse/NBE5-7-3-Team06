@@ -51,13 +51,21 @@ internal class AuthServiceUnitTests {
 
     private val jwtService: JwtService = mockk<JwtService>()
 
-    private val authService: AuthService = AuthService(memberRepository,memberInfoRepository,deptRepository,codeRepository,passwordEncoder,jwtTokenProvider,jwtService)
+    private val authService: AuthService = AuthService(
+        memberRepository,
+        memberInfoRepository,
+        deptRepository,
+        codeRepository,
+        passwordEncoder,
+        jwtTokenProvider,
+        jwtService
+    )
 
     @Test
     fun `회원가입 성공 테스트`() {
         // given
         val encodedPassword = "encoded1234"
-        val dept = Dept.builder().deptName("개발팀").build()
+        val dept = Dept(null, "개발팀", null)
         val position = PositionMother.employee()
         val memberReq = genMemberSignUpRequest()
         val member = MemberMother.withId(1L)
@@ -92,9 +100,7 @@ internal class AuthServiceUnitTests {
     fun signUp_position_exception() {
         val memberReq = genMemberSignUpRequest()
 
-        val dept = Dept.builder()
-            .deptName("개발팀")
-            .build()
+        val dept = Dept(null, "개발팀", null)
 
         every { deptRepository.findByIdOrNull(memberReq.dept) } returns dept
 
@@ -115,9 +121,7 @@ internal class AuthServiceUnitTests {
     fun signUp_email_exception() {
         val memberReq = genMemberSignUpRequest()
 
-        val dept = Dept.builder()
-            .deptName("개발팀")
-            .build()
+        val dept = Dept(null, "개발팀", null)
 
         val position = PositionMother.employee()
 
@@ -130,7 +134,7 @@ internal class AuthServiceUnitTests {
             )
         } returns position
 
-        every {  memberInfoRepository.existsByEmail(memberReq.email!!) } returns true
+        every { memberInfoRepository.existsByEmail(memberReq.email!!) } returns true
 
         assertThatThrownBy { authService.signUp(memberReq) }.isInstanceOf(ConflictException::class.java)
             .hasFieldOrPropertyWithValue("errorCode", ConflictErrorCode.CONFLICT_EMAIL)
@@ -152,7 +156,7 @@ internal class AuthServiceUnitTests {
 
         val tokenPair = TokenPairWithExpiration("accessToken", "refreshToken", 200, 1000)
 
-        every { jwtTokenProvider.generateTokenPair(JwtMemberInfo(1L, member.name, member.role))} returns tokenPair
+        every { jwtTokenProvider.generateTokenPair(JwtMemberInfo(1L, member.name, member.role)) } returns tokenPair
 
         val response = authService.login(MemberLoginRequest(email, password))
 
@@ -175,7 +179,7 @@ internal class AuthServiceUnitTests {
         val password: String = info!!.password
 
 
-        every { memberRepository.findByEmail(email) }returns null
+        every { memberRepository.findByEmail(email) } returns null
         val memberLoginRequest = MemberLoginRequest(email, password)
 
         assertThatThrownBy { authService.login(memberLoginRequest) }
@@ -231,7 +235,7 @@ internal class AuthServiceUnitTests {
             )
         )
 
-        every { jwtTokenProvider.parseClaims(refreshToken) }returns TokenBody(1L, "name", Role.USER, date, date)
+        every { jwtTokenProvider.parseClaims(refreshToken) } returns TokenBody(1L, "name", Role.USER, date, date)
 
         mockkObject(JwtUtils)
         every { jwtService.addBlackList(refreshToken, 0L) } just Runs
