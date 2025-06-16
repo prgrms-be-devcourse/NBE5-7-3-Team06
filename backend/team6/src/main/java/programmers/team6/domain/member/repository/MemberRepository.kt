@@ -19,7 +19,7 @@ interface MemberRepository : JpaRepository<Member?, Long?> {
 			m.id, m.name, m.position.name, m.dept.deptName, m.memberInfo.birth, m.memberInfo.email
 		)
 		from Member m
-		where m.role = :role
+		where m._role = :role
 		
 		"""
     )

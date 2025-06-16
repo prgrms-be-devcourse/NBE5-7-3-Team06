@@ -1,39 +1,17 @@
-package programmers.team6.global.exception.code;
+package programmers.team6.global.exception.code
 
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatus
+import programmers.team6.global.exception.ErrorStatus
 
-import programmers.team6.global.exception.ErrorStatus;
+enum class ForbiddenErrorCode(override val message: String) : ErrorCode {
+    FORBIDDEN_PENDING("회원가입 승인 대기중입니다"),
+    FORBIDDEN_NO_AUTHORITY("권한이 불충분합니다.");
 
-public enum ForbiddenErrorCode implements ErrorCode {
+    override val httpStatus: HttpStatus = HttpStatus.FORBIDDEN
 
-	FORBIDDEN_PENDING("회원가입 승인 대기중입니다"),
-	FORBIDDEN_NO_AUTHORITY("권한이 불충분합니다.");
+    override val errorStatus: ErrorStatus
+        get() = ErrorStatus.FORBIDDEN
 
-	private final String message;
-	private final HttpStatus httpStatus = HttpStatus.FORBIDDEN;
-
-	ForbiddenErrorCode(String message) {
-		this.message = message;
-	}
-
-	@Override
-	public ErrorStatus getErrorStatus() {
-		return ErrorStatus.FORBIDDEN;
-	}
-
-	@Override
-	public HttpStatus getHttpStatus() {
-		return httpStatus;
-	}
-
-	@Override
-	public int getHttpStatusCode() {
-		return httpStatus.value();
-	}
-
-	@Override
-	public String getMessage() {
-		return message;
-	}
-
+    override val httpStatusCode: Int
+        get() = httpStatus.value()
 }

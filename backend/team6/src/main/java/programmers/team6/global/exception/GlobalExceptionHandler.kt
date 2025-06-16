@@ -1,92 +1,102 @@
-package programmers.team6.global.exception;
+package programmers.team6.global.exception
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import io.github.oshai.kotlinlogging.KotlinLogging
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.validation.FieldError
+import org.springframework.web.bind.MethodArgumentNotValidException
+import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.bind.annotation.RestControllerAdvice
+import programmers.team6.global.exception.code.BadRequestErrorCode
+import programmers.team6.global.exception.customException.CustomException
+import programmers.team6.global.exception.response.ErrorResponse
+import programmers.team6.global.exception.response.ValidationErrorResponse
+import java.time.LocalDateTime
+import java.util.function.Consumer
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import lombok.extern.slf4j.Slf4j;
-import programmers.team6.global.exception.code.BadRequestErrorCode;
-import programmers.team6.global.exception.code.ErrorCode;
-import programmers.team6.global.exception.customException.CustomException;
-import programmers.team6.global.exception.response.ErrorResponse;
-import programmers.team6.global.exception.response.ValidationErrorResponse;
 
-@Slf4j
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+class GlobalExceptionHandler {
 
-	@ExceptionHandler(CustomException.class)
-	public ResponseEntity<ErrorResponse> handleNotFoundException(CustomException e) {
-		ErrorCode errorCode = e.getErrorCode();
+    companion object{
+        private val logger = KotlinLogging.logger {}
+    }
 
-		log.warn(errorCode.getMessage());
+    @ExceptionHandler(CustomException::class)
+    fun handleNotFoundException(e: CustomException): ResponseEntity<ErrorResponse> {
+        val errorCode = e.errorCode
 
-		return ResponseEntity.status(errorCode.getHttpStatus())
-			.body(new ErrorResponse(errorCode.toString(), errorCode.getMessage(),
-				errorCode.getHttpStatusCode()));
-	}
+        logger.warn { errorCode.message }
 
-	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-		Map<String, String> errors = new HashMap<>();
+        return ResponseEntity.status(errorCode.httpStatus)
+            .body(
+                ErrorResponse(
+                    errorCode.toString(), errorCode.message,
+                    errorCode.httpStatusCode
+                )
+            )
+    }
 
-		e.getBindingResult().getFieldErrors().forEach(error -> {
-			String fieldName = error.getField();
-			String message = error.getDefaultMessage();
-			errors.put(fieldName, message);
-		});
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    fun handleMethodArgumentNotValidException(e: MethodArgumentNotValidException): ResponseEntity<ErrorResponse> {
+        val errors: MutableMap<String, String> = HashMap()
 
-		for (String key : errors.keySet()) {
-			log.warn(errors.get(key));
-		}
+        e.bindingResult.fieldErrors.forEach(Consumer { error: FieldError ->
+            val fieldName = error.field
+            val message = error.defaultMessage?: "오류 발생"
+            errors[fieldName] = message
+        })
 
-		BadRequestErrorCode badRequestValidation = BadRequestErrorCode.BAD_REQUEST_VALIDATION;
+        for (key in errors.keys) {
+            logger.warn { errors[key]}
+        }
 
-		return ResponseEntity.status(badRequestValidation.getHttpStatusCode())
-			.body(new ValidationErrorResponse(badRequestValidation.toString(), badRequestValidation.getMessage(),
-				badRequestValidation.getHttpStatusCode(), errors));
-	}
+        val badRequestValidation = BadRequestErrorCode.BAD_REQUEST_VALIDATION
 
-	@ExceptionHandler(RuntimeException.class)
-	public ResponseEntity<Object> handleRuntimeException(RuntimeException ex) {
-		Map<String, Object> body = new LinkedHashMap<>();
-		body.put("timestamp", LocalDateTime.now());
-		body.put("status", HttpStatus.BAD_REQUEST.value());
-		body.put("error", "Bad Request");
-		body.put("message", ex.getMessage());
+        return ResponseEntity.status(badRequestValidation.httpStatusCode)
+            .body(
+                ValidationErrorResponse(
+                    badRequestValidation.name,
+                    badRequestValidation.message,
+                    badRequestValidation.httpStatusCode,
+                    errors
+                )
+            )
+    }
 
-		return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
-	}
+    @ExceptionHandler(RuntimeException::class)
+    fun handleRuntimeException(ex: RuntimeException): ResponseEntity<Any> {
+        val body: MutableMap<String, Any?> = LinkedHashMap()
+        body["timestamp"] = LocalDateTime.now()
+        body["status"] = HttpStatus.BAD_REQUEST.value()
+        body["error"] = "Bad Request"
+        body["message"] = ex.message
 
-	@ExceptionHandler(IllegalStateException.class)
-	public ResponseEntity<Object> handleIllegalStateException(IllegalStateException ex) {
-		Map<String, Object> body = new LinkedHashMap<>();
-		body.put("timestamp", LocalDateTime.now());
-		body.put("status", HttpStatus.CONFLICT.value());
-		body.put("error", "Conflict");
-		body.put("message", ex.getMessage());
+        return ResponseEntity(body, HttpStatus.BAD_REQUEST)
+    }
 
-		return new ResponseEntity<>(body, HttpStatus.CONFLICT);
-	}
+    @ExceptionHandler(IllegalStateException::class)
+    fun handleIllegalStateException(ex: IllegalStateException): ResponseEntity<Any> {
+        val body: MutableMap<String, Any?> = LinkedHashMap()
+        body["timestamp"] = LocalDateTime.now()
+        body["status"] = HttpStatus.CONFLICT.value()
+        body["error"] = "Conflict"
+        body["message"] = ex.message
 
-	@ExceptionHandler(Exception.class)
-	public ResponseEntity<Object> handleAllExceptions(Exception ex) {
-		Map<String, Object> body = new LinkedHashMap<>();
-		body.put("timestamp", LocalDateTime.now());
-		body.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-		body.put("error", "Internal Server Error");
-		body.put("message", "서버 내부 오류가 발생했습니다. 관리자에게 문의하세요.");
-		// 실제 오류 메시지는 로그에만 남김
-		ex.printStackTrace();
+        return ResponseEntity(body, HttpStatus.CONFLICT)
+    }
 
-		return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
-	}
+    @ExceptionHandler(Exception::class)
+    fun handleAllExceptions(ex: Exception): ResponseEntity<Any> {
+        val body: MutableMap<String, Any> = LinkedHashMap()
+        body["timestamp"] = LocalDateTime.now()
+        body["status"] = HttpStatus.INTERNAL_SERVER_ERROR.value()
+        body["error"] = "Internal Server Error"
+        body["message"] = "서버 내부 오류가 발생했습니다. 관리자에게 문의하세요."
+        // 실제 오류 메시지는 로그에만 남김
+        ex.printStackTrace()
 
+        return ResponseEntity(body, HttpStatus.INTERNAL_SERVER_ERROR)
+    }
 }

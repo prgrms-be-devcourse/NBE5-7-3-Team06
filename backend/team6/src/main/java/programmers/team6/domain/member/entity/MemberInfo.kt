@@ -1,63 +1,24 @@
-package programmers.team6.domain.member.entity;
+package programmers.team6.domain.member.entity
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import programmers.team6.global.entity.BaseEntity;
+import jakarta.persistence.*
+import programmers.team6.global.entity.BaseEntity
 
 @Entity
-public class MemberInfo extends BaseEntity {
+class MemberInfo (
 
-	public MemberInfo( String birth, String email, String password) {
-		this.birth = birth;
-		this.email = email;
-		this.password = password;
-	}
+    @field:Column(nullable = false)
+     val birth: String,
 
-	public MemberInfo() {
-	}
+    @field:Column(nullable = false)
+    val email: String,
 
-	@Id
-	@Column(name = "member_info_id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-
-	@Column(nullable = false)
-	private String birth;
-
-	@Column(nullable = false)
-	private String email;
-
-	@Column(nullable = false)
-	private String password;
-
-//	@Builder
-//	public MemberInfo(String birth, String email, String password) {
-//		this.birth = birth;
-//		this.email = email;
-//		this.password = password;
-//	}
+    @field:Column(nullable = false)
+    val password: String
+) : BaseEntity() {
+    @Id
+    @Column(name = "member_info_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private var id: Long? = null
 
 
-	public Long getId() {
-		return id;
-	}
-
-	public String getBirth() {
-		return birth;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public String getPassword() {
-		return password;
-	}
 }

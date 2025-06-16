@@ -48,11 +48,10 @@ class AuthService(
         val dept:Dept = deptRepository.findByIdOrNull(request.dept)
             ?: throw NotFoundException(NotFoundErrorCode.NOT_FOUND_DEPT)
 
-
         val position:Code = codeRepository.findByGroupCodeAndCode("POSITION", request.position!!)
             ?: throw NotFoundException(NotFoundErrorCode.NOT_FOUND_POSITION)
 
-        if (isExistsByEmail(request.email)) throw  ConflictException(ConflictErrorCode.CONFLICT_EMAIL)
+        if (isExistsByEmail(request.email!!)) throw  ConflictException(ConflictErrorCode.CONFLICT_EMAIL)
 
         val encodedPassword = passwordEncoder.encode(request.password)
 
@@ -63,7 +62,7 @@ class AuthService(
         memberRepository.save(member)
     }
 
-    fun isExistsByEmail(email: String?): Boolean {
+    fun isExistsByEmail(email: String): Boolean {
         return memberInfoRepository.existsByEmail(email)
     }
 
@@ -75,16 +74,16 @@ class AuthService(
         if (member.role == Role.PENDING) throw ForbiddenException(ForbiddenErrorCode.FORBIDDEN_PENDING)
 
 
-        if(!passwordEncoder.matches(memberLoginRequest.password, member.memberInfo.password)) throw UnauthorizedException(UnauthorizedErrorCode.UNAUTHORIZED_PASSWORD)
+        if(!passwordEncoder.matches(memberLoginRequest.password, member.memberInfo!!.password)) throw UnauthorizedException(UnauthorizedErrorCode.UNAUTHORIZED_PASSWORD)
 
 
         val tokenPair = jwtTokenProvider.generateTokenPair(
-            JwtMemberInfo(member.id, member.name, member.role)
+            JwtMemberInfo(member.id!!, member.name, member.role)
         )
 
         val authTokenResponse = AuthTokenResponse(
             tokenPair.accessToken,
-            tokenPair.accessTokenExpiresIn, member.id,
+            tokenPair.accessTokenExpiresIn, member.id!!,
             member.name, member.role
         )
 

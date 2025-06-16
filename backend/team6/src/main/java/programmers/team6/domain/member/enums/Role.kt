@@ -1,5 +1,5 @@
-package programmers.team6.domain.member.enums;
+package programmers.team6.domain.member.enums
 
-public enum Role {
-	PENDING, USER, ADMIN
+enum class Role {
+    PENDING, USER, ADMIN
 }

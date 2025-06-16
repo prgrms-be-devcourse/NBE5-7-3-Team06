@@ -1,10 +1,5 @@
-package programmers.team6.global.exception.customException;
+package programmers.team6.global.exception.customException
 
-import programmers.team6.global.exception.code.NotFoundErrorCode;
+import programmers.team6.global.exception.code.NotFoundErrorCode
 
-public class NotFoundException extends CustomException {
-
-	public NotFoundException(NotFoundErrorCode errorCode) {
-		super(errorCode);
-	}
-}
+class NotFoundException(errorCode: NotFoundErrorCode) : CustomException(errorCode)

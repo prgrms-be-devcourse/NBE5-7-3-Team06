@@ -38,9 +38,9 @@ public class ApprovalStepController {
 		ApprovalStepSelectRequest request, @PagingConfig Pageable pageable) {
 
 		if (!request.hasFilter()) {
-			return approvalStepService.findFirstStepByMemberId(tokenBody.id, pageable);
+			return approvalStepService.findFirstStepByMemberId(tokenBody.getId(), pageable);
 		} else {
-			return approvalStepService.findFirstStepByFilter(request, tokenBody.id, pageable);
+			return approvalStepService.findFirstStepByFilter(request, tokenBody.getId(), pageable);
 		}
 	}
 
@@ -49,7 +49,7 @@ public class ApprovalStepController {
 	public ApprovalFirstStepDetailResponse getFirstStepDetail(@AuthenticationPrincipal TokenBody tokenBody,
 		@PathVariable Long approvalStepId) {
 
-		return approvalStepService.findFirstStepDetailById(approvalStepId, tokenBody.id);
+		return approvalStepService.findFirstStepDetailById(approvalStepId, tokenBody.getId());
 	}
 
 	@GetMapping("/second")
@@ -59,9 +59,9 @@ public class ApprovalStepController {
 		ApprovalStepSelectRequest request, @PagingConfig Pageable pageable) {
 
 		if (!request.hasFilter()) {
-			return approvalStepService.findSecondStepByMemberId(tokenBody.id, pageable);
+			return approvalStepService.findSecondStepByMemberId(tokenBody.getId(), pageable);
 		} else {
-			return approvalStepService.findSecondStepByFilter(request, tokenBody.id, pageable);
+			return approvalStepService.findSecondStepByFilter(request, tokenBody.getId(), pageable);
 		}
 	}
 
@@ -70,27 +70,27 @@ public class ApprovalStepController {
 	public ApprovalSecondStepDetailResponse getSecondStepDetail(@AuthenticationPrincipal TokenBody tokenBody,
 		@PathVariable Long approvalStepId) {
 
-		return approvalStepService.findSecondStepDetailById(approvalStepId, tokenBody.id);
+		return approvalStepService.findSecondStepDetailById(approvalStepId, tokenBody.getId());
 	}
 
 	@PatchMapping("/first/{approvalStepId}/approve")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void approveFirstStep(@AuthenticationPrincipal TokenBody tokenBody, @PathVariable Long approvalStepId) {
 
-		approvalStepService.approveFirstStep(approvalStepId, tokenBody.id);
+		approvalStepService.approveFirstStep(approvalStepId, tokenBody.getId());
 	}
 
 	@PatchMapping("/first/{approvalStepId}/reject")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void rejectFirstStep(@AuthenticationPrincipal TokenBody tokenBody, @PathVariable Long approvalStepId,
 		@Valid @RequestBody ApprovalStepRejectRequest request) {
-		approvalStepService.rejectFirstStep(approvalStepId, tokenBody.id, request);
+		approvalStepService.rejectFirstStep(approvalStepId, tokenBody.getId(), request);
 	}
 
 	@PatchMapping("/second/{approvalStepId}/approve")
 	@ResponseStatus(HttpStatus.OK)
 	public boolean approveSecondStep(@AuthenticationPrincipal TokenBody tokenBody, @PathVariable Long approvalStepId) {
-		return approvalStepService.approveSecondStep(approvalStepId, tokenBody.id);
+		return approvalStepService.approveSecondStep(approvalStepId, tokenBody.getId());
 	}
 
 	@PatchMapping("/second/{approvalStepId}/reject")
@@ -98,7 +98,7 @@ public class ApprovalStepController {
 	public void rejectSecondStep(@AuthenticationPrincipal TokenBody tokenBody, @PathVariable Long approvalStepId,
 		@Valid @RequestBody ApprovalStepRejectRequest request) {
 
-		approvalStepService.rejectSecondStep(approvalStepId, tokenBody.id, request);
+		approvalStepService.rejectSecondStep(approvalStepId, tokenBody.getId(), request);
 	}
 
 }

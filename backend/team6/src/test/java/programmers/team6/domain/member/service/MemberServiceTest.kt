@@ -1,51 +1,55 @@
-package programmers.team6.domain.member.service;
+package programmers.team6.domain.member.service
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import io.mockk.every
+import io.mockk.mockk
+import org.assertj.core.api.Assertions
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.Mock
+import org.mockito.Mockito
+import org.mockito.junit.jupiter.MockitoExtension
+import org.springframework.data.repository.findByIdOrNull
+import programmers.team6.domain.member.repository.MemberRepository
+import programmers.team6.global.exception.code.NotFoundErrorCode
+import programmers.team6.global.exception.customException.NotFoundException
+import programmers.team6.support.MemberMother
+import java.util.*
 
-import java.util.Optional;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+internal class MemberServiceTest {
 
-import programmers.team6.domain.member.entity.Member;
-import programmers.team6.domain.member.repository.MemberRepository;
-import programmers.team6.global.exception.code.NotFoundErrorCode;
-import programmers.team6.global.exception.customException.NotFoundException;
-import programmers.team6.support.MemberMother;
+    private val memberRepository: MemberRepository = mockk<MemberRepository>()
 
-@ExtendWith(MockitoExtension.class)
-class MemberServiceTest {
+    @Test
+    @DisplayName("사용자 찾기 성공")
+    fun find_member_success() {
+        val id = 1L
+        val member = MemberMother.withId(id)
 
-	@Mock
-	private MemberRepository memberRepository;
+        every { memberRepository.findByIdOrNull(id) } returns member
+        val memberService = MemberService(memberRepository)
 
-	@Test
-	@DisplayName("사용자 찾기 성공")
-	void find_member_success() {
-		long id = 1L;
-		Member member = MemberMother.withId(id);
-		when(memberRepository.findById(id)).thenReturn(Optional.of(member));
-		MemberService memberService = new MemberService(memberRepository);
+        val result = memberService.findById(id)
 
-		Member result = memberService.findById(id);
+        Assertions.assertThat(member).isEqualTo(result)
+    }
 
-		assertThat(member).isEqualTo(result);
-	}
+    @Test
+    @DisplayName("사용자 찾기 실패")
+    fun find_member_failure() {
+        val id = 1L
 
-	@Test
-	@DisplayName("사용자 찾기 실패")
-	void find_member_failure() {
-		long id = 1L;
-		when(memberRepository.findById(id)).thenReturn(Optional.empty());
-		MemberService memberService = new MemberService(memberRepository);
+        every { memberRepository.findByIdOrNull(id) } returns null
 
-		assertThatThrownBy(() -> memberService.findById(id)).isInstanceOf(NotFoundException.class)
-			.hasFieldOrPropertyWithValue("errorCode",
-				NotFoundErrorCode.NOT_FOUND_MEMBER);
+        val memberService = MemberService(memberRepository)
 
-	}
+        Assertions.assertThatThrownBy { memberService.findById(id) }.isInstanceOf(
+            NotFoundException::class.java
+        )
+            .hasFieldOrPropertyWithValue(
+                "errorCode",
+                NotFoundErrorCode.NOT_FOUND_MEMBER
+            )
+    }
 }

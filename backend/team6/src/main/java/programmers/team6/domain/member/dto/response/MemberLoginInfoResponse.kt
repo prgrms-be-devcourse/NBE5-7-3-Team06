@@ -1,6 +1,6 @@
 package programmers.team6.domain.member.dto.response
 
-@JvmRecord
+
 data class MemberLoginInfoResponse(
     val id: Long,
     val name: String,

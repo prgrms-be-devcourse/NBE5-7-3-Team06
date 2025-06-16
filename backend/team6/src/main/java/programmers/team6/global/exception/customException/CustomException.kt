@@ -1,19 +1,6 @@
-package programmers.team6.global.exception.customException;
+package programmers.team6.global.exception.customException
 
-import lombok.Getter;
-import programmers.team6.global.exception.code.ErrorCode;
+import programmers.team6.global.exception.code.ErrorCode
 
-
-public abstract class CustomException extends RuntimeException {
-
-	private final ErrorCode errorCode;
-
-	protected CustomException(ErrorCode errorCode) {
-		super(errorCode.getMessage());
-		this.errorCode = errorCode;
-	}
-
-	public ErrorCode getErrorCode() {
-		return errorCode;
-	}
-}
+abstract class CustomException protected constructor(@JvmField val errorCode: ErrorCode) :
+    RuntimeException(errorCode.message)

@@ -5,9 +5,9 @@ import java.util.*
 
 
 data class TokenBody(
-	@JvmField val id: Long,
-	@JvmField val name: String,
-	@JvmField val role: Role,
-	@JvmField val expiration: Date,
-	@JvmField val issuedAt: Date
+	val id: Long,
+	val name: String,
+	val role: Role,
+	val expiration: Date,
+	val issuedAt: Date
 )

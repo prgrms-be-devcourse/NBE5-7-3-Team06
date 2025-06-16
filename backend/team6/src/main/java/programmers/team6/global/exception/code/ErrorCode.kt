@@ -1,15 +1,14 @@
-package programmers.team6.global.exception.code;
+package programmers.team6.global.exception.code
 
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatus
+import programmers.team6.global.exception.ErrorStatus
 
-import programmers.team6.global.exception.ErrorStatus;
+interface ErrorCode {
+    val errorStatus: ErrorStatus
 
-public interface ErrorCode {
-	ErrorStatus getErrorStatus();
+    val httpStatus: HttpStatus
 
-	HttpStatus getHttpStatus();
+    val httpStatusCode: Int
 
-	int getHttpStatusCode();
-
-	String getMessage();
+    val message: String
 }

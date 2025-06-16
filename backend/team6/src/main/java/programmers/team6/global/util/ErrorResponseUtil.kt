@@ -1,37 +1,39 @@
-package programmers.team6.global.util;
+package programmers.team6.global.util
 
-import java.io.IOException;
+import com.fasterxml.jackson.databind.ObjectMapper
+import io.github.oshai.kotlinlogging.KotlinLogging
+import jakarta.servlet.http.HttpServletResponse
+import lombok.AccessLevel
+import lombok.NoArgsConstructor
+import lombok.extern.slf4j.Slf4j
+import programmers.team6.global.exception.code.ErrorCode
+import programmers.team6.global.exception.response.ErrorResponse
+import java.io.IOException
+import kotlin.math.log
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import programmers.team6.global.exception.code.ErrorCode;
-import programmers.team6.global.exception.response.ErrorResponse;
+object ErrorResponseUtil {
 
-@Slf4j
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ErrorResponseUtil {
+    private val logger = KotlinLogging.logger {}
 
-	public static void setErrorResponse(HttpServletResponse response, ErrorCode errorCode) {
-		response.setStatus(errorCode.getHttpStatus().value());
-		response.setContentType("application/json");
-		response.setCharacterEncoding("UTF-8");
+    fun setErrorResponse(response: HttpServletResponse, errorCode: ErrorCode) {
+        response.status = errorCode.httpStatus.value()
+        response.contentType = "application/json"
+        response.characterEncoding = "UTF-8"
 
-		ErrorResponse errorResponse = new ErrorResponse(errorCode.toString(), errorCode.getMessage(),
-			errorCode.getHttpStatusCode());
+        val errorResponse = ErrorResponse(
+            errorCode.toString(), errorCode.message,
+            errorCode.httpStatusCode
+        )
 
-		try {
-			log.warn(errorCode.getMessage());
+        try {
+            logger.warn { errorCode.message }
+            val objectMapper = ObjectMapper()
 
-			ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.writeValue(response.writer, errorResponse)
+        } catch (e: IOException) {
 
-			objectMapper.writeValue(response.getWriter(), errorResponse);
-		} catch (IOException e) {
-			log.error("Failed to write error response", e);
-		}
-	}
-
+            logger.error(e) { "Failed to write error response" }
+        }
+    }
 }

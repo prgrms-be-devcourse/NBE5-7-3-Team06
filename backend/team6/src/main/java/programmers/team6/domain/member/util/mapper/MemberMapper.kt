@@ -16,9 +16,9 @@ object MemberMapper {
         encodedPassword: String
     ): Member {
 
-        val memberInfo: MemberInfo = MemberInfo(memberSignUpRequest.birth,memberSignUpRequest.email,encodedPassword)
+        val memberInfo: MemberInfo = MemberInfo(memberSignUpRequest.birth!!,memberSignUpRequest.email!!,encodedPassword)
 
-        val member = Member(memberSignUpRequest.name,dept,position,memberSignUpRequest.joinDate,Role.PENDING)
+        val member = Member(memberSignUpRequest.name!!,dept,position,memberSignUpRequest.joinDate!!,Role.PENDING)
 
         member.memberInfo = memberInfo
 

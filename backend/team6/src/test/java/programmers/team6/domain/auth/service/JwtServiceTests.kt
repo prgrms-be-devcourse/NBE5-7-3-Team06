@@ -1,72 +1,66 @@
-package programmers.team6.domain.auth.service;
+package programmers.team6.domain.auth.service
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
+import io.mockk.*
+import org.assertj.core.api.Assertions
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import org.springframework.data.redis.core.StringRedisTemplate
+import org.springframework.data.redis.core.ValueOperations
+import java.util.concurrent.TimeUnit
 
-import java.util.concurrent.TimeUnit;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+internal class JwtServiceTests {
 
-@ExtendWith(MockitoExtension.class)
-class JwtServiceTests {
+    private val stringRedisTemplate: StringRedisTemplate = mockk<StringRedisTemplate>()
 
-    @Mock
-    private StringRedisTemplate stringRedisTemplate;
+    private val valueOperations: ValueOperations<String, String> = mockk<ValueOperations<String, String>>()
 
-    @Mock
-    private ValueOperations<String,String> valueOperations;
-
-    private JwtService jwtService;
+    private var jwtService: JwtService = JwtService(stringRedisTemplate)
 
     @BeforeEach
-    void setUp() {
-        jwtService = new JwtService(stringRedisTemplate);
+    fun setUp() {
+        jwtService = JwtService(stringRedisTemplate)
     }
-    
+
     @Test
     @DisplayName("블랙리스트(redis)추가")
-    void add_blackList() {
+    fun add_blackList() {
+        val token = "test-refresh-token"
+        val expirationTime = 1000L
+        val key = "BL_$token"
 
-        String token = "test-refresh-token";
-        long expirationTime = 1000L;
+        every { stringRedisTemplate.opsForValue()}returns valueOperations
+        every { valueOperations.set(key, "logout", expirationTime, TimeUnit.MILLISECONDS) } just Runs
 
-        when(stringRedisTemplate.opsForValue()).thenReturn(valueOperations);
+        jwtService.addBlackList(token, expirationTime)
 
-        jwtService.addBlackList(token, expirationTime);
-
-        verify(valueOperations).set("BL_" + token, "logout", expirationTime, TimeUnit.MILLISECONDS);
-
+        verify(exactly = 1) {
+            valueOperations.set(key, "logout", expirationTime, TimeUnit.MILLISECONDS)
+        }
     }
 
     @Test
     @DisplayName("refresh token이 블랙리스트에 저장되어있는 경우 ")
-    void isBlackListed_true()  {
+    fun isBlackListed_true(){
+        val token = "test-refresh-token"
 
-        String token = "test-refresh-token";
-        when(stringRedisTemplate.hasKey("BL_" + token)).thenReturn(true);
+        every { stringRedisTemplate.hasKey("BL_$token") } returns true
 
-        boolean result = jwtService.isBlackListed(token);
+        val result = jwtService.isBlackListed(token)
 
-        assertThat(result).isTrue();
+        Assertions.assertThat(result).isTrue()
     }
 
     @Test
     @DisplayName("refresh token이 블랙리스트에 없는 경우 ")
-    void isBlackListed_false() {
+    fun isBlackListed_false(){
+        val token = "test-refresh-token"
 
-        String token = "test-refresh-token";
-        when(stringRedisTemplate.hasKey("BL_" + token)).thenReturn(false);
+        every { stringRedisTemplate.hasKey("BL_$token") } returns false
 
-        boolean result = jwtService.isBlackListed(token);
+        val result = jwtService.isBlackListed(token)
 
-        assertThat(result).isFalse();
+        Assertions.assertThat(result).isFalse()
     }
 }
