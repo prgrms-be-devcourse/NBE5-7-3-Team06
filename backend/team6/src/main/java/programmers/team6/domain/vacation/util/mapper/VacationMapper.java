@@ -23,7 +23,7 @@ public class VacationMapper {
 		return new VacationInfoSelectResponseDto(
 			vacationInfo.getTotalCount(),
 			vacationInfo.getUseCount()
-			);
+		);
 
 	}
 
@@ -74,7 +74,7 @@ public class VacationMapper {
 			vacationRequest.getStatus().name(),
 			approverName,
 			vacationRequest.getUpdatedAt()
-			);
+		);
 	}
 
 	//
@@ -89,6 +89,6 @@ public class VacationMapper {
 			page.getTotalPages(),
 			page.isFirst(),
 			page.isLast()
-			);
+		);
 	}
 }
