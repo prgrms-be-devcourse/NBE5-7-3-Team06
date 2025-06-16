@@ -23,7 +23,7 @@ class AnnualVacationGrantRule(
         return annualVacationRule.vacationInfo(memberId)
     }
 
-    override fun isSameType(vacationCode: VacationCode?): Boolean {
+    override fun isSameType(vacationCode: VacationCode): Boolean {
         return annualVacationRule.isSameType(vacationCode)
     }
 

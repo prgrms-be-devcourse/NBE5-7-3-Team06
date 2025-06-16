@@ -11,7 +11,7 @@ interface VacationGrantRule {
 
     fun createVacationInfo(memberId: Long): VacationInfo
 
-    fun isSameType(vacationCode: VacationCode?): Boolean
+    fun isSameType(vacationCode: VacationCode): Boolean
 
     fun getBaseLineDates(date: LocalDate): List<LocalDate>
 

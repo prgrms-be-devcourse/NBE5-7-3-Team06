@@ -35,7 +35,7 @@ open class VacationGrantRuleFinder {
         override fun createVacationInfo(memberId: Long): VacationInfo =
             VacationInfo(0.0, type.code, memberId)
 
-        override fun isSameType(vacationCode: VacationCode?): Boolean =
+        override fun isSameType(vacationCode: VacationCode): Boolean =
             this.type == vacationCode
 
         override fun getBaseLineDates(date: LocalDate): List<LocalDate> =

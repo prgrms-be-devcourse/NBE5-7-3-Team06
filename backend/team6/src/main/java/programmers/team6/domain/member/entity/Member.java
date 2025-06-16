@@ -87,4 +87,7 @@ public class Member extends BaseEntity {
 		return this.dept != null && this.dept.isHrDept();
 	}
 
+	public LocalDateTime getJoinDate() {
+		return joinDate;
+	}
 }

@@ -1,60 +1,51 @@
-package programmers.team6.domain.vacation.rule;
+package programmers.team6.domain.vacation.rule
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import programmers.team6.domain.vacation.entity.VacationInfo
+import programmers.team6.domain.vacation.entity.VacationInfoLog
+import programmers.team6.global.entity.Positive
+import java.time.LocalDate
 
-import lombok.RequiredArgsConstructor;
-import programmers.team6.domain.vacation.entity.VacationInfo;
-import programmers.team6.domain.vacation.entity.VacationInfoLog;
-import programmers.team6.global.entity.Positive;
+private val STATUTORY_GRANT_DAYS = Positive(1)
 
-@RequiredArgsConstructor
-public final class MonthlyVacationRule {
+class MonthlyVacationRule(private val grantDays: Positive) {
 
-	private static final Positive STATUTORY_GRANT_DAYS = new Positive(1);
+    fun grant(vacationInfo: VacationInfo): VacationInfoLog {
+        return vacationInfo.updateTotalCount(vacationInfo.totalCount + grantDays.toInt())
+    }
 
-	private final Positive grantDays;
+    fun getBaseLineDates(boundaryDate: LocalDate, now: LocalDate): List<LocalDate> {
+        val baseDay = boundaryDate.dayOfMonth
+        var current = boundaryDate.plusMonths(1).withDayOfMonth(1)
 
-	public static MonthlyVacationRule statutory() {
-		return new MonthlyVacationRule(STATUTORY_GRANT_DAYS);
-	}
+        val result = mutableListOf<LocalDate>()
 
-	public VacationInfoLog grant(VacationInfo vacationInfo) {
-		return vacationInfo.updateTotalCount(vacationInfo.getTotalCount() + grantDays.toInt());
-	}
+        while (current.isBefore(now)) {
+            val lastDayOfMonth = current.lengthOfMonth()
+            val dayToUse = minOf(baseDay, lastDayOfMonth)
+            val candidate = current.withDayOfMonth(dayToUse)
 
-	public List<LocalDate> getBaseLineDates(LocalDate boundLineDate, LocalDate now) {
+            if (candidate == now) break
 
-		List<LocalDate> result = new ArrayList<>();
-		int baseDay = boundLineDate.getDayOfMonth();
+            result += candidate
 
-		LocalDate current = boundLineDate.plusMonths(1).withDayOfMonth(1);
+            if (isLastDayOfMonth(now) && now.lengthOfMonth() < candidate.lengthOfMonth()) {
+                result += (baseDay + 1..lastDayOfMonth).map { day ->
+                    candidate.withDayOfMonth(day)
+                }
+            }
 
-		while (current.isBefore(now)) {
-			int lastDay = current.lengthOfMonth();
-			int dayToUse = Math.min(baseDay, lastDay);
-			LocalDate candidate = current.withDayOfMonth(dayToUse);
+            current = current.plusMonths(1)
+        }
 
-			if (candidate.isEqual(now)) {
-				break;
-			}
-			result.add(candidate);
+        return result
+    }
 
-			if (isLastDays(now) && now.lengthOfMonth() < candidate.lengthOfMonth()) {
-				for (int days = baseDay + 1; days <= lastDay; days++) {
-					result.add(candidate.withDayOfMonth(days));
-				}
-			}
+    private fun isLastDayOfMonth(now: LocalDate): Boolean = now.dayOfMonth == now.lengthOfMonth()
 
-			current = current.plusMonths(1);
-		}
+    companion object {
 
-		return result;
-	}
-
-	private boolean isLastDays(LocalDate now) {
-		int day = now.getDayOfMonth();
-		return day == now.lengthOfMonth();
-	}
+        fun statutory(): MonthlyVacationRule {
+            return MonthlyVacationRule(STATUTORY_GRANT_DAYS)
+        }
+    }
 }

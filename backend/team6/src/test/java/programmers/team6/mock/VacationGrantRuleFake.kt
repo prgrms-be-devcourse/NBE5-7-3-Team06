@@ -20,7 +20,7 @@ class VacationGrantRuleFake(private val vacationCode: VacationCode) : VacationGr
             .vacationType(vacationCode.code).build()
     }
 
-    override fun isSameType(vacationCode: VacationCode?): Boolean {
+    override fun isSameType(vacationCode: VacationCode): Boolean {
         return vacationCode == this.vacationCode
     }
 

@@ -1,36 +1,26 @@
-package programmers.team6.global.entity;
+package programmers.team6.global.entity
 
-public final class Positive {
+const val MIN_VALUE: Int = 0
+const val NEGATIVE_VALUE_ERROR_MESSAGE: String = "해당 값을 음수가 될 수 없습니다."
 
-	public static final int MIN_VALUE = 0;
-	public static final String NEGATIVE_VALUE_ERROR_MESSAGE = "해당 값을 음수가 될 수 없습니다.";
+class Positive(value: Int) {
+    private val value: Int
 
-	private final int value;
+    init {
+        this.value = requirePositive(value)
+    }
 
-	public Positive(int value) {
-		this.value = requirePositive(value);
-	}
+    fun toInt(): Int = value
 
-	private static int requirePositive(int value) {
-		if (value < MIN_VALUE) {
-			throw new IllegalArgumentException(NEGATIVE_VALUE_ERROR_MESSAGE);
-		}
-		return value;
-	}
+    fun isEquals(positive: Positive): Boolean = this.value == positive.value
 
-	public int toInt() {
-		return value;
-	}
+    fun isGraterThan(totalCount: Positive): Boolean = this.value > totalCount.value
 
-	public boolean isEquals(Positive positive) {
-		return this.value == positive.value;
-	}
+    fun isLessThan(totalCount: Positive): Boolean = this.value < totalCount.value
 
-	public boolean isGraterThan(Positive totalCount) {
-		return this.value > totalCount.value;
-	}
+}
 
-	public boolean isLessThan(Positive totalCount) {
-		return this.value < totalCount.value;
-	}
+private fun requirePositive(value: Int): Int {
+    require(value >= MIN_VALUE) { NEGATIVE_VALUE_ERROR_MESSAGE }
+    return value
 }
