@@ -1,6 +1,5 @@
 package programmers.team6.domain.admin.service
 
-import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import programmers.team6.domain.admin.dto.response.MemberApprovalResponse
@@ -14,7 +13,6 @@ import programmers.team6.domain.vacation.rule.VacationGrantRuleFinder
 import programmers.team6.domain.vacation.support.VacationInfoLogPublisher
 
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
 class MemberApprovalService(
     private val memberRepository: MemberRepository,
