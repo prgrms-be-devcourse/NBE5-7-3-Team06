@@ -17,6 +17,7 @@ import programmers.team6.mock.VacationInfoLogReaderFake
 import programmers.team6.mock.VacationRequestsReaderFake
 import programmers.team6.support.MemberMother
 import programmers.team6.support.TestVacationType
+import programmers.team6.support.VacationTypeMother
 import java.time.LocalDateTime
 
 internal class VacationStatisticsServiceTest {
@@ -32,16 +33,22 @@ internal class VacationStatisticsServiceTest {
         val log2 = VacationInfoLog(13.0, 0.0, "01", 2L)
         val vacationInfoLogReaderFake = VacationInfoLogReaderFake(log1, log2)
 
-        val vacationRequest1 = VacationRequest.builder()
-            .from(LocalDateTime.of(2024, 5, 13, 0, 0))
-            .to(LocalDateTime.of(2024, 5, 14, 0, 0))
-            .member(member1)
-            .type(TestVacationType.ANNUAL.toCode()).build()
-        val vacationRequest2 = VacationRequest.builder()
-            .from(LocalDateTime.of(2024, 5, 13, 0, 0))
-            .to(LocalDateTime.of(2024, 5, 14, 0, 0))
-            .member(member2)
-            .type(TestVacationType.ANNUAL.toCode()).build()
+        val vacationRequest1 = VacationRequest(
+            from = LocalDateTime.of(2024, 5, 13, 0, 0),
+            to = LocalDateTime.of(2024, 5, 14, 0, 0),
+            member = member1,
+            type = VacationTypeMother.Annual(),
+            reason = ""
+        )
+
+        val vacationRequest2 = VacationRequest(
+            from = LocalDateTime.of(2024, 5, 13, 0, 0),
+            to = LocalDateTime.of(2024, 5, 14, 0, 0),
+            member = member2,
+            type = VacationTypeMother.Annual(),
+            reason = ""
+        )
+
         val vacationRequestsReaderFake: VacationRequestsReader = VacationRequestsReaderFake(
             vacationRequest1,
             vacationRequest2

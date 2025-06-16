@@ -42,7 +42,7 @@ interface VacationInfoRepository : JpaRepository<VacationInfo, Int> {
     fun findActualRemainingVacationDaysExcludeRequestId(
         memberId: Long?, vacationType: String?,
         excludeRequestId: Long?
-    ): Optional<Double?>?
+    ): Double?
 
     fun findByMemberIdAndVacationType(memberId: Long, vacationType: String): VacationInfo?
 

@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import programmers.team6.domain.admin.entity.Code;
 import programmers.team6.domain.vacation.enums.VacationCode;
 import programmers.team6.domain.vacation.enums.VacationRequestStatus;
 import programmers.team6.support.MemberMother;
@@ -91,7 +92,7 @@ class VacationRequestTests {
 			LocalDateTime.now(),
 			"reason",
 			TestVacationType.ANNUAL.toCode(),
-			VacationRequestStatus.IN_PROGRESS,
+			VacationRequestStatus.APPROVED,
 			1
 		);
 
@@ -154,7 +155,7 @@ class VacationRequestTests {
 			LocalDateTime.now(),
 			"reason",
 			TestVacationType.ANNUAL.toCode(),
-			VacationRequestStatus.IN_PROGRESS,
+			VacationRequestStatus.APPROVED,
 			1
 		);
 
@@ -236,7 +237,7 @@ class VacationRequestTests {
 			LocalDateTime.now(),
 			"reason",
 			TestVacationType.ANNUAL.toCode(),
-			VacationRequestStatus.IN_PROGRESS,
+			VacationRequestStatus.APPROVED,
 			1
 		);
 
@@ -273,7 +274,7 @@ class VacationRequestTests {
 			LocalDateTime.now(),
 			"reason",
 			TestVacationType.ANNUAL.toCode(),
-			VacationRequestStatus.IN_PROGRESS,
+			VacationRequestStatus.APPROVED,
 			1
 		);
 
@@ -376,7 +377,7 @@ class VacationRequestTests {
 			LocalDateTime.now(),
 			LocalDateTime.now(),
 			"reason",
-			TestVacationType.ANNUAL.toCode(),
+			TestVacationType.HALP.toCode(),
 			VacationRequestStatus.IN_PROGRESS,
 			1
 		);

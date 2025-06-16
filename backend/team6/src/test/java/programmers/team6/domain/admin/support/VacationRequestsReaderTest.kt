@@ -20,20 +20,25 @@ internal class VacationRequestsReaderTest {
     fun 연차휴가요청내역조회() {
         val repository = mockk<VacationRequestRepository>()
         val memberIds = listOf(1L)
-        val annualVacationRequest = VacationRequest.builder()
-            .to(LocalDateTime.of(2024, 1, 1, 1, 1))
-            .from(LocalDateTime.of(2024, 1, 1, 1, 1))
-            .member(MemberMother.withId(1L))
-            .type(VacationTypeMother.Annual())
-            .status(VacationRequestStatus.APPROVED)
-            .build()
-        val halfVacationRequest = VacationRequest.builder()
-            .to(LocalDateTime.of(2024, 1, 1, 1, 1))
-            .from(LocalDateTime.of(2024, 1, 1, 1, 1))
-            .member(MemberMother.withId(1L))
-            .type(VacationTypeMother.half())
-            .status(VacationRequestStatus.APPROVED)
-            .build()
+
+        val annualVacationRequest = VacationRequest(
+            from = LocalDateTime.of(2024, 1, 1, 1, 1),
+            to = LocalDateTime.of(2024, 1, 1, 1, 1),
+            member = MemberMother.withId(1L),
+            type = VacationTypeMother.Annual(),
+            status = VacationRequestStatus.APPROVED,
+            reason = ""
+        )
+
+        val halfVacationRequest = VacationRequest(
+            from = LocalDateTime.of(2024, 1, 1, 1, 1),
+            to = LocalDateTime.of(2024, 1, 1, 1, 1),
+            member = MemberMother.withId(1L),
+            type = VacationTypeMother.half(),
+            status = VacationRequestStatus.APPROVED,
+            reason = ""
+        )
+
         every { repository.findByMemberIdInAndYear(
             memberIds, 2024, listOf("01", "05")
         ) }.returns(listOf(annualVacationRequest, halfVacationRequest))
@@ -54,13 +59,15 @@ internal class VacationRequestsReaderTest {
     fun 일반휴가내역() {
         val repository = mockk<VacationRequestRepository>();
         val memberIds = listOf(1L)
-        val rewardVacationRequest = VacationRequest.builder()
-            .to(LocalDateTime.of(2024, 1, 1, 1, 1))
-            .from(LocalDateTime.of(2024, 1, 1, 1, 1))
-            .member(MemberMother.withId(1L))
-            .type(VacationTypeMother.reward())
-            .status(VacationRequestStatus.APPROVED)
-            .build()
+        val rewardVacationRequest = VacationRequest(
+            from = LocalDateTime.of(2024, 1, 1, 1, 1),
+            to = LocalDateTime.of(2024, 1, 1, 1, 1),
+            member = MemberMother.withId(1L),
+            type = VacationTypeMother.reward(),
+            status = VacationRequestStatus.APPROVED,
+            reason = ""
+        )
+
         every {  repository.findByMemberIdInAndYear(
             memberIds, 2024, listOf("02")
         ) }.returns(listOf(rewardVacationRequest))

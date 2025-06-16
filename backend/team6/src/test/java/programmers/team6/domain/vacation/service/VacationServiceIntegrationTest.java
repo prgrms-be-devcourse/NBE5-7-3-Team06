@@ -1,6 +1,7 @@
 package programmers.team6.domain.vacation.service;
 
 import static org.assertj.core.api.Assertions.*;
+import static programmers.team6.domain.admin.repository.AdminVacationRequestSearchTestDataFactory.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,7 +13,9 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
+import programmers.team6.domain.admin.entity.Code;
 import programmers.team6.domain.admin.entity.Dept;
+import programmers.team6.domain.admin.repository.AdminVacationRequestSearchTestDataFactory;
 import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.admin.repository.CodeRepository;
 import programmers.team6.domain.admin.repository.DeptRepository;
@@ -31,6 +34,7 @@ import programmers.team6.domain.vacation.enums.VacationRequestStatus;
 import programmers.team6.domain.vacation.repository.VacationInfoRepository;
 import programmers.team6.domain.vacation.repository.VacationRequestRepository;
 import programmers.team6.domain.vacation.repository.VacationRequestSearchRepository;
+import programmers.team6.domain.vacation.service.util.ApprovalStepServiceUtils;
 import programmers.team6.domain.vacation.support.VacationInfoLogPublisher;
 import programmers.team6.domain.vacation.util.mapper.VacationMapper;
 
@@ -59,9 +63,9 @@ class VacationServiceIntegrationTest {
 	@Test
 	void should_findMyVacationInfo_when_givenMemberId() {
 		// given & when
-		Code positionCode = codeRepository.save(genTestCode("POSITION", "00", "name"));
-		Dept dept = deptRepository.save(genTestDept("deptName"));
-		Member requester = memberRepository.save(genTestMember("A", dept, positionCode));
+		Code positionCode = codeRepository.save(INSTANCE.genTestCode("POSITION", "00", "name"));
+		Dept dept = deptRepository.save(INSTANCE.genTestDept("deptName"));
+		Member requester = memberRepository.save(INSTANCE.genTestMember("A", dept, positionCode));
 		vacationInfoRepository.save(new VacationInfo(100d, 5d, VacationCode.ANNUAL.getCode(), requester.getId()));
 
 		// then
@@ -74,15 +78,15 @@ class VacationServiceIntegrationTest {
 	@Test
 	void should_saveVacation_when_givenValidMemberIdAndVacationCreateRequestDto() {
 		// given & when
-		Code vacationTypeCode = codeRepository.save(genTestCode("VACATION_TYPE", "00", "name"));
-		Code positionCode = codeRepository.save(genTestCode("POSITION", "00", "name"));
+		Code vacationTypeCode = codeRepository.save(INSTANCE.genTestCode("VACATION_TYPE", "00", "name"));
+		Code positionCode = codeRepository.save(INSTANCE.genTestCode("POSITION", "00", "name"));
 
-		Dept dept = deptRepository.save(genTestDept("deptName"));
-		Dept hrDept = deptRepository.save(genTestDept("인사팀"));
+		Dept dept = deptRepository.save(INSTANCE.genTestDept("deptName"));
+		Dept hrDept = deptRepository.save(INSTANCE.genTestDept("인사팀"));
 
-		Member requester = memberRepository.save(genTestMember("A", dept, positionCode));
-		Member firstApprover = memberRepository.save(genTestMember("B", dept, positionCode));
-		Member secondApprover = memberRepository.save(genTestMember("C", hrDept, positionCode));
+		Member requester = memberRepository.save(INSTANCE.genTestMember("A", dept, positionCode));
+		Member firstApprover = memberRepository.save(INSTANCE.genTestMember("B", dept, positionCode));
+		Member secondApprover = memberRepository.save(INSTANCE.genTestMember("C", hrDept, positionCode));
 		dept.appointLeader(firstApprover);
 		hrDept.appointLeader(secondApprover);
 
@@ -108,15 +112,15 @@ class VacationServiceIntegrationTest {
 	@Test
 	void should_updateVacation_when_givenValidMemberIdAndVacationRequestIdAndVacationUpdateRequestDto() {
 		// given & when
-		Code vacationTypeCode = codeRepository.save(genTestCode("VACATION_TYPE", "00", "name"));
-		Code positionCode = codeRepository.save(genTestCode("POSITION", "00", "name"));
+		Code vacationTypeCode = codeRepository.save(INSTANCE.genTestCode("VACATION_TYPE", "00", "name"));
+		Code positionCode = codeRepository.save(INSTANCE.genTestCode("POSITION", "00", "name"));
 
-		Dept dept = deptRepository.save(genTestDept("deptName"));
-		Dept hrDept = deptRepository.save(genTestDept("인사팀"));
+		Dept dept = deptRepository.save(INSTANCE.genTestDept("deptName"));
+		Dept hrDept = deptRepository.save(INSTANCE.genTestDept("인사팀"));
 
-		Member requester = memberRepository.save(genTestMember("A", dept, positionCode));
-		Member firstApprover = memberRepository.save(genTestMember("B", dept, positionCode));
-		Member secondApprover = memberRepository.save(genTestMember("C", hrDept, positionCode));
+		Member requester = memberRepository.save(INSTANCE.genTestMember("A", dept, positionCode));
+		Member firstApprover = memberRepository.save(INSTANCE.genTestMember("B", dept, positionCode));
+		Member secondApprover = memberRepository.save(INSTANCE.genTestMember("C", hrDept, positionCode));
 		dept.appointLeader(firstApprover);
 		hrDept.appointLeader(secondApprover);
 
@@ -153,15 +157,15 @@ class VacationServiceIntegrationTest {
 	@Test
 	void should_cancelVacationRequest_when_givenMemberIdAndRequestId() {
 		// given & when
-		Code vacationTypeCode = codeRepository.save(genTestCode("VACATION_TYPE", "00", "name"));
-		Code positionCode = codeRepository.save(genTestCode("POSITION", "00", "name"));
+		Code vacationTypeCode = codeRepository.save(INSTANCE.genTestCode("VACATION_TYPE", "00", "name"));
+		Code positionCode = codeRepository.save(INSTANCE.genTestCode("POSITION", "00", "name"));
 
-		Dept dept = deptRepository.save(genTestDept("deptName"));
-		Dept hrDept = deptRepository.save(genTestDept("인사팀"));
+		Dept dept = deptRepository.save(INSTANCE.genTestDept("deptName"));
+		Dept hrDept = deptRepository.save(INSTANCE.genTestDept("인사팀"));
 
-		Member requester = memberRepository.save(genTestMember("A", dept, positionCode));
-		Member firstApprover = memberRepository.save(genTestMember("B", dept, positionCode));
-		Member secondApprover = memberRepository.save(genTestMember("C", hrDept, positionCode));
+		Member requester = memberRepository.save(INSTANCE.genTestMember("A", dept, positionCode));
+		Member firstApprover = memberRepository.save(INSTANCE.genTestMember("B", dept, positionCode));
+		Member secondApprover = memberRepository.save(INSTANCE.genTestMember("C", hrDept, positionCode));
 		dept.appointLeader(firstApprover);
 		hrDept.appointLeader(secondApprover);
 
@@ -189,15 +193,15 @@ class VacationServiceIntegrationTest {
 	@Test
 	void should_selectVacationCalendar_when_givenYearAndDeptId() {
 		// given & when
-		Code vacationTypeCode = codeRepository.save(genTestCode("VACATION_TYPE", "00", "name"));
-		Code positionCode = codeRepository.save(genTestCode("POSITION", "00", "name"));
+		Code vacationTypeCode = codeRepository.save(INSTANCE.genTestCode("VACATION_TYPE", "00", "name"));
+		Code positionCode = codeRepository.save(INSTANCE.genTestCode("POSITION", "00", "name"));
 
-		Dept dept = deptRepository.save(genTestDept("deptName"));
-		Dept hrDept = deptRepository.save(genTestDept("인사팀"));
+		Dept dept = deptRepository.save(INSTANCE.genTestDept("deptName"));
+		Dept hrDept = deptRepository.save(INSTANCE.genTestDept("인사팀"));
 
-		Member requester = memberRepository.save(genTestMember("A", dept, positionCode));
-		Member firstApprover = memberRepository.save(genTestMember("B", dept, positionCode));
-		Member secondApprover = memberRepository.save(genTestMember("C", hrDept, positionCode));
+		Member requester = memberRepository.save(INSTANCE.genTestMember("A", dept, positionCode));
+		Member firstApprover = memberRepository.save(INSTANCE.genTestMember("B", dept, positionCode));
+		Member secondApprover = memberRepository.save(INSTANCE.genTestMember("C", hrDept, positionCode));
 		dept.appointLeader(firstApprover);
 		hrDept.appointLeader(secondApprover);
 
