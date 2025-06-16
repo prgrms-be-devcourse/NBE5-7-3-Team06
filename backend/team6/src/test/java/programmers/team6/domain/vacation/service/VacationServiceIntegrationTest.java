@@ -92,12 +92,12 @@ class VacationServiceIntegrationTest {
 
 		LocalDateTime from = LocalDateTime.now().plusDays(1);
 		LocalDateTime to = from.plusDays(1);
-		VacationCreateRequestDto vacationCreateRequestDto = VacationCreateRequestDto.builder()
-			.from(from)
-			.to(to)
-			.reason("reason")
-			.vacationType(vacationTypeCode.getCode())
-			.build();
+		VacationCreateRequestDto vacationCreateRequestDto = new VacationCreateRequestDto(
+			from,
+			to,
+			"reason",
+			vacationTypeCode.getCode()
+		);
 
 		// then
 		VacationCreateResponseDto response = vacationService.requestVacation(requester.getId(),
@@ -127,13 +127,14 @@ class VacationServiceIntegrationTest {
 		LocalDateTime from = LocalDateTime.now().plusDays(1);
 		LocalDateTime to = from.plusDays(1);
 
-		VacationCreateResponseDto response = vacationService.requestVacation(requester.getId(),
-			VacationCreateRequestDto.builder()
-				.from(from)
-				.to(to)
-				.reason("reason")
-				.vacationType(vacationTypeCode.getCode())
-				.build());
+		VacationCreateRequestDto requestDto = new VacationCreateRequestDto(
+			from,
+			to,
+			"reason",
+			vacationTypeCode.getCode()
+		);
+
+		VacationCreateResponseDto response = vacationService.requestVacation(requester.getId(), requestDto);
 
 		LocalDateTime updatedFrom = LocalDateTime.now().plusDays(5);
 		LocalDateTime updatedTo = updatedFrom.plusDays(1);
@@ -170,12 +171,13 @@ class VacationServiceIntegrationTest {
 
 		LocalDateTime from = LocalDateTime.now().plusDays(1);
 		LocalDateTime to = from.plusDays(1);
-		VacationCreateRequestDto vacationCreateRequestDto = VacationCreateRequestDto.builder()
-			.from(from)
-			.to(to)
-			.reason("reason")
-			.vacationType(vacationTypeCode.getCode())
-			.build();
+		VacationCreateRequestDto vacationCreateRequestDto = new VacationCreateRequestDto(
+			from,
+			to,
+			"reason",
+			vacationTypeCode.getCode()
+		);
+
 		VacationCreateResponseDto response = vacationService.requestVacation(requester.getId(),
 			vacationCreateRequestDto);
 
@@ -205,12 +207,13 @@ class VacationServiceIntegrationTest {
 
 		LocalDateTime from = LocalDateTime.of(2025, 1, 1, 0, 0, 0);
 		LocalDateTime to = from.plusDays(1);
-		VacationCreateRequestDto vacationCreateRequestDto = VacationCreateRequestDto.builder()
-			.from(from)
-			.to(to)
-			.reason("reason")
-			.vacationType(vacationTypeCode.getCode())
-			.build();
+		VacationCreateRequestDto vacationCreateRequestDto = new VacationCreateRequestDto(
+			from,
+			to,
+			"reason",
+			vacationTypeCode.getCode()
+		);
+
 		VacationCreateResponseDto response = vacationService.requestVacation(requester.getId(),
 			vacationCreateRequestDto);
 		vacationRequestRepository.findById(response.getRequestId()).ifPresent(result -> result.approve());

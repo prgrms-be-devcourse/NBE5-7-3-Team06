@@ -17,7 +17,6 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import programmers.team6.domain.admin.entity.Code;
@@ -27,7 +26,6 @@ import programmers.team6.global.entity.BaseEntity;
 import programmers.team6.global.exception.code.BadRequestErrorCode;
 import programmers.team6.global.exception.customException.BadRequestException;
 
-@Getter
 @Entity
 @Table(name = "members")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -87,4 +85,31 @@ public class Member extends BaseEntity {
 		return this.dept != null && this.dept.isHrDept();
 	}
 
+	public Long getId() {
+		return id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public Dept getDept() {
+		return dept;
+	}
+
+	public Code getPosition() {
+		return position;
+	}
+
+	public LocalDateTime getJoinDate() {
+		return joinDate;
+	}
+
+	public Role getRole() {
+		return role;
+	}
+
+	public MemberInfo getMemberInfo() {
+		return memberInfo;
+	}
 }

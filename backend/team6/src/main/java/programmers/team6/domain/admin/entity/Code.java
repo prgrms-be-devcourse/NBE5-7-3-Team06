@@ -13,7 +13,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import programmers.team6.global.entity.BaseEntity;
 
-@Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(
@@ -49,5 +48,21 @@ public class Code extends BaseEntity {
 		this.groupCode = groupCode;
 		this.code = code;
 		this.name = name;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public String getGroupCode() {
+		return groupCode;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public String getName() {
+		return name;
 	}
 }

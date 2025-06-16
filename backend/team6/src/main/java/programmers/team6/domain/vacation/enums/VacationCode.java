@@ -25,4 +25,6 @@ public enum VacationCode {
 	public static Optional<VacationCode> findByCode(String type) {
 		return Arrays.stream(values()).filter(vacationCode -> vacationCode.getCode().equals(type)).findFirst();
 	}
+
+	
 }
