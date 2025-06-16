@@ -1,12 +1,12 @@
-package programmers.team6.domain.vacation.dto.response;
+package programmers.team6.domain.vacation.dto.response
 
-import java.time.LocalDateTime;
+import java.time.LocalDateTime
 
-public record VacationRequestCalendarResponse(
-	String name,
-	String deptName,
-	String typeName,
-	String positionName,
-	LocalDateTime from,
-	LocalDateTime to) {
-}
+data class VacationRequestCalendarResponse(
+    val name: String,
+    val deptName: String,
+    val typeName: String,
+    val positionName: String,
+    val from: LocalDateTime,
+    val to: LocalDateTime
+)

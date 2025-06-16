@@ -1,6 +1,8 @@
-package programmers.team6.domain.vacation.support;
+package programmers.team6.domain.vacation.support
 
-import java.time.LocalDateTime;
+import java.time.LocalDateTime
 
-public record MonthRange(LocalDateTime start, LocalDateTime end) {
-}
+data class MonthRange(
+    val start: LocalDateTime,
+    val end: LocalDateTime
+)

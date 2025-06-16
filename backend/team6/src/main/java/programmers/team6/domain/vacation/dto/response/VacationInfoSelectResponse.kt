@@ -1,4 +1,8 @@
-package programmers.team6.domain.vacation.dto.response;
+package programmers.team6.domain.vacation.dto.response
 
-public record VacationInfoSelectResponse(int id, double totalCount, String vacationType, int version) {
-}
+data class VacationInfoSelectResponse(
+    val id: Int,
+    val totalCount: Double,
+    val vacationType: String,
+    val version: Int
+)

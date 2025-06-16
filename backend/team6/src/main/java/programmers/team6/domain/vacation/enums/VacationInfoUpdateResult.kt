@@ -1,11 +1,10 @@
-package programmers.team6.domain.vacation.enums;
+package programmers.team6.domain.vacation.enums
 
-public enum VacationInfoUpdateResult {
-	SUCCESS,
-	MISS_VERSION,
-	MISS_RULES;
+enum class VacationInfoUpdateResult {
+    SUCCESS,
+    MISS_VERSION,
+    MISS_RULES;
 
-	public boolean isSuccess() {
-		return this == SUCCESS;
-	}
+    val isSuccess: Boolean
+        get() = this == SUCCESS
 }
