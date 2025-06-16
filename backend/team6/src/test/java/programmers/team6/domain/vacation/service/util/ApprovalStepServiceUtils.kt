@@ -4,19 +4,17 @@ import programmers.team6.domain.member.entity.Member
 import programmers.team6.domain.vacation.entity.ApprovalStep
 import programmers.team6.domain.vacation.entity.VacationRequest
 import programmers.team6.domain.vacation.enums.ApprovalStatus
+import programmers.team6.support.TestVacationType
 import programmers.team6.support.VacationTypeMother
 import java.time.LocalDateTime
 
 object ApprovalStepServiceUtils {
     fun genVacationRequest(member: Member): VacationRequest {
-        return VacationRequest.builder()
-            .member(member)
-            .from(LocalDateTime.of(2025, 8, 1, 9, 0))
-            .to(LocalDateTime.of(2025, 8, 3, 18, 0))
-            .reason("사정이 있습니다.")
-            .type(VacationTypeMother.Annual())
-            .status(null)
-            .build()
+        return VacationRequest(
+            member, LocalDateTime.of(2025, 8, 1, 9, 0), LocalDateTime.of(2025, 8, 3, 18, 0), "사정이 있습니다.",
+            TestVacationType.ANNUAL.toCode()
+
+        )
     }
 
     fun genFirstStep(id: Long, approver: Member, vacationRequest: VacationRequest): ApprovalStep {
