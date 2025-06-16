@@ -19,10 +19,10 @@ import org.springframework.data.domain.Pageable;
 
 import programmers.team6.domain.admin.entity.Code;
 import programmers.team6.domain.admin.entity.Dept;
-import programmers.team6.domain.member.entity.Member;
-import programmers.team6.domain.member.enums.Role;
 import programmers.team6.domain.admin.repository.CodeRepository;
 import programmers.team6.domain.admin.repository.DeptRepository;
+import programmers.team6.domain.member.entity.Member;
+import programmers.team6.domain.member.enums.Role;
 import programmers.team6.domain.member.repository.MemberRepository;
 import programmers.team6.domain.vacation.dto.response.ApprovalFirstStepSelectResponse;
 import programmers.team6.domain.vacation.dto.response.ApprovalSecondStepSelectResponse;
@@ -70,7 +70,7 @@ class ApprovalStepRepositoryTests {
 		Code savePosition01 = codeRepository.save(new Code("POSITION", "01", "사원"));
 		Code savePosition04 = codeRepository.save(new Code("POSITION", "04", "부장"));
 		Code saveVacationType01 = codeRepository.save(new Code("VACATION_TYPE", "01", "연차"));
-		Dept dept = deptRepository.save(new Dept("인사팀", null));
+		Dept dept = deptRepository.save(new Dept(null, "인사팀", null));
 		Member member = memberRepository.save(
 			new Member("민경준", dept, savePosition01, LocalDateTime.of(2025, 1, 1, 0, 0), Role.USER)
 		);

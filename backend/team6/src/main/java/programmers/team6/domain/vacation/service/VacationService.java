@@ -19,17 +19,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import programmers.team6.domain.admin.entity.Code;
 import programmers.team6.domain.admin.entity.Dept;
-import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.admin.repository.CodeRepository;
+import programmers.team6.domain.member.entity.Member;
 import programmers.team6.domain.member.repository.MemberRepository;
-import programmers.team6.domain.vacation.support.MonthRange;
 import programmers.team6.domain.vacation.dto.request.VacationCreateRequestDto;
+import programmers.team6.domain.vacation.dto.request.VacationUpdateRequestDto;
+import programmers.team6.domain.vacation.dto.request.VacationUpdateResponseDto;
 import programmers.team6.domain.vacation.dto.response.VacationCreateResponseDto;
 import programmers.team6.domain.vacation.dto.response.VacationInfoSelectResponseDto;
 import programmers.team6.domain.vacation.dto.response.VacationListResponseDto;
 import programmers.team6.domain.vacation.dto.response.VacationRequestCalendarResponse;
-import programmers.team6.domain.vacation.dto.request.VacationUpdateRequestDto;
-import programmers.team6.domain.vacation.dto.request.VacationUpdateResponseDto;
 import programmers.team6.domain.vacation.entity.ApprovalStep;
 import programmers.team6.domain.vacation.entity.VacationInfo;
 import programmers.team6.domain.vacation.entity.VacationRequest;
@@ -39,6 +38,7 @@ import programmers.team6.domain.vacation.repository.ApprovalStepRepository;
 import programmers.team6.domain.vacation.repository.VacationInfoRepository;
 import programmers.team6.domain.vacation.repository.VacationRequestRepository;
 import programmers.team6.domain.vacation.repository.VacationRequestSearchRepository;
+import programmers.team6.domain.vacation.support.MonthRange;
 import programmers.team6.domain.vacation.util.mapper.VacationMapper;
 import programmers.team6.global.exception.code.BadRequestErrorCode;
 import programmers.team6.global.exception.code.NotFoundErrorCode;
@@ -101,11 +101,10 @@ public class VacationService {
 
 		// 부서장 조회 (결재자)
 		Dept dept = member.getDept();
-		Member approver = dept.getDeptLeader();
+		Member approver = dept.deptLeaderOrThrow();
 
 		// 휴가 유형 코드 조회
-		Code vacationType = codeRepository.findByGroupCodeAndCode("VACATION_TYPE", requestDto.getVacationType())
-			.orElseThrow(() -> new RuntimeException("잘못된 휴가 유형입니다."));
+		Code vacationType = codeRepository.findByGroupCodeAndCode("VACATION_TYPE", requestDto.getVacationType());
 
 		// 휴가 요청 상태 코드 (기본 대기 상태)
 		VacationRequestStatus status = VacationRequestStatus.IN_PROGRESS;
@@ -224,8 +223,7 @@ public class VacationService {
 		}
 
 		// 휴가 유형 코드 조회
-		Code vacationType = codeRepository.findByGroupCodeAndCode("VACATION_TYPE", requestDto.getVacationType())
-			.orElseThrow(() -> new RuntimeException("잘못된 휴가 유형입니다."));
+		Code vacationType = codeRepository.findByGroupCodeAndCode("VACATION_TYPE", requestDto.getVacationType());
 
 		// 수정 권한 검증 및 수정 처리
 		vacationRequest.updateByMember(memberId, requestDto.getFrom(), requestDto.getTo(), requestDto.getReason(),

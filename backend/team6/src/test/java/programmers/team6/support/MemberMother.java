@@ -14,12 +14,12 @@ public class MemberMother {
 		Member member = MemberStub.subBuilder()
 			.id(id)
 			.name("testMember")
-			.dept(new Dept("testDept", null))
+			.dept(new Dept(null, "testDept", null))
 			.position(PositionMother.employee())
 			.joinDate(LocalDateTime.of(2025, 6, 12, 10, 11))
 			.role(Role.USER)
 			.build();
-		member.setMemberInfo(new MemberInfo("birth","test@gmail.com","testPassword"));
+		member.setMemberInfo(new MemberInfo("birth", "test@gmail.com", "testPassword"));
 		return member;
 	}
 
@@ -27,25 +27,25 @@ public class MemberMother {
 		return MemberStub.subBuilder()
 			.id(id)
 			.name("testMember")
-			.dept(new Dept("testDept", null))
+			.dept(new Dept(null, "testDept", null))
 			.position(PositionMother.employee())
 			.joinDate(LocalDateTime.of(2025, 6, 12, 10, 11))
 			.role(role)
 			.build();
-  }
-  
+	}
+
 	public static Member withIdAndDeptName(Long id, String deptName) {
 		return MemberStub.subBuilder()
 			.id(id)
 			.name("testMember" + id)
-			.dept(new Dept(deptName, null))
+			.dept(new Dept(null, deptName, null))
 			.position(PositionMother.employee())
 			.joinDate(LocalDateTime.of(2025, 6, 12, 10, 11))
 			.role(Role.USER)
 			.build();
-  }
-	
-  public static Member member() {
+	}
+
+	public static Member member() {
 		return withId(0L);
 	}
 }

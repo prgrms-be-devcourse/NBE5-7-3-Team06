@@ -193,7 +193,7 @@ class VacationServiceTests {
 		when(vacationInfoRepository.findActualRemainingVacationDays(member.getId(),
 			vacationCreateRequestDto.getVacationType())).thenReturn(Optional.of(30d));
 		when(codeRepository.findByGroupCodeAndCode("VACATION_TYPE",
-			vacationCreateRequestDto.getVacationType())).thenReturn(Optional.empty());
+			vacationCreateRequestDto.getVacationType())).thenReturn(null);
 
 		// then
 		assertThatThrownBy(
