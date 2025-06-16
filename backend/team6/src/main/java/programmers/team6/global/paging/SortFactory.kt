@@ -1,62 +1,47 @@
-package programmers.team6.global.paging;
+package programmers.team6.global.paging
 
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.core.annotation.MergedAnnotation
+import org.springframework.data.domain.Sort
+import org.springframework.web.context.request.NativeWebRequest
 
-import org.springframework.core.annotation.MergedAnnotation;
-import org.springframework.data.domain.Sort;
-import org.springframework.util.ObjectUtils;
-import org.springframework.web.context.request.NativeWebRequest;
+const val SORT_PARAMETER_NAME: String = "sort"
 
-public class SortFactory {
+class SortFactory {
+    fun create(methodParameter: MergedAnnotation<PagingConfig>, webRequest: NativeWebRequest): Sort {
+        val defaultDirection = getDefaultDirection(methodParameter)
+        val webSort = getWebSort(defaultDirection, webRequest)
+        return if (webSort.isSorted) webSort else getConfigSort(methodParameter, defaultDirection)
+    }
 
-	public static final String SORT_PARAMETER_NAME = "sort";
+    private fun getDefaultDirection(methodParameter: MergedAnnotation<PagingConfig>): Sort.Direction {
+        return methodParameter.getEnum("direction", Sort.Direction::class.java)
+    }
 
-	public Sort create(MergedAnnotation<PagingConfig> methodParameter, NativeWebRequest webRequest) {
-		Sort.Direction defaultDirection = getDefaultDirection(methodParameter);
-		Sort webSort = getWebSort(defaultDirection, webRequest);
-		if (webSort.isSorted()) {
-			return webSort;
-		}
-		return getConfigSort(methodParameter, defaultDirection);
-	}
+    private fun getWebSort(defaultDirection: Sort.Direction, webRequest: NativeWebRequest): Sort {
+        val sorts = webRequest.getParameterValues(SORT_PARAMETER_NAME) ?: return Sort.unsorted()
+        return Sort.by(toOrders(defaultDirection, sorts))
+    }
 
-	private Sort.Direction getDefaultDirection(MergedAnnotation<PagingConfig> methodParameter) {
-		return methodParameter.getEnum("direction", Sort.Direction.class);
-	}
+    private fun toOrders(defaultDirection: Sort.Direction, sorts: Array<String>): List<Sort.Order> {
+        return sorts.map { toOrder(it, defaultDirection) }
+    }
 
-	private Sort getWebSort(Sort.Direction defaultDirection, NativeWebRequest webRequest) {
-		String[] sorts = webRequest.getParameterValues(SORT_PARAMETER_NAME);
-		if (ObjectUtils.isEmpty(sorts)) {
-			return Sort.unsorted();
-		}
-		return Sort.by(toOrders(defaultDirection, sorts));
-	}
+    private fun toOrder(sort: String, defaultDirection: Sort.Direction): Sort.Order {
+        val values = sort.split(",", limit = 2)
+        require(values.isNotEmpty()) { "입력이 잘 못 되었습니다." }
+        return if (values.size == 1) {
+            Sort.Order(defaultDirection, values[0])
+        } else {
+            Sort.Order(Sort.Direction.fromString(values[1]), values[0])
+        }
+    }
 
-	private List<Sort.Order> toOrders(Sort.Direction defaultDirection, String[] sorts) {
-		List<Sort.Order> orders = new ArrayList<>();
-		for (String sort : sorts) {
-			orders.add(toOrder(sort, defaultDirection));
-		}
-		return orders;
-	}
-
-	private Sort.Order toOrder(String sort, Sort.Direction defaultDirection) {
-		String[] values = sort.split(",", 2);
-		if (ObjectUtils.isEmpty(values)) {
-			throw new IllegalArgumentException("입력이 잘 못 되었습니다.");
-		}
-		if (values.length == 1) {
-			return new Sort.Order(defaultDirection, values[0]);
-		}
-		return new Sort.Order(Sort.Direction.fromString(values[1]), values[0]);
-	}
-
-	private Sort getConfigSort(MergedAnnotation<PagingConfig> methodParameter, Sort.Direction defaultDirection) {
-		String[] sorts = methodParameter.getStringArray(SORT_PARAMETER_NAME);
-		if (ObjectUtils.isEmpty(sorts)) {
-			return Sort.unsorted();
-		}
-		return Sort.by(defaultDirection, sorts);
-	}
+    private fun getConfigSort(methodParameter: MergedAnnotation<PagingConfig>, defaultDirection: Sort.Direction): Sort {
+        val sorts = methodParameter.getStringArray(SORT_PARAMETER_NAME)
+        return if (sorts.isNullOrEmpty()) {
+            Sort.unsorted()
+        } else {
+            Sort.by(defaultDirection, *sorts)
+        }
+    }
 }

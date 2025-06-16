@@ -1,23 +1,13 @@
-package programmers.team6.global.paging;
+package programmers.team6.global.paging
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.springframework.data.domain.Sort
 
-import org.springframework.data.domain.Sort;
-
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.PARAMETER)
-public @interface PagingConfig {
-
-	int size() default 10;
-
-	int page() default 0;
-
-	int maxSize() default 100;
-
-	String[] sort() default {};
-
-	Sort.Direction direction() default Sort.Direction.ASC;
-}
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.VALUE_PARAMETER)
+annotation class PagingConfig(
+    val size: Int = 10,
+    val page: Int = 0,
+    val maxSize: Int = 100,
+    val sort: Array<String> = [],
+    val direction: Sort.Direction = Sort.Direction.ASC
+)

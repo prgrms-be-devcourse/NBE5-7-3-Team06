@@ -1,12 +1,11 @@
-package programmers.team6.global.paging;
+package programmers.team6.global.paging
 
-import org.springframework.core.annotation.MergedAnnotation;
+import org.springframework.core.annotation.MergedAnnotation
 
-public class PageableValidatorFactory {
+private const val ATTRIBUTE_NAME = "maxSize"
 
-	private static final String ATTRIBUTE_NAME = "maxSize";
-
-	public PageableValidator create(MergedAnnotation<PagingConfig> configMergedAnnotation) {
-		return new PageableValidator(configMergedAnnotation.getInt(ATTRIBUTE_NAME));
-	}
+class PageableValidatorFactory {
+    fun create(configMergedAnnotation: MergedAnnotation<PagingConfig>): PageableValidator {
+        return PageableValidator(configMergedAnnotation.getInt(ATTRIBUTE_NAME))
+    }
 }
