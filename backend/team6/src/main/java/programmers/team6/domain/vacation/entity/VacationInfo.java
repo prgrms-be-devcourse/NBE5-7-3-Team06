@@ -16,7 +16,6 @@ import programmers.team6.global.exception.customException.BadRequestException;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
 public class VacationInfo extends BaseEntity {
 
 	@Id
@@ -67,6 +66,30 @@ public class VacationInfo extends BaseEntity {
 
 	public boolean canUseVacation(double count) {
 		return this.useCount + count <= this.totalCount;
+	}
+
+	public int getVacationId() {
+		return vacationId;
+	}
+
+	public double getTotalCount() {
+		return totalCount;
+	}
+
+	public double getUseCount() {
+		return useCount;
+	}
+
+	public String getVacationType() {
+		return vacationType;
+	}
+
+	public Long getMemberId() {
+		return memberId;
+	}
+
+	public int getVersion() {
+		return version;
 	}
 
 	@CheckReturnValue

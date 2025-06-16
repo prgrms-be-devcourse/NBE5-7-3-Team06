@@ -20,7 +20,6 @@ import programmers.team6.global.exception.code.BadRequestErrorCode;
 import programmers.team6.global.exception.customException.BadRequestException;
 
 @Entity
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ApprovalStep extends BaseEntity {
 	@Id
@@ -133,5 +132,29 @@ public class ApprovalStep extends BaseEntity {
 
 	public boolean isHrApprover() {
 		return this.member.isHrMember();
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public Member getMember() {
+		return member;
+	}
+
+	public VacationRequest getVacationRequest() {
+		return vacationRequest;
+	}
+
+	public ApprovalStatus getApprovalStatus() {
+		return approvalStatus;
+	}
+
+	public int getStep() {
+		return step;
+	}
+
+	public String getReason() {
+		return reason;
 	}
 }

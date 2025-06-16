@@ -75,16 +75,21 @@ public class AdminVacationRequestSearchTestDataFactory {
 		return result;
 	}
 
-	public static VacationRequest genVacationRequest(Member member, LocalDateTime start, LocalDateTime end,
-		String reason, Code type, VacationRequestStatus status) {
-		return VacationRequest.builder()
-			.member(member)
-			.from(start)
-			.to(end)
-			.reason(reason)
-			.type(type)
-			.status(status)
-			.build();
+	public static VacationRequest genVacationRequest(Member member,
+		LocalDateTime start,
+		LocalDateTime end,
+		String reason,
+		Code type,
+		VacationRequestStatus status) {
+		return new VacationRequest(
+			member,
+			start,
+			end,
+			reason,
+			type,
+			status,
+			null
+		);
 	}
 
 	public static ApprovalStep genApprovalStep(int step, ApprovalStatus approvalStatus, Member member,

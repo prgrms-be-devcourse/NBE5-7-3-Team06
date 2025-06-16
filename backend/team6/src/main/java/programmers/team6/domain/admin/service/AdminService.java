@@ -49,8 +49,10 @@ public class AdminService {
 	@Transactional
 	public void updateVacationRequestDetailById(Long id,
 		VacationRequestDetailUpdateRequest vacationRequestDetailUpdateRequest) {
-		VacationRequest vacationRequest = vacationRequestRepository.findVacationRequestById(id)
-			.orElseThrow(() -> new NotFoundException(NotFoundErrorCode.NOT_FOUND_VACATION_REQUEST));
+		VacationRequest vacationRequest = vacationRequestRepository.findVacationRequestById(id);
+		if (vacationRequest == null) {
+			throw new NotFoundException(NotFoundErrorCode.NOT_FOUND_VACATION_REQUEST);
+		}
 
 		Code vacationRequestType = codeRepository.findByIdAndGroupCode(vacationRequestDetailUpdateRequest.typeId(),
 			"VACATION_TYPE").orElseThrow(() -> new NotFoundException(NotFoundErrorCode.NOT_FOUND_CODE));

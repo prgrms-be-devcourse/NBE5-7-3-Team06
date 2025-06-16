@@ -81,7 +81,7 @@ class AdminServiceTest {
 		@DisplayName("알맞은 VacationRequestId와 VacationRequestDetail 입력시, update 성공")
 		void success_when_givenValidVacationRequestIdAndVacationRequestDetail() {
 			// when
-			when(vacationRequestRepository.findVacationRequestById(anyLong())).thenReturn(Optional.of(vacationRequest));
+			when(vacationRequestRepository.findVacationRequestById(anyLong())).thenReturn(vacationRequest);
 			when(codeRepository.findByIdAndGroupCode(anyLong(), eq("VACATION_TYPE"))).thenReturn(
 				Optional.of(vacationRequestType));
 			when(approvalStepRepository.findApprovalStepsByVacationRequest_IdOrderByStepAsc(anyLong())).thenReturn(
@@ -101,7 +101,7 @@ class AdminServiceTest {
 		@DisplayName("잘못된 VacationRequestId 입력시, NotFoundException 발생")
 		void fail_when_givenInvalidVacationRequestId() {
 			// when
-			when(vacationRequestRepository.findVacationRequestById(anyLong())).thenReturn(Optional.empty());
+			when(vacationRequestRepository.findVacationRequestById(anyLong())).thenReturn(null);
 
 			// then
 			assertThatThrownBy(() -> adminService.updateVacationRequestDetailById(0L,
@@ -113,7 +113,7 @@ class AdminServiceTest {
 		@DisplayName("잘못된 VacationRequest의 typeId(분류코드 id) 입력시, NotFoundException 발생")
 		void fail_when_givenInvalidVacationRequestTypeId() {
 			// when
-			when(vacationRequestRepository.findVacationRequestById(anyLong())).thenReturn(Optional.of(vacationRequest));
+			when(vacationRequestRepository.findVacationRequestById(anyLong())).thenReturn(vacationRequest);
 			when(codeRepository.findByIdAndGroupCode(anyLong(), eq("VACATION_TYPE"))).thenReturn(Optional.empty());
 
 			// then
@@ -126,7 +126,7 @@ class AdminServiceTest {
 		@DisplayName("해당 VacationReuqest의 ApprovalStep이 없을 경우, ConflictException 발생")
 		void fail_when_givenEmptyApprovalSteps() {
 			// when
-			when(vacationRequestRepository.findVacationRequestById(anyLong())).thenReturn(Optional.of(vacationRequest));
+			when(vacationRequestRepository.findVacationRequestById(anyLong())).thenReturn(vacationRequest);
 			when(codeRepository.findByIdAndGroupCode(anyLong(), eq("VACATION_TYPE"))).thenReturn(
 				Optional.of(vacationRequestType));
 			when(approvalStepRepository.findApprovalStepsByVacationRequest_IdOrderByStepAsc(anyLong())).thenReturn(
@@ -142,7 +142,7 @@ class AdminServiceTest {
 		@DisplayName("해당 VacationReuqest와 ApprovalStep가 동기화가 안된경우, ConflictException 발생")
 		void fail_when_givenInvalidApprovalSteps() {
 			// when
-			when(vacationRequestRepository.findVacationRequestById(anyLong())).thenReturn(Optional.of(vacationRequest));
+			when(vacationRequestRepository.findVacationRequestById(anyLong())).thenReturn(vacationRequest);
 			when(codeRepository.findByIdAndGroupCode(anyLong(), eq("VACATION_TYPE"))).thenReturn(
 				Optional.of(vacationRequestType));
 			when(approvalStepRepository.findApprovalStepsByVacationRequest_IdOrderByStepAsc(anyLong())).thenReturn(
