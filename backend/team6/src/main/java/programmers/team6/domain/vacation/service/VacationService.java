@@ -101,7 +101,7 @@ public class VacationService {
 
 		// 부서장 조회 (결재자)
 		Dept dept = member.getDept();
-		Member approver = dept.getDeptLeader();
+		Member approver = dept.deptLeaderOrThrow();
 
 		// 휴가 유형 코드 조회
 		Code vacationType = codeRepository.findByGroupCodeAndCode("VACATION_TYPE", requestDto.getVacationType());

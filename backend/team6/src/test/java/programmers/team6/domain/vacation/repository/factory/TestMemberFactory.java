@@ -27,7 +27,7 @@ public class TestMemberFactory {
 	public Member defaultMember() {
 		LocalDateTime joinDate = LocalDateTime.of(2025, 10, 31, 0, 0);
 		Code code = getOrCreate();
-		Dept dept = deptRepository.save(new Dept("code", null));
+		Dept dept = deptRepository.save(new Dept(null, "code", null));
 		Member member = new Member("test1", dept, code, joinDate, Role.USER);
 		return memberRepository.save(member);
 	}

@@ -150,7 +150,8 @@ public class ApprovalStepService {
 		// todo: 2차 결재자 지정 기능 (시스템상 구현 필요)
 		Dept findDept = deptService.findByDeptName("인사팀");
 		approvalStepRepository.save(ApprovalStepMapper.toEntity(firstApprover, vacationRequest, STEP1));
-		approvalStepRepository.save(ApprovalStepMapper.toEntity(findDept.getDeptLeader(), vacationRequest, STEP2));
+		approvalStepRepository.save(
+			ApprovalStepMapper.toEntity(findDept.deptLeaderOrThrow(), vacationRequest, STEP2));
 	}
 
 	// 휴가 요청 취소될 경우, 관련 결재 단계 상태 CANCELED

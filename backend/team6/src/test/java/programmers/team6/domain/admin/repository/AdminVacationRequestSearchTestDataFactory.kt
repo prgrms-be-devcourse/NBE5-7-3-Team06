@@ -28,7 +28,7 @@ object AdminVacationRequestSearchTestDataFactory {
     }
 
     fun genTestDept(deptName: String): Dept {
-        return Dept(deptName, null)
+        return Dept(null, deptName, null)
     }
 
     fun genTestDeptList(cnt: Int, prefixDeptName: String): MutableList<Dept> {

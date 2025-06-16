@@ -4,7 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import programmers.team6.domain.admin.dto.response.DeptDropdownResponse
 import programmers.team6.domain.admin.entity.Dept
-import java.util.*
 
 interface DeptRepository : JpaRepository<Dept, Long> {
 
@@ -12,7 +11,6 @@ interface DeptRepository : JpaRepository<Dept, Long> {
         """
 		  SELECT new programmers.team6.domain.admin.dto.response.DeptDropdownResponse(d.id,d.deptName)
 		  FROM Dept d
-		
 		"""
     )
     fun findAllDept(): List<DeptDropdownResponse>
