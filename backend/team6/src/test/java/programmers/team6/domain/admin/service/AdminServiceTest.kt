@@ -1,152 +1,207 @@
-package programmers.team6.domain.admin.service;
+package programmers.team6.domain.admin.service
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import io.kotest.matchers.shouldBe
+import io.mockk.every
+import io.mockk.mockk
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.assertj.core.api.iterable.ThrowingExtractor
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
+import programmers.team6.domain.admin.dto.request.VacationRequestDetailUpdateRequest
+import programmers.team6.domain.admin.entity.Code
+import programmers.team6.domain.admin.repository.AdminVacationRequestSearchCustom
+import programmers.team6.domain.admin.repository.AdminVacationRequestSearchTestDataFactory
+import programmers.team6.domain.admin.repository.CodeRepository
+import programmers.team6.domain.member.entity.Member
+import programmers.team6.domain.vacation.entity.ApprovalStep
+import programmers.team6.domain.vacation.entity.VacationRequest
+import programmers.team6.domain.vacation.enums.VacationRequestStatus
+import programmers.team6.domain.vacation.repository.ApprovalStepRepository
+import programmers.team6.domain.vacation.repository.VacationRequestRepository
+import programmers.team6.domain.vacation.support.VacationRequestReader
+import programmers.team6.global.exception.code.ConflictErrorCode
+import programmers.team6.global.exception.code.NotFoundErrorCode
+import programmers.team6.global.exception.customException.ConflictException
+import programmers.team6.global.exception.customException.NotFoundException
+import java.time.LocalDateTime
+import java.util.*
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+internal class AdminServiceTest {
+    val adminVacationRequestSearchCustom = mockk<AdminVacationRequestSearchCustom>()
+    val vacationRequestRepository = mockk<VacationRequestRepository>()
+    val codeRepository = mockk<CodeRepository>()
+    val approvalStepRepository = mockk<ApprovalStepRepository>()
+    val vacationRequestReader = mockk<VacationRequestReader>()
+    var adminService: AdminService = AdminService(
+        adminVacationRequestSearchCustom,
+        vacationRequestRepository,
+        codeRepository,
+        approvalStepRepository,
+        vacationRequestReader
+    )
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+    @Nested
+    @DisplayName("VacationRequestDetail 수정 과정에서 ")
+    internal inner class should_updateVacationRequestDetail {
+        lateinit var vacationRequest: VacationRequest
+        lateinit var vacationRequestType: Code
+        lateinit var vacationRequestDetailUpdateRequest: VacationRequestDetailUpdateRequest
+        lateinit var approvalSteps: MutableList<ApprovalStep>
 
-import programmers.team6.domain.admin.dto.request.VacationRequestDetailUpdateRequest;
-import programmers.team6.domain.admin.entity.Code;
-import programmers.team6.domain.admin.repository.AdminVacationRequestSearchCustom;
-import programmers.team6.domain.admin.repository.AdminVacationRequestSearchTestDataFactory;
-import programmers.team6.domain.admin.repository.CodeRepository;
-import programmers.team6.domain.vacation.entity.ApprovalStep;
-import programmers.team6.domain.vacation.entity.VacationRequest;
-import programmers.team6.domain.vacation.enums.VacationRequestStatus;
-import programmers.team6.domain.vacation.repository.ApprovalStepRepository;
-import programmers.team6.domain.vacation.repository.VacationRequestRepository;
-import programmers.team6.domain.vacation.support.VacationRequestReader;
-import programmers.team6.global.exception.code.ConflictErrorCode;
-import programmers.team6.global.exception.code.NotFoundErrorCode;
-import programmers.team6.global.exception.customException.ConflictException;
-import programmers.team6.global.exception.customException.NotFoundException;
+        @BeforeEach
+        fun setUp() {
+            this.vacationRequest = VacationRequest(
+                mockk<Member>(), LocalDateTime.now(), LocalDateTime.now().plusMinutes(1), "", mockk<Code>(),
+                VacationRequestStatus.IN_PROGRESS, 0
+            )
+            this.vacationRequestType = Code("VACATION_TYPE", UUID.randomUUID().toString(), "test_name")
+            this.vacationRequestDetailUpdateRequest = VacationRequestDetailUpdateRequest(
+                0L,
+                LocalDateTime.now().plusDays(1L), LocalDateTime.now().plusDays(3L), VacationRequestStatus.APPROVED,
+                "testReason", mutableListOf("r1", "r2", "r3")
+            )
+            this.approvalSteps = mutableListOf()
+            for (i in 0..2) {
+                approvalSteps.add(
+                    AdminVacationRequestSearchTestDataFactory.genTestApprovalStep(
+                        vacationRequest, i,
+                        String.format("o%d", i)
+                    )
+                )
+            }
+        }
 
-@ExtendWith(MockitoExtension.class)
-class AdminServiceTest {
-	@Mock
-	AdminVacationRequestSearchCustom adminVacationRequestSearchCustom;
-	@Mock
-	VacationRequestRepository vacationRequestRepository;
-	@Mock
-	CodeRepository codeRepository;
-	@Mock
-	ApprovalStepRepository approvalStepRepository;
-	@Mock
-	VacationRequestReader vacationRequestReader;
-	@InjectMocks
-	AdminService adminService;
+        @Test
+        @DisplayName("알맞은 VacationRequestId와 VacationRequestDetail 입력시, update 성공")
+        fun success_when_givenValidVacationRequestIdAndVacationRequestDetail() {
+            // given
+            val vacationRequestId = 0L
 
-	@Nested
-	@DisplayName("VacationRequestDetail 수정 과정에서 ")
-	class should_updateVacationRequestDetail {
-		private VacationRequest vacationRequest;
-		private Code vacationRequestType;
-		private VacationRequestDetailUpdateRequest vacationRequestDetailUpdateRequest;
-		private List<ApprovalStep> approvalSteps;
+            // when
+            every { vacationRequestRepository.findVacationRequestById(vacationRequestId) }.returns(vacationRequest)
+            every {
+                codeRepository.findByIdAndGroupCode(
+                    vacationRequestDetailUpdateRequest.typeId,
+                    "VACATION_TYPE"
+                )
+            }.returns(vacationRequestType)
+            every { approvalStepRepository.findApprovalStepsByVacationRequest_IdOrderByStepAsc(vacationRequestId) }.returns(
+                approvalSteps
+            )
+            adminService.updateVacationRequestDetailById(vacationRequestId, vacationRequestDetailUpdateRequest)
 
-		@BeforeEach
-		void setUp() {
-			this.vacationRequest = VacationRequest.builder().build();
-			this.vacationRequestType = new Code("VACATION_TYPE", UUID.randomUUID().toString(), "test_name");
-			this.vacationRequestDetailUpdateRequest = new VacationRequestDetailUpdateRequest(0L,
-				LocalDateTime.now().plusDays(1L), LocalDateTime.now().plusDays(3L), VacationRequestStatus.APPROVED,
-				"testReason", List.of("r1", "r2", "r3"));
-			this.approvalSteps = new ArrayList<>();
-			for (int i = 0; i < 3; i++) {
-				approvalSteps.add(AdminVacationRequestSearchTestDataFactory.genTestApprovalStep(vacationRequest, i,
-					String.format("o%d", i)));
-			}
-		}
+            // then
+            vacationRequest.from shouldBe vacationRequestDetailUpdateRequest.from
+            vacationRequest.to shouldBe vacationRequestDetailUpdateRequest.to
+            vacationRequest.status shouldBe vacationRequestDetailUpdateRequest.vacationRequestStatus
+            vacationRequest.reason shouldBe vacationRequestDetailUpdateRequest.reason
 
-		@Test
-		@DisplayName("알맞은 VacationRequestId와 VacationRequestDetail 입력시, update 성공")
-		void success_when_givenValidVacationRequestIdAndVacationRequestDetail() {
-			// when
-			when(vacationRequestRepository.findVacationRequestById(anyLong())).thenReturn(vacationRequest);
-			when(codeRepository.findByIdAndGroupCode(anyLong(), eq("VACATION_TYPE"))).thenReturn(
-				vacationRequestType);
-			when(approvalStepRepository.findApprovalStepsByVacationRequest_IdOrderByStepAsc(anyLong())).thenReturn(
-				approvalSteps);
-			adminService.updateVacationRequestDetailById(0L, vacationRequestDetailUpdateRequest);
+            assertThat(approvalSteps).hasSize(3)
+                .extracting<String?, RuntimeException?>(ThrowingExtractor { obj: ApprovalStep? -> obj!!.getReason() })
+                .containsExactly("r1", "r2", "r3")
+        }
 
-			// then
-			assertThat(vacationRequest).extracting(VacationRequest::getFrom, VacationRequest::getTo,
-					VacationRequest::getStatus, VacationRequest::getReason)
-				.containsExactly(vacationRequestDetailUpdateRequest.getFrom(), vacationRequestDetailUpdateRequest.getTo(),
-					vacationRequestDetailUpdateRequest.getVacationRequestStatus(),
-					vacationRequestDetailUpdateRequest.getReason());
-			assertThat(approvalSteps).hasSize(3).extracting(ApprovalStep::getReason).containsExactly("r1", "r2", "r3");
-		}
+        @Test
+        @DisplayName("잘못된 VacationRequestId 입력시, NotFoundException 발생")
+        fun fail_when_givenInvalidVacationRequestId() {
+            // given
+            val vacationRequestId = 0L
 
-		@Test
-		@DisplayName("잘못된 VacationRequestId 입력시, NotFoundException 발생")
-		void fail_when_givenInvalidVacationRequestId() {
-			// when
-			when(vacationRequestRepository.findVacationRequestById(anyLong())).thenReturn(null);
+            // when
+            every { vacationRequestRepository.findVacationRequestById(vacationRequestId) }.returns(null)
 
-			// then
-			assertThatThrownBy(() -> adminService.updateVacationRequestDetailById(0L,
-				vacationRequestDetailUpdateRequest)).isInstanceOf(NotFoundException.class)
-				.hasMessage(NotFoundErrorCode.NOT_FOUND_VACATION_REQUEST.getMessage());
-		}
+            // then
+            assertThatThrownBy({
+                adminService.updateVacationRequestDetailById(
+                    vacationRequestId,
+                    vacationRequestDetailUpdateRequest
+                )
+            }).isInstanceOf(NotFoundException::class.java)
+                .hasMessage(NotFoundErrorCode.NOT_FOUND_VACATION_REQUEST.getMessage())
+        }
 
-		@Test
-		@DisplayName("잘못된 VacationRequest의 typeId(분류코드 id) 입력시, NotFoundException 발생")
-		void fail_when_givenInvalidVacationRequestTypeId() {
-			// when
-			when(vacationRequestRepository.findVacationRequestById(anyLong())).thenReturn(vacationRequest);
-			when(codeRepository.findByIdAndGroupCode(anyLong(), eq("VACATION_TYPE"))).thenReturn(null);
+        @Test
+        @DisplayName("잘못된 VacationRequest의 typeId(분류코드 id) 입력시, NotFoundException 발생")
+        fun fail_when_givenInvalidVacationRequestTypeId() {
+            // given
+            val vacationRequestId = 0L
 
-			// then
-			assertThatThrownBy(() -> adminService.updateVacationRequestDetailById(0L,
-				vacationRequestDetailUpdateRequest)).isInstanceOf(NotFoundException.class)
-				.hasMessage(NotFoundErrorCode.NOT_FOUND_CODE.getMessage());
-		}
+            // when
+            every { vacationRequestRepository.findVacationRequestById(vacationRequestId) }.returns(vacationRequest)
+            every {
+                codeRepository.findByIdAndGroupCode(
+                    vacationRequestDetailUpdateRequest.typeId,
+                    "VACATION_TYPE"
+                )
+            }.returns(null)
 
-		@Test
-		@DisplayName("해당 VacationReuqest의 ApprovalStep이 없을 경우, ConflictException 발생")
-		void fail_when_givenEmptyApprovalSteps() {
-			// when
-			when(vacationRequestRepository.findVacationRequestById(anyLong())).thenReturn(vacationRequest);
-			when(codeRepository.findByIdAndGroupCode(anyLong(), eq("VACATION_TYPE"))).thenReturn(
-				vacationRequestType);
-			when(approvalStepRepository.findApprovalStepsByVacationRequest_IdOrderByStepAsc(anyLong())).thenReturn(
-				Collections.emptyList());
+            // then
+            assertThatThrownBy({
+                adminService.updateVacationRequestDetailById(
+                    vacationRequestId,
+                    vacationRequestDetailUpdateRequest
+                )
+            }).isInstanceOf(NotFoundException::class.java)
+                .hasMessage(NotFoundErrorCode.NOT_FOUND_CODE.getMessage())
+        }
 
-			// then
-			assertThatThrownBy(() -> adminService.updateVacationRequestDetailById(0L,
-				vacationRequestDetailUpdateRequest)).isInstanceOf(ConflictException.class)
-				.hasMessage(ConflictErrorCode.CONFLICT_APPROVAL_STEP.getMessage());
-		}
+        @Test
+        @DisplayName("해당 VacationReuqest의 ApprovalStep이 없을 경우, ConflictException 발생")
+        fun fail_when_givenEmptyApprovalSteps() {
+            // given
+            val vacationRequestId = 0L
 
-		@Test
-		@DisplayName("해당 VacationReuqest와 ApprovalStep가 동기화가 안된경우, ConflictException 발생")
-		void fail_when_givenInvalidApprovalSteps() {
-			// when
-			when(vacationRequestRepository.findVacationRequestById(anyLong())).thenReturn(vacationRequest);
-			when(codeRepository.findByIdAndGroupCode(anyLong(), eq("VACATION_TYPE"))).thenReturn(
-				vacationRequestType);
-			when(approvalStepRepository.findApprovalStepsByVacationRequest_IdOrderByStepAsc(anyLong())).thenReturn(
-				List.of(AdminVacationRequestSearchTestDataFactory.genTestApprovalStep(null, 0, null)));
+            // when
+            every { vacationRequestRepository.findVacationRequestById(vacationRequestId) }.returns(vacationRequest)
+            every {
+                codeRepository.findByIdAndGroupCode(
+                    vacationRequestDetailUpdateRequest.typeId,
+                    "VACATION_TYPE"
+                )
+            }.returns(vacationRequestType)
+            every { approvalStepRepository.findApprovalStepsByVacationRequest_IdOrderByStepAsc(vacationRequestId) }.returns(
+                emptyList()
+            )
 
-			// then
-			assertThatThrownBy(() -> adminService.updateVacationRequestDetailById(0L,
-				vacationRequestDetailUpdateRequest)).isInstanceOf(ConflictException.class)
-				.hasMessage(ConflictErrorCode.CONFLICT_APPROVAL_STEP.getMessage());
-		}
-	}
+            // then
+            assertThatThrownBy({
+                adminService.updateVacationRequestDetailById(
+                    vacationRequestId,
+                    vacationRequestDetailUpdateRequest
+                )
+            }).isInstanceOf(ConflictException::class.java)
+                .hasMessage(ConflictErrorCode.CONFLICT_APPROVAL_STEP.getMessage())
+        }
+
+        @Test
+        @DisplayName("해당 VacationReuqest와 ApprovalStep가 동기화가 안된경우, ConflictException 발생")
+        fun fail_when_givenInvalidApprovalSteps() {
+            // given
+            val vacationRequestId = 0L
+
+            // when
+            every { vacationRequestRepository.findVacationRequestById(vacationRequestId) }.returns(vacationRequest)
+            every {
+                codeRepository.findByIdAndGroupCode(
+                    vacationRequestDetailUpdateRequest.typeId,
+                    "VACATION_TYPE"
+                )
+            }.returns(vacationRequestType)
+            every { approvalStepRepository.findApprovalStepsByVacationRequest_IdOrderByStepAsc(vacationRequestId) }.returns(
+                listOf(mockk<ApprovalStep>())
+            )
+
+            // then
+            assertThatThrownBy( {
+                adminService.updateVacationRequestDetailById(
+                    0L,
+                    vacationRequestDetailUpdateRequest
+                )
+            }).isInstanceOf(ConflictException::class.java)
+                .hasMessage(ConflictErrorCode.CONFLICT_APPROVAL_STEP.getMessage())
+        }
+    }
 }

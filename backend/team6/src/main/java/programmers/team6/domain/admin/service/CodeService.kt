@@ -18,7 +18,6 @@ import programmers.team6.global.exception.customException.NotFoundException
 
 @Service
 @Transactional
-@RequiredArgsConstructor
 class CodeService(
     private val codeRepository: CodeRepository
 ) {

@@ -29,7 +29,6 @@ import programmers.team6.global.querybuilder.QueryUtils
 import java.time.LocalDateTime
 
 @Repository
-@RequiredArgsConstructor
 class AdminVacationRequestSearchCustom(
     private val entityManager: EntityManager
 ) {

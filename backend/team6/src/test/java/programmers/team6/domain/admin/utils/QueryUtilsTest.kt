@@ -1,35 +1,31 @@
-package programmers.team6.domain.admin.utils;
+package programmers.team6.domain.admin.utils
 
-import jakarta.persistence.TypedQuery;
-import programmers.team6.global.querybuilder.QueryUtils;
+import io.mockk.every
+import io.mockk.mockk
+import jakarta.persistence.TypedQuery
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import programmers.team6.global.querybuilder.QueryUtils.makeQueryToPageable
 
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-
-import java.util.Arrays;
-import java.util.List;
-
-import static org.mockito.Mockito.when;
-
-
-class QueryUtilsTest {
+internal class QueryUtilsTest {
     @Test
-    void should_makeQueryToPageable() {
-        TypedQuery<String> query = Mockito.mock(TypedQuery.class);
-        Pageable pageable = PageRequest.of(1, 2); // 2개씩, 2페이지(0-based)
-        List<String> resultList = Arrays.asList("A", "B", "C", "D", "E");
-        long totalCount = 5L;
+    fun should_makeQueryToPageable() {
+        // given
+        val query: TypedQuery<String> = mockk<TypedQuery<String>>()
 
-        when(query.setFirstResult(2)).thenReturn(query);
-        when(query.setMaxResults(2)).thenReturn(query);
-        when(query.getResultList()).thenReturn(resultList.subList(2, 4));
-        Page<String> pages = QueryUtils.makeQueryToPageable(query, pageable, totalCount);
+        val pageable: Pageable = PageRequest.of(1, 2) // 2개씩, 2페이지(0-based)
+        val resultList = mutableListOf<String?>("A", "B", "C", "D", "E")
+        val totalCount = 5L
 
-        Assertions.assertThat(pages).containsExactly("C", "D");
+        // when
+        every { query.setFirstResult(2) }.returns(query)
+        every { query.setMaxResults(2) }.returns(query)
+        every {  query.getResultList()}.returns(resultList.subList(2, 4))
+        val pages = makeQueryToPageable(query, pageable, totalCount)
+
+        // then
+        assertThat(pages).containsExactly("C", "D")
     }
-
 }
