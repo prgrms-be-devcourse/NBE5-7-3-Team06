@@ -6,6 +6,8 @@ import programmers.team6.domain.member.enums.Role
 import programmers.team6.domain.vacation.entity.ApprovalStep
 import programmers.team6.domain.vacation.entity.VacationRequest
 import programmers.team6.domain.vacation.enums.ApprovalStatus
+import programmers.team6.support.MemberMother
+import programmers.team6.support.TestVacationType
 import java.time.LocalDateTime
 
 object ApprovalStepTestUtils {
@@ -20,7 +22,10 @@ object ApprovalStepTestUtils {
                 Role.USER
             ),
             approvalStatus = status,
-            vacationRequest = VacationRequest.builder().build()
+            vacationRequest = VacationRequest(
+                MemberMother.withId(0L), LocalDateTime.now(), LocalDateTime.now().plusDays(1), "",
+                TestVacationType.ANNUAL.toCode()
+            )
 
         )
     }

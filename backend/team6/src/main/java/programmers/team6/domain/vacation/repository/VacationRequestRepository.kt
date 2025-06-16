@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param
 import programmers.team6.domain.admin.dto.response.VacationRequestDetailReadResponse
 import programmers.team6.domain.vacation.entity.VacationRequest
 import java.time.LocalDateTime
+import java.util.Optional
 
 interface VacationRequestRepository : JpaRepository<VacationRequest, Long> {
     @Query(
@@ -56,6 +57,13 @@ interface VacationRequestRepository : JpaRepository<VacationRequest, Long> {
                 + "where vr.id = :id")
     )
     fun findVacationRequestDetailById(@Param("id") id: Long): VacationRequestDetailReadResponse?
+
+    @Query(
+        value = ("select new programmers.team6.domain.admin.dto.response.VacationRequestDetailReadResponse(vr.id,vr.from, vr.to, m.id ,m.name, d.deptName,p.name,vr.reason,t.name,vr.status) "
+                + "from VacationRequest vr join vr.type t " + "join vr.member m join m.dept d join m.position p "
+                + "where vr.id = :id")
+    )
+    fun findVacationRequestDetailById2(@Param("id") id: Long): Optional<VacationRequestDetailReadResponse>
 
     fun findVacationRequestById(id: Long): VacationRequest?
 

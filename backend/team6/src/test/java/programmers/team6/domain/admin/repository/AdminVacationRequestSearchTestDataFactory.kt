@@ -12,7 +12,7 @@ import programmers.team6.support.MemberMother
 import java.time.LocalDateTime
 
 object AdminVacationRequestSearchTestDataFactory {
-    fun genTestApprovalStep(vacationRequest: VacationRequest, step: Int, reason: String): ApprovalStep {
+    public fun genTestApprovalStep(vacationRequest: VacationRequest, step: Int, reason: String): ApprovalStep {
         return ApprovalStep(
             vacationRequest = vacationRequest,
             member = MemberMother.withId(1),
@@ -22,7 +22,7 @@ object AdminVacationRequestSearchTestDataFactory {
         )
     }
 
-    fun genTestCode(groupCode: String, code: String, name: String): Code {
+    public fun genTestCode(groupCode: String, code: String, name: String): Code {
         return Code(groupCode, code, name)
     }
 
