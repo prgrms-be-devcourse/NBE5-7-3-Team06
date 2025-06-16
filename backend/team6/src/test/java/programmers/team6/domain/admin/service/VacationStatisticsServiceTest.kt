@@ -16,7 +16,6 @@ import programmers.team6.mock.MemberReaderFake
 import programmers.team6.mock.VacationInfoLogReaderFake
 import programmers.team6.mock.VacationRequestsReaderFake
 import programmers.team6.support.MemberMother
-import programmers.team6.support.TestVacationType
 import programmers.team6.support.VacationTypeMother
 import java.time.LocalDateTime
 

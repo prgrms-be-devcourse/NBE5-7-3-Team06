@@ -2,10 +2,8 @@ package programmers.team6.domain.admin.support
 
 import io.mockk.every
 import io.mockk.mockk
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito
 import programmers.team6.domain.admin.dto.request.VacationStatisticsRequest
 import programmers.team6.domain.vacation.entity.VacationRequest
 import programmers.team6.domain.vacation.enums.VacationRequestStatus
@@ -13,7 +11,6 @@ import programmers.team6.domain.vacation.repository.VacationRequestRepository
 import programmers.team6.support.MemberMother
 import programmers.team6.support.VacationTypeMother
 import java.time.LocalDateTime
-import java.util.List
 
 internal class VacationRequestsReaderTest {
     @Test
@@ -39,9 +36,11 @@ internal class VacationRequestsReaderTest {
             reason = ""
         )
 
-        every { repository.findByMemberIdInAndYear(
-            memberIds, 2024, listOf("01", "05")
-        ) }.returns(listOf(annualVacationRequest, halfVacationRequest))
+        every {
+            repository.findByMemberIdInAndYear(
+                memberIds, 2024, listOf("01", "05")
+            )
+        }.returns(listOf(annualVacationRequest, halfVacationRequest))
 
         val reader = VacationRequestsReader(repository)
 
@@ -68,9 +67,11 @@ internal class VacationRequestsReaderTest {
             reason = ""
         )
 
-        every {  repository.findByMemberIdInAndYear(
-            memberIds, 2024, listOf("02")
-        ) }.returns(listOf(rewardVacationRequest))
+        every {
+            repository.findByMemberIdInAndYear(
+                memberIds, 2024, listOf("02")
+            )
+        }.returns(listOf(rewardVacationRequest))
 
         val reader = VacationRequestsReader(repository)
 
