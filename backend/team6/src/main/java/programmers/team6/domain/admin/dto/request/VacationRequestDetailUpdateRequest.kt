@@ -13,5 +13,5 @@ data class VacationRequestDetailUpdateRequest(
 	val to: @NotNull @FutureOrPresent LocalDateTime,
 	val vacationRequestStatus: @NotNull VacationRequestStatus,
 	val reason: @NotNull String,
-	val approvalReason: @Valid MutableList<String>
+	val approvalReason: @Valid List<String>
 )
