@@ -4,7 +4,6 @@ import programmers.team6.domain.auth.dto.JwtMemberInfo
 import programmers.team6.domain.member.enums.Role
 
 object JwtMemberInfoMother {
-    @JvmStatic
     fun defaultUser(): JwtMemberInfo {
         return JwtMemberInfo(1L, "member1", Role.USER)
     }
