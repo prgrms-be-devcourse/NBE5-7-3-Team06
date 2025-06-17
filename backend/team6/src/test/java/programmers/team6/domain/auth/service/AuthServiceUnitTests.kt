@@ -29,6 +29,7 @@ import programmers.team6.global.exception.customException.ConflictException
 import programmers.team6.global.exception.customException.NotFoundException
 import programmers.team6.global.exception.customException.UnauthorizedException
 import programmers.team6.support.MemberMother
+import programmers.team6.support.PositionMother
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.util.*

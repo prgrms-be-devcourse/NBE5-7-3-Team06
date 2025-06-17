@@ -9,6 +9,7 @@ import programmers.team6.domain.vacation.entity.VacationRequest
 import programmers.team6.domain.vacation.enums.VacationRequestStatus
 import programmers.team6.domain.vacation.repository.VacationRequestRepository
 import programmers.team6.support.MemberMother
+import programmers.team6.support.VacationTypeMother
 import java.time.LocalDateTime
 
 internal class VacationRequestsReaderTest {

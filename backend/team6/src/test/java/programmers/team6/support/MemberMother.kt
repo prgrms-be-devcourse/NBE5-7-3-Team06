@@ -5,10 +5,12 @@ import programmers.team6.domain.member.entity.Member
 import programmers.team6.domain.member.entity.MemberInfo
 import programmers.team6.domain.member.enums.Role
 import programmers.team6.mock.MemberStub
+import programmers.team6.support.PositionMother.employee
 import java.time.LocalDateTime
 
 object MemberMother {
 
+    @JvmStatic
     fun withId(id: Long): Member {
         val member = MemberStub.subBuilder()
             .id(id)
@@ -44,6 +46,7 @@ object MemberMother {
             .build()
     }
 
+    @JvmStatic
     fun member(): Member {
         return withId(0L)
     }
