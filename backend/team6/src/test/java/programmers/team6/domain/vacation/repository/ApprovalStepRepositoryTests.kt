@@ -9,8 +9,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Transactional
 import programmers.team6.domain.admin.entity.Code
 import programmers.team6.domain.admin.entity.Dept
 import programmers.team6.domain.admin.repository.CodeRepository
