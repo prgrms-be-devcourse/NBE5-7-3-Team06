@@ -1,6 +1,5 @@
 package programmers.team6.global.exception
 
-import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.FieldError
@@ -11,23 +10,19 @@ import programmers.team6.global.exception.code.BadRequestErrorCode
 import programmers.team6.global.exception.customException.CustomException
 import programmers.team6.global.exception.response.ErrorResponse
 import programmers.team6.global.exception.response.ValidationErrorResponse
+import programmers.team6.global.util.logger
 import java.time.LocalDateTime
 import java.util.function.Consumer
-
 
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
 
-    companion object{
-        private val logger = KotlinLogging.logger {}
-    }
-
     @ExceptionHandler(CustomException::class)
     fun handleNotFoundException(e: CustomException): ResponseEntity<ErrorResponse> {
         val errorCode = e.errorCode
 
-        logger.warn { errorCode.message }
+        this.logger().warn { errorCode.message }
 
         return ResponseEntity.status(errorCode.httpStatus)
             .body(
@@ -44,12 +39,12 @@ class GlobalExceptionHandler {
 
         e.bindingResult.fieldErrors.forEach(Consumer { error: FieldError ->
             val fieldName = error.field
-            val message = error.defaultMessage?: "오류 발생"
+            val message = error.defaultMessage ?: "오류 발생"
             errors[fieldName] = message
         })
 
         for (key in errors.keys) {
-            logger.warn { errors[key]}
+            this.logger().warn { errors[key] }
         }
 
         val badRequestValidation = BadRequestErrorCode.BAD_REQUEST_VALIDATION
