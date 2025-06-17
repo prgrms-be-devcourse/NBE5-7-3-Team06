@@ -34,7 +34,7 @@ interface MemberRepository : JpaRepository<Member, Long> {
                 "LEFT JOIN FETCH d.deptLeader " +
                 "WHERE m.id = :memberId")
     )
-    fun findByIdWithDeptAndLeader(@Param("memberId") memberId: Long): Optional<Member>
+    fun findByIdWithDeptAndLeader(@Param("memberId") memberId: Long): Member?
 
     @Query(
         """

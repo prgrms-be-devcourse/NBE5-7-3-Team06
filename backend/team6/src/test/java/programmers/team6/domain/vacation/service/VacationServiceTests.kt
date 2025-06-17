@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import programmers.team6.domain.admin.repository.CodeRepository
 import programmers.team6.domain.member.repository.MemberRepository
@@ -67,7 +68,7 @@ class VacationServiceTests {
         @Test
         fun `should throw RuntimeException when given not exist vacation info`() {
             // when
-            every { memberRepository.findByIdWithDeptAndLeader(0L) } returns Optional.empty()
+            every { memberRepository.findByIdWithDeptAndLeader(0L) } returns null
 
             // then
             assertThatThrownBy { vacationService.requestVacation(0L, mockk()) }
@@ -83,7 +84,7 @@ class VacationServiceTests {
             val vacationCreateRequestDto = VacationCreateRequestDto(from, to, "empty", "empty")
 
             // when
-            every { memberRepository.findByIdWithDeptAndLeader(0L) } returns Optional.of(member)
+            every { memberRepository.findByIdWithDeptAndLeader(0L) } returns member
             every {
                 vacationRequestRepository.countInRangeFromBetweenToBy(member.id!!, from, to)
             } returns 1L
@@ -104,7 +105,7 @@ class VacationServiceTests {
             val vacationCreateRequestDto = VacationCreateRequestDto(from, to, "reason", vacationType)
 
             // when
-            every { memberRepository.findByIdWithDeptAndLeader(0L) } returns Optional.of(member)
+            every { memberRepository.findByIdWithDeptAndLeader(0L) } returns member
             every {
                 vacationRequestRepository.countInRangeFromBetweenToBy(
                     member.id!!,
@@ -117,7 +118,7 @@ class VacationServiceTests {
             } returns 0.0
             every {
                 vacationInfoRepository.findActualRemainingVacationDays(member.id!!, vacationType)
-            } returns Optional.empty()
+            } returns null
 
             // then
             assertThatThrownBy {
@@ -135,7 +136,7 @@ class VacationServiceTests {
             val vacationCreateRequestDto = VacationCreateRequestDto(from, to, "reason", vacationType)
 
             // when
-            every { memberRepository.findByIdWithDeptAndLeader(0L) } returns Optional.of(member)
+            every { memberRepository.findByIdWithDeptAndLeader(0L) } returns member
             every {
                 vacationRequestRepository.countInRangeFromBetweenToBy(
                     member.id!!,
@@ -148,7 +149,7 @@ class VacationServiceTests {
             } returns 5.0
             every {
                 vacationInfoRepository.findActualRemainingVacationDays(member.id!!, vacationType)
-            } returns Optional.of(0.0)
+            } returns 0.0
 
             // then
             assertThatThrownBy {
@@ -169,7 +170,7 @@ class VacationServiceTests {
             val vacationCreateRequestDto = VacationCreateRequestDto(from, to, "reason", vacationType)
 
             // when
-            every { memberRepository.findByIdWithDeptAndLeader(0L) } returns Optional.of(member)
+            every { memberRepository.findByIdWithDeptAndLeader(0L) } returns member
             every {
                 vacationRequestRepository.countInRangeFromBetweenToBy(
                     member.id!!,
@@ -182,7 +183,7 @@ class VacationServiceTests {
             } returns 0.0
             every {
                 vacationInfoRepository.findActualRemainingVacationDays(member.id!!, vacationType)
-            } returns Optional.of(1.0)
+            } returns 1.0
 
             // then
             assertThatThrownBy {
@@ -203,7 +204,7 @@ class VacationServiceTests {
         val vacationCreateRequestDto = VacationCreateRequestDto(from, to, "reason", "vacationType")
 
         // when
-        every { memberRepository.findByIdWithDeptAndLeader(member.id!!) } returns Optional.of(member)
+        every { memberRepository.findByIdWithDeptAndLeader(member.id!!) } returns member
         every { vacationRequestRepository.countInRangeFromBetweenToBy(member.id!!, from, to) } returns 0L
         every {
             vacationRequestRepository.calculateRequestedVacationDays(
@@ -217,7 +218,7 @@ class VacationServiceTests {
                 member.id!!,
                 vacationCreateRequestDto.vacationType
             )
-        } returns Optional.of(30.0)
+        } returns 30.0
         every {
             codeRepository.findByGroupCodeAndCode("VACATION_TYPE", vacationCreateRequestDto.vacationType)
         } returns null
@@ -236,7 +237,7 @@ class VacationServiceTests {
             val member = MemberMother.member()
 
             // when
-            every { memberRepository.findById(member.id!!) } returns Optional.of(member)
+            every { memberRepository.findByIdOrNull(member.id!!) } returns member
             every {
                 vacationRequestRepository.findIdsByRequesterIdPaging(any<Long>(), any<Pageable>())
             } returns Page.empty()

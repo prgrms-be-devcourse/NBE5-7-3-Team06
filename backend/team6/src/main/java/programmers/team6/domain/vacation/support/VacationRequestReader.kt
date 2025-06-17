@@ -15,13 +15,10 @@ open class VacationRequestReader(
 ) {
 
     open fun readDetailFrom(id: Long): VacationRequestDetailReadResponse {
-        return vacationRequestRepository.findVacationRequestDetailById2(id)
-            .orElseThrow {
-                NotFoundException(
-                    NotFoundErrorCode.NOT_FOUND_VACATION_REQUEST
-                )
-            }
-            .injectApprovalStepDetails(readApprovalFrom(id))
+        val response = vacationRequestRepository.findVacationRequestDetailById(id) ?: throw NotFoundException(
+                NotFoundErrorCode.NOT_FOUND_VACATION_REQUEST
+            )
+        return response.injectApprovalStepDetails(readApprovalFrom(id))
     }
 
     private fun readApprovalFrom(id: Long): List<ApprovalStepDetailUpdateResponse> {

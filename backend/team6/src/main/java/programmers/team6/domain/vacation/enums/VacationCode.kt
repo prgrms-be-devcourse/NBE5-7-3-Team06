@@ -11,8 +11,8 @@ enum class VacationCode(val groupCode: String,val code:String, val description: 
     companion object {
 
         @JvmStatic
-        fun findByCode(type: String): Optional<VacationCode> {
-            return Optional.ofNullable(VacationCode.entries.firstOrNull{ it.code == type })
+        fun findByCode(type: String): VacationCode? {
+            return VacationCode.entries.firstOrNull{ it.code == type }
         }
     }
 }
