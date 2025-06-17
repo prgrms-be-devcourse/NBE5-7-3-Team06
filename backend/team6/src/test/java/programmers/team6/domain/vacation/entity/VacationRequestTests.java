@@ -92,7 +92,7 @@ class VacationRequestTests {
 			LocalDateTime.now(),
 			"reason",
 			TestVacationType.ANNUAL.toCode(),
-			VacationRequestStatus.IN_PROGRESS,
+			VacationRequestStatus.APPROVED,
 			1
 		);
 
@@ -155,7 +155,7 @@ class VacationRequestTests {
 			LocalDateTime.now(),
 			"reason",
 			TestVacationType.ANNUAL.toCode(),
-			VacationRequestStatus.IN_PROGRESS,
+			VacationRequestStatus.APPROVED,
 			1
 		);
 
@@ -237,7 +237,7 @@ class VacationRequestTests {
 			LocalDateTime.now(),
 			"reason",
 			TestVacationType.ANNUAL.toCode(),
-			VacationRequestStatus.IN_PROGRESS,
+			VacationRequestStatus.APPROVED,
 			1
 		);
 
@@ -274,7 +274,7 @@ class VacationRequestTests {
 			LocalDateTime.now(),
 			"reason",
 			TestVacationType.ANNUAL.toCode(),
-			VacationRequestStatus.IN_PROGRESS,
+			VacationRequestStatus.APPROVED,
 			1
 		);
 
@@ -377,7 +377,7 @@ class VacationRequestTests {
 			LocalDateTime.now(),
 			LocalDateTime.now(),
 			"reason",
-			TestVacationType.ANNUAL.toCode(),
+			TestVacationType.HALP.toCode(),
 			VacationRequestStatus.IN_PROGRESS,
 			1
 		);

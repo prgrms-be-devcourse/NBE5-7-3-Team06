@@ -154,7 +154,7 @@ class VacationRequest(
     }
 
     val memberId: Long
-        get() = this.memberId
+        get() = this.member.id!!
 
     val code: String
         get() = this.type.code

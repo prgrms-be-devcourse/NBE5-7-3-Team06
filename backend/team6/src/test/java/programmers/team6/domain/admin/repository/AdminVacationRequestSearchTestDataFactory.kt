@@ -86,7 +86,7 @@ object AdminVacationRequestSearchTestDataFactory {
         member: Member, start: LocalDateTime, end: LocalDateTime,
         reason: String, type: Code, status: VacationRequestStatus
     ): VacationRequest {
-        return VacationRequest(member, start, end, reason, type, status, 0)
+        return VacationRequest(member, start, end, reason, type, status, null)
     }
 
     fun genApprovalStep(
