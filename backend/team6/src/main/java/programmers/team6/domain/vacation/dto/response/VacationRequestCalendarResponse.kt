@@ -2,7 +2,6 @@ package programmers.team6.domain.vacation.dto.response
 
 import java.time.LocalDateTime
 
-@JvmRecord
 data class VacationRequestCalendarResponse(
     val name: String,
     val deptName: String,

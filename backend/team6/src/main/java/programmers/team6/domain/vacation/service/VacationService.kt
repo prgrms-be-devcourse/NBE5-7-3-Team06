@@ -47,7 +47,7 @@ class VacationService(
         val vacationInfo = vacationInfoRepository.findByMemberIdAndVacationType(
             memberId,
             VacationCode.ANNUAL.code
-        ).orElse(null) ?: throw RuntimeException("휴가 정보를 찾을 수 없습니다.")
+        ) ?: throw RuntimeException("휴가 정보를 찾을 수 없습니다.")
 
         return vacationMapper.toVacationInfoSelectResponseDto(vacationInfo)
     }
@@ -55,8 +55,12 @@ class VacationService(
     // 휴가 신청
     fun requestVacation(memberId: Long, requestDto: VacationCreateRequestDto): VacationCreateResponseDto {
         // 신청자 정보 조회
-        val member = memberRepository.findByIdWithDeptAndLeader(memberId)
-            ?.orElse(null) ?: throw RuntimeException("멤버 정보를 찾을 수 없습니다.")
+        val memberOptional = memberRepository.findByIdWithDeptAndLeader(memberId)
+        val member = if (memberOptional?.isPresent == true) {
+            memberOptional.get()
+        } else {
+            throw RuntimeException("멤버 정보를 찾을 수 없습니다.")
+        }
 
         // 시작일(from)과 종료일(to) 설정 (진행중이거나 승인된 휴가 기간내에 신청 불가능하게)
         if (vacationRequestRepository.countInRangeFromBetweenToBy(
@@ -75,22 +79,28 @@ class VacationService(
             requestDto.vacationType
         )
 
-        val actualRemainCount = vacationInfoRepository
+        val actualRemainCountOptional = vacationInfoRepository
             .findActualRemainingVacationDays(memberId, getVacationInfoType(requestDto.vacationType))
-            .orElse(null) ?: throw NotFoundException(NotFoundErrorCode.NOT_FOUND_VACATION_INFO)
+        val actualRemainCount = if (actualRemainCountOptional?.isPresent == true) {
+            actualRemainCountOptional.get()
+        } else {
+            throw NotFoundException(NotFoundErrorCode.NOT_FOUND_VACATION_INFO)
+        }
 
         // 잔여 일수 초과 검증
-        if (actualRemainCount < requestDays) {
+        if (actualRemainCount != null && actualRemainCount < requestDays) {
             throw BadRequestException(BadRequestErrorCode.BAD_REQUEST_INSUFFICIENT_VACATION_DAYS)
         }
 
         // 부서장 조회 (결재자)
-        val dept = member.dept
-        val approver = dept.deptLeader
+        val dept = member.dept ?: throw RuntimeException("부서 정보를 찾을 수 없습니다.")
+        val approver = dept.deptLeader ?: throw RuntimeException("부서장 정보를 찾을 수 없습니다.")
 
         // 휴가 유형 코드 조회
-        val vacationType = codeRepository.findByGroupCodeAndCode("VACATION_TYPE", requestDto.vacationType)
-            .orElse(null) ?: throw RuntimeException("잘못된 휴가 유형입니다.")
+        val vacationType = codeRepository.findByGroupCodeAndCode(
+            "VACATION_TYPE",
+            requestDto.vacationType
+        ) ?: throw RuntimeException("잘못된 휴가 유형입니다.")
 
         // 휴가 요청 상태 코드 (기본 대기 상태)
         val status = VacationRequestStatus.IN_PROGRESS
@@ -177,8 +187,12 @@ class VacationService(
         getMemberById(memberId)
 
         // 휴가 신청 조회
-        val vacationRequest = vacationRequestRepository.findById(requestId).orElse(null)
-            ?: throw RuntimeException("휴가 신청 정보를 찾을 수 없습니다.")
+        val vacationRequestOptional = vacationRequestRepository.findById(requestId)
+        val vacationRequest = if (vacationRequestOptional.isPresent) {
+            vacationRequestOptional.get()
+        } else {
+            throw RuntimeException("휴가 신청 정보를 찾을 수 없습니다.")
+        }
 
         // 시작일(from)과 종료일(to) 설정 (진행중이거나 승인된 휴가 기간내에 신청 불가능하게)
         if (vacationRequestRepository.countInRangeFromBetweenToByExcludeRequestId(
@@ -196,28 +210,33 @@ class VacationService(
         )
 
         // 실제 사용 가능한 잔여 휴가 일수를 한 번에 조회
-        val actualRemainCount = vacationInfoRepository
+        val actualRemainCountOptional = vacationInfoRepository
             .findActualRemainingVacationDaysExcludeRequestId(
                 memberId,
                 getVacationInfoType(requestDto.vacationType),
                 requestId
-            ).orElse(null) ?: throw NotFoundException(NotFoundErrorCode.NOT_FOUND_VACATION_INFO)
+            )
+        val actualRemainCount = if (actualRemainCountOptional?.isPresent == true) {
+            actualRemainCountOptional.get()
+        } else {
+            throw NotFoundException(NotFoundErrorCode.NOT_FOUND_VACATION_INFO)
+        }
 
         // 잔여 일수 초과 검증
-        if (actualRemainCount < requestDays) {
+        if (actualRemainCount != null && actualRemainCount < requestDays) {
             throw BadRequestException(BadRequestErrorCode.BAD_REQUEST_INSUFFICIENT_VACATION_DAYS)
         }
 
         // 휴가 유형 코드 조회
         val vacationType = codeRepository.findByGroupCodeAndCode("VACATION_TYPE", requestDto.vacationType)
-            .orElse(null) ?: throw RuntimeException("잘못된 휴가 유형입니다.")
+            ?: throw RuntimeException("잘못된 휴가 유형입니다.")
 
         // 수정 권한 검증 및 수정 처리
         vacationRequest.updateByMember(memberId, requestDto.from, requestDto.to, requestDto.reason, vacationType)
 
         // 결재자 정보 조회
         val approvalStep = approvalStepRepository.findFirstByVacationRequestOrderByStepAsc(vacationRequest)
-            .orElse(null) ?: throw RuntimeException("결재 단계 정보를 찾을 수 없습니다.")
+            ?: throw RuntimeException("결재 단계 정보를 찾을 수 없습니다.")
 
         // 응답 DTO 생성
         return vacationMapper.toVacationUpdateResponseDto(
@@ -233,8 +252,12 @@ class VacationService(
         getMemberById(memberId)
 
         // 휴가 신청 조회
-        val vacationRequest = vacationRequestRepository.findById(requestId).orElse(null)
-            ?: throw RuntimeException("휴가 신청 정보를 찾을 수 없습니다.")
+        val vacationRequestOptional = vacationRequestRepository.findById(requestId)
+        val vacationRequest = if (vacationRequestOptional.isPresent) {
+            vacationRequestOptional.get()
+        } else {
+            throw RuntimeException("휴가 신청 정보를 찾을 수 없습니다.")
+        }
 
         // 휴가 신청 취소
         vacationRequest.validateAndCancel(memberId)
@@ -268,8 +291,12 @@ class VacationService(
 
     // 멤버 ID로 멤버를 조회, 멤버가 존재하지 않으면 예외 발생
     private fun getMemberById(memberId: Long): Member {
-        return memberRepository.findById(memberId).orElse(null)
-            ?: throw RuntimeException("멤버 정보를 찾을 수 없습니다.")
+        val memberOptional = memberRepository.findById(memberId)
+        return if (memberOptional.isPresent) {
+            memberOptional.get()
+        } else {
+            throw RuntimeException("멤버 정보를 찾을 수 없습니다.")
+        }
     }
 
     // 반차 코드(05)를 01로 변환
