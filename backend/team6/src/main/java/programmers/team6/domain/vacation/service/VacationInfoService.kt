@@ -46,11 +46,7 @@ class VacationInfoService(
 
     private fun updateTotalCount(infos: List<VacationInfo>, requests: VacationInfoUpdateTotalCountRequests) {
         for (info in infos) {
-            val target = requests.getTarget(info.vacationType)
-            if (target.isEmpty) {
-                continue
-            }
-            val request = target.get()
+            val request = requests.getTarget(info.vacationType) ?: continue
             val vacationGrantRule = vacationGrantRuleFinder.find(info.vacationType)
 
             validUpdate(info, vacationGrantRule, request)

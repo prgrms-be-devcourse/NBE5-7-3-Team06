@@ -210,20 +210,15 @@ class VacationService(
         )
 
         // 실제 사용 가능한 잔여 휴가 일수를 한 번에 조회
-        val actualRemainCountOptional = vacationInfoRepository
+        val actualRemainCount = vacationInfoRepository
             .findActualRemainingVacationDaysExcludeRequestId(
                 memberId,
                 getVacationInfoType(requestDto.vacationType),
                 requestId
-            )
-        val actualRemainCount = if (actualRemainCountOptional?.isPresent == true) {
-            actualRemainCountOptional.get()
-        } else {
-            throw NotFoundException(NotFoundErrorCode.NOT_FOUND_VACATION_INFO)
-        }
+            ) ?: throw NotFoundException(NotFoundErrorCode.NOT_FOUND_VACATION_INFO)
 
         // 잔여 일수 초과 검증
-        if (actualRemainCount != null && actualRemainCount < requestDays) {
+        if (actualRemainCount < requestDays) {
             throw BadRequestException(BadRequestErrorCode.BAD_REQUEST_INSUFFICIENT_VACATION_DAYS)
         }
 

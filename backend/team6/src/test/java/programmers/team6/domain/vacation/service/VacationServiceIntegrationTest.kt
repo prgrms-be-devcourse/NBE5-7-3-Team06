@@ -66,7 +66,7 @@ class VacationServiceIntegrationTest {
         val positionCode = codeRepository.save(genTestCode("POSITION", "00", "name"))
         val dept = deptRepository.save(genTestDept("deptName"))
         val requester = memberRepository.save(genTestMember("A", dept, positionCode))
-        vacationInfoRepository.save(VacationInfo(100.0, 5.0, VacationCode.ANNUAL.code, requester.id))
+        vacationInfoRepository.save(VacationInfo(100.0, 5.0, VacationCode.ANNUAL.code, requester.id!!))
 
         // then
         val response = vacationService.getMyVacationInfo(requester.id!!)
@@ -95,7 +95,7 @@ class VacationServiceIntegrationTest {
         dept.appointLeader(firstApprover)
         hrDept.appointLeader(secondApprover)
 
-        vacationInfoRepository.save(VacationInfo(100.0, 5.0, vacationTypeCode.code, requester.id))
+        vacationInfoRepository.save(VacationInfo(100.0, 5.0, vacationTypeCode.code, requester.id!!))
 
         val from = LocalDateTime.now().plusDays(1)
         val to = from.plusDays(1)
@@ -132,7 +132,7 @@ class VacationServiceIntegrationTest {
         dept.appointLeader(firstApprover)
         hrDept.appointLeader(secondApprover)
 
-        vacationInfoRepository.save(VacationInfo(100.0, 5.0, vacationTypeCode.code, requester.id))
+        vacationInfoRepository.save(VacationInfo(100.0, 5.0, vacationTypeCode.code, requester.id!!))
 
         val from = LocalDateTime.now().plusDays(1)
         val to = from.plusDays(1)
@@ -187,7 +187,7 @@ class VacationServiceIntegrationTest {
         dept.appointLeader(firstApprover)
         hrDept.appointLeader(secondApprover)
 
-        vacationInfoRepository.save(VacationInfo(100.0, 5.0, vacationTypeCode.code, requester.id))
+        vacationInfoRepository.save(VacationInfo(100.0, 5.0, vacationTypeCode.code, requester.id!!))
 
         val from = LocalDateTime.now().plusDays(1)
         val to = from.plusDays(1)
@@ -224,7 +224,7 @@ class VacationServiceIntegrationTest {
         dept.appointLeader(firstApprover)
         hrDept.appointLeader(secondApprover)
 
-        vacationInfoRepository.save(VacationInfo(100.0, 5.0, vacationTypeCode.code, requester.id))
+        vacationInfoRepository.save(VacationInfo(100.0, 5.0, vacationTypeCode.code, requester.id!!))
 
         val from = LocalDateTime.of(2025, 1, 1, 0, 0, 0)
         val to = from.plusDays(1)
