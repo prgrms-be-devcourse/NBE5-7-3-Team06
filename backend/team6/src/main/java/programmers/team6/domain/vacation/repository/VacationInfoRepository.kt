@@ -72,7 +72,7 @@ interface VacationInfoRepository : JpaRepository<VacationInfo, Int> {
     fun findAnnualVacationFrom(
         @Param("startJoinDate") startJoinDate: LocalDate?,
         @Param("currentDate") currentDate: LocalDate?
-    ): List<VacationInfo?>?
+    ): List<VacationInfo>
 
     fun findAllByVacationIdIn(ids: List<Int>): List<VacationInfo>
 

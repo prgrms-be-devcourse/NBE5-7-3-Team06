@@ -1,58 +1,50 @@
-package programmers.team6.domain.admin.controller;
+package programmers.team6.domain.admin.controller
 
-import java.util.List;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-
-import lombok.RequiredArgsConstructor;
-import programmers.team6.domain.admin.dto.request.VacationInfoUpdateTotalCountRequestsList;
-import programmers.team6.domain.member.entity.Member;
-import programmers.team6.domain.member.repository.MemberSearchRepository;
-import programmers.team6.domain.vacation.dto.response.MemberVacationInfoSelectResponse;
-import programmers.team6.domain.vacation.entity.VacationInfo;
-import programmers.team6.domain.vacation.repository.VacationInfoRepository;
-import programmers.team6.domain.vacation.service.VacationInfoService;
-import programmers.team6.domain.vacation.util.mapper.VacationInfoMapper;
-import programmers.team6.global.paging.PagingConfig;
+import lombok.RequiredArgsConstructor
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.http.HttpStatus
+import org.springframework.validation.annotation.Validated
+import org.springframework.web.bind.annotation.*
+import programmers.team6.domain.admin.dto.request.VacationInfoUpdateTotalCountRequestsList
+import programmers.team6.domain.member.entity.Member
+import programmers.team6.domain.member.repository.MemberSearchRepository
+import programmers.team6.domain.vacation.dto.response.MemberVacationInfoSelectResponse
+import programmers.team6.domain.vacation.repository.VacationInfoRepository
+import programmers.team6.domain.vacation.service.VacationInfoService
+import programmers.team6.domain.vacation.util.mapper.VacationInfoMapper
+import programmers.team6.global.paging.PagingConfig
 
 @RestController
 @RequestMapping("/admin/vacations/infos")
 @RequiredArgsConstructor
-public class AdminVacationInfoController {
+class AdminVacationInfoController(
+    private val vacationInfoService: VacationInfoService,
+    private val memberSearchRepository: MemberSearchRepository,
+    private val vacationInfoRepository: VacationInfoRepository,
+) {
 
-	private final VacationInfoService vacationInfoService;
-	private final MemberSearchRepository memberSearchRepository;
-	private final VacationInfoRepository vacationInfoRepository;
-	private final VacationInfoMapper vacationInfoMapper;
 
-	@GetMapping
-	@ResponseStatus(value = HttpStatus.OK)
-	public Page<MemberVacationInfoSelectResponse> selectVacationInfos(@PagingConfig(sort = "id") Pageable pageable,
-		@RequestParam(required = false) Long deptId, @RequestParam(required = false) String name) {
-		Page<Member> members = memberSearchRepository.searchFrom(name, deptId, pageable);
-		List<VacationInfo> vacationInfos = vacationInfoRepository.findByMemberIdIn(toIds(members));
-		return vacationInfoMapper.toMemberVacationInfoSelectResponsePageFrom(members, vacationInfos);
-	}
+    @GetMapping
+    @ResponseStatus(value = HttpStatus.OK)
+    fun selectVacationInfos(
+        @PagingConfig(sort = ["id"]) pageable: Pageable,
+        @RequestParam(required = false) deptId: Long?, @RequestParam(required = false) name: String?
+    ): Page<MemberVacationInfoSelectResponse> {
+        val members = memberSearchRepository.searchFrom(name, deptId, pageable)
+        val vacationInfos = vacationInfoRepository.findByMemberIdIn(toIds(members))
+        return VacationInfoMapper.toMemberVacationInfoSelectResponsePageFrom(members, vacationInfos)
+    }
 
-	private List<Long> toIds(Page<Member> members) {
-		return members.map(Member::getId).toList();
-	}
+    private fun toIds(members: Page<Member>): List<Long> {
+        return members.mapNotNull(Member::id).toList()
+    }
 
-	@PatchMapping
-	@ResponseStatus(value = HttpStatus.OK)
-	public void updateTotalCount(
-		@Validated
-		@RequestBody VacationInfoUpdateTotalCountRequestsList request) {
-		vacationInfoService.updateFrom(request);
-	}
+    @PatchMapping
+    @ResponseStatus(value = HttpStatus.OK)
+    fun updateTotalCount(
+        @Validated @RequestBody request: VacationInfoUpdateTotalCountRequestsList
+    ) {
+        vacationInfoService.updateFrom(request)
+    }
 }

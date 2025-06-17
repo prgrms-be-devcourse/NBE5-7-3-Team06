@@ -1,108 +1,63 @@
-package programmers.team6.domain.vacation.entity;
+package programmers.team6.domain.vacation.entity
 
-import org.springframework.lang.CheckReturnValue;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Version;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import programmers.team6.global.entity.BaseEntity;
-import programmers.team6.global.exception.code.BadRequestErrorCode;
-import programmers.team6.global.exception.customException.BadRequestException;
+import jakarta.persistence.*
+import org.springframework.lang.CheckReturnValue
+import programmers.team6.global.entity.BaseEntity
+import programmers.team6.global.exception.code.BadRequestErrorCode
+import programmers.team6.global.exception.customException.BadRequestException
 
 @Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class VacationInfo extends BaseEntity {
+class VacationInfo(
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int vacationId;
+    var totalCount: Double,
 
-	private double totalCount;
+    var useCount: Double,
 
-	private double useCount;
+    var vacationType: String,
 
-	private String vacationType;
+    var memberId: Long
 
-	private Long memberId;
+) : BaseEntity() {
 
-	@Version
-	private int version;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val vacationId: Int? = null
 
-	public VacationInfo(double totalCount, String vacationType, Long memberId) {
-		this(totalCount, 0, vacationType, memberId);
-	}
+    @Version
+    val version: Int = 0
 
-	public VacationInfo(double totalCount, double useCount, String vacationType, Long memberId) {
-		this.totalCount = totalCount;
-		this.useCount = useCount;
-		this.vacationType = vacationType;
-		this.memberId = memberId;
-		this.version = 0;
-	}
+    constructor(totalCount: Double, vacationType: String, memberId: Long) : this(
+        totalCount, 0.0, vacationType, memberId
+    )
 
-	@CheckReturnValue
-	public VacationInfoLog updateTotalCount(double totalCount) {
-		return update(totalCount, this.useCount);
-	}
+    @CheckReturnValue
+    fun updateTotalCount(newCount: Double): VacationInfoLog =
+        update(newCount, useCount)
 
-	@CheckReturnValue
-	public VacationInfoLog init(double totalCount) {
-		return update(totalCount, 0);
-	}
+    @CheckReturnValue
+    fun init(newCount: Double): VacationInfoLog =
+        update(newCount, 0.0)
 
-	@CheckReturnValue
-	public VacationInfoLog useVacation(double count) {
-		return update(this.totalCount, this.useCount + count);
-	}
+    @CheckReturnValue
+    fun useVacation(count: Double): VacationInfoLog =
+        update(totalCount, useCount + count)
 
-	public boolean isSameVersion(Integer version) {
-		return this.version == version;
-	}
+    fun isSameVersion(version: Int): Boolean =
+        this.version == version
 
-	public boolean canUseVacation(double count) {
-		return this.useCount + count <= this.totalCount;
-	}
+    fun canUseVacation(count: Double): Boolean =
+        useCount + count <= totalCount
 
-	@CheckReturnValue
-	private VacationInfoLog update(double totalCount, double useCount) {
-		if (useCount > totalCount) {
-			throw new BadRequestException(BadRequestErrorCode.BAD_REQUEST_INVALID_INPUT);
-		}
-		this.totalCount = totalCount;
-		this.useCount = useCount;
-		return toLog();
-	}
+    @CheckReturnValue
+    private fun update(newTotal: Double, newUsed: Double): VacationInfoLog {
+        if (newUsed > newTotal) {
+            throw BadRequestException(BadRequestErrorCode.BAD_REQUEST_INVALID_INPUT)
+        }
+        this.totalCount = newTotal
+        this.useCount = newUsed
+        return toLog()
+    }
 
-	public VacationInfoLog toLog() {
-		return VacationInfoLog.from(this);
-	}
-
-	public int getVacationId() {
-		return vacationId;
-	}
-
-	public double getTotalCount() {
-		return totalCount;
-	}
-
-	public double getUseCount() {
-		return useCount;
-	}
-
-	public String getVacationType() {
-		return vacationType;
-	}
-
-	public Long getMemberId() {
-		return memberId;
-	}
-
-	public int getVersion() {
-		return version;
-	}
-
+    fun toLog(): VacationInfoLog =
+        VacationInfoLog.from(this)
 }

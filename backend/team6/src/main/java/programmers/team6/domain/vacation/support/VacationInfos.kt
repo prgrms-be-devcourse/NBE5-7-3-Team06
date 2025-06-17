@@ -1,35 +1,16 @@
-package programmers.team6.domain.vacation.support;
+package programmers.team6.domain.vacation.support
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import programmers.team6.domain.vacation.entity.VacationInfo
 
-import jakarta.validation.constraints.NotNull;
-import programmers.team6.domain.vacation.entity.VacationInfo;
+class VacationInfos(infos: List<VacationInfo>) {
+    private val infos: Map<Long, List<VacationInfo>> = infos.groupBy { it.memberId }
 
-public final class VacationInfos {
-	private final Map<Long, List<VacationInfo>> infos;
+    val memberIds: List<Long>
+        get() = infos.keys.toList()
 
-	public VacationInfos(List<VacationInfo> infos) {
-		this.infos = toMap(infos);
-	}
+    fun getByMemberId(id: Long): List<VacationInfo> =
+        infos[id] ?: emptyList()
 
-	private static Map<Long, List<VacationInfo>> toMap(List<VacationInfo> infos) {
-		return infos.stream().collect(Collectors.groupingBy(VacationInfo::getMemberId));
-	}
-
-	public List<Long> getMemberIds() {
-		return infos.keySet().stream().toList();
-	}
-
-	public List<VacationInfo> getByMemberId(@NotNull Long id) {
-		return infos.getOrDefault(id, Collections.emptyList());
-	}
-
-	public List<VacationInfo> getAll() {
-		return infos.values().stream()
-			.flatMap(List::stream)
-			.toList();
-	}
+    val all: List<VacationInfo>
+        get() = infos.values.flatten()
 }

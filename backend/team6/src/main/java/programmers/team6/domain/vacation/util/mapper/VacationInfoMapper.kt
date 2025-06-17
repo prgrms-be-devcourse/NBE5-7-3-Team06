@@ -1,43 +1,38 @@
-package programmers.team6.domain.vacation.util.mapper;
+package programmers.team6.domain.vacation.util.mapper
 
-import java.util.List;
+import org.springframework.data.domain.Page
+import programmers.team6.domain.member.entity.Member
+import programmers.team6.domain.vacation.dto.response.MemberVacationInfoSelectResponse
+import programmers.team6.domain.vacation.dto.response.VacationInfoSelectResponse
+import programmers.team6.domain.vacation.entity.VacationInfo
 
-import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Component;
+object VacationInfoMapper {
+    fun toMemberVacationInfoSelectResponsePageFrom(
+        members: Page<Member>,
+        vacationInfos: List<VacationInfo>
+    ): Page<MemberVacationInfoSelectResponse> {
+        return members.map { member: Member ->
+            this.toMemberVacationSelectResponse(
+                member,
+                vacationInfos.filter { it.memberId == member.id }
+            )
+        }
+    }
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import programmers.team6.domain.member.entity.Member;
-import programmers.team6.domain.vacation.dto.response.MemberVacationInfoSelectResponse;
-import programmers.team6.domain.vacation.dto.response.VacationInfoSelectResponse;
-import programmers.team6.domain.vacation.entity.VacationInfo;
+    private fun toMemberVacationSelectResponse(
+        member: Member,
+        vacationInfos: List<VacationInfo>
+    ): MemberVacationInfoSelectResponse {
+        val responses  = vacationInfos.map { toVacationInfoSelectResponseFrom(it) }
+        return MemberVacationInfoSelectResponse(member.id!!, member.name, responses)
+    }
 
-@Component
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class VacationInfoMapper {
+    private fun toVacationInfoSelectResponseFrom(info: VacationInfo): VacationInfoSelectResponse =
+        VacationInfoSelectResponse(
+            info.vacationId!!,
+            info.totalCount,
+            info.vacationType,
+            info.version
+        )
 
-	public Page<MemberVacationInfoSelectResponse> toMemberVacationInfoSelectResponsePageFrom(Page<Member> members,
-		List<VacationInfo> vacationInfos) {
-		return members.map(
-			member -> this.toMemberVacationSelectResponse(member, findVacationInfos(vacationInfos, member.getId())));
-	}
-
-	private MemberVacationInfoSelectResponse toMemberVacationSelectResponse(Member member,
-		List<VacationInfo> vacationInfos) {
-		List<VacationInfoSelectResponse> responses = vacationInfos.stream()
-			.map(this::toVacationInfoSelectResponseFrom)
-			.toList();
-		return new MemberVacationInfoSelectResponse(member.getId(), member.getName(), responses);
-	}
-
-	private VacationInfoSelectResponse toVacationInfoSelectResponseFrom(VacationInfo info) {
-		return new VacationInfoSelectResponse(info.getVacationId(),
-			info.getTotalCount(),
-			info.getVacationType(),
-			info.getVersion());
-	}
-
-	private List<VacationInfo> findVacationInfos(List<VacationInfo> infos, Long memberId) {
-		return infos.stream().filter(info -> info.getMemberId().equals(memberId)).toList();
-	}
 }
