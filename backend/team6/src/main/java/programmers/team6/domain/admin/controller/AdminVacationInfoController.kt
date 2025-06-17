@@ -10,7 +10,6 @@ import programmers.team6.domain.admin.dto.request.VacationInfoUpdateTotalCountRe
 import programmers.team6.domain.member.entity.Member
 import programmers.team6.domain.member.repository.MemberSearchRepository
 import programmers.team6.domain.vacation.dto.response.MemberVacationInfoSelectResponse
-import programmers.team6.domain.vacation.entity.VacationInfo
 import programmers.team6.domain.vacation.repository.VacationInfoRepository
 import programmers.team6.domain.vacation.service.VacationInfoService
 import programmers.team6.domain.vacation.util.mapper.VacationInfoMapper
@@ -18,12 +17,13 @@ import programmers.team6.global.paging.PagingConfig
 
 @RestController
 @RequestMapping("/admin/vacations/infos")
+@RequiredArgsConstructor
 class AdminVacationInfoController(
     private val vacationInfoService: VacationInfoService,
     private val memberSearchRepository: MemberSearchRepository,
     private val vacationInfoRepository: VacationInfoRepository,
-    private val vacationInfoMapper: VacationInfoMapper
 ) {
+
 
     @GetMapping
     @ResponseStatus(value = HttpStatus.OK)
@@ -31,13 +31,13 @@ class AdminVacationInfoController(
         @PagingConfig(sort = ["id"]) pageable: Pageable,
         @RequestParam(required = false) deptId: Long?, @RequestParam(required = false) name: String?
     ): Page<MemberVacationInfoSelectResponse> {
-        val members: Page<Member> = memberSearchRepository.searchFrom(name, deptId, pageable)
-        val vacationInfos: List<VacationInfo> = vacationInfoRepository.findByMemberIdIn(toIds(members))
-        return vacationInfoMapper.toMemberVacationInfoSelectResponsePageFrom(members, vacationInfos)
+        val members = memberSearchRepository.searchFrom(name, deptId, pageable)
+        val vacationInfos = vacationInfoRepository.findByMemberIdIn(toIds(members))
+        return VacationInfoMapper.toMemberVacationInfoSelectResponsePageFrom(members, vacationInfos)
     }
 
     private fun toIds(members: Page<Member>): List<Long> {
-        return members.map<Long>(Member::id).toList()
+        return members.mapNotNull(Member::id).toList()
     }
 
     @PatchMapping

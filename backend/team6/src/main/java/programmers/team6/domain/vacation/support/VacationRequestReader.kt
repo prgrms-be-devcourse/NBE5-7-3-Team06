@@ -1,6 +1,5 @@
 package programmers.team6.domain.vacation.support
 
-import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Component
 import programmers.team6.domain.admin.dto.response.ApprovalStepDetailUpdateResponse
 import programmers.team6.domain.admin.dto.response.VacationRequestDetailReadResponse
@@ -10,11 +9,12 @@ import programmers.team6.global.exception.code.NotFoundErrorCode
 import programmers.team6.global.exception.customException.NotFoundException
 
 @Component
-open class VacationRequestReader(private val vacationRequestRepository: VacationRequestRepository,
-                                 private val approvalStepRepository: ApprovalStepRepository
+open class VacationRequestReader(
+    private val vacationRequestRepository: VacationRequestRepository,
+    private val approvalStepRepository: ApprovalStepRepository
 ) {
 
-    open fun readDetailFrom(id: Long): VacationRequestDetailReadResponse? {
+    open fun readDetailFrom(id: Long): VacationRequestDetailReadResponse {
         return vacationRequestRepository.findVacationRequestDetailById2(id)
             .orElseThrow {
                 NotFoundException(

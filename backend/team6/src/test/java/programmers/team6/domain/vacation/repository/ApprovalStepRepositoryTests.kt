@@ -1,10 +1,9 @@
 package programmers.team6.domain.vacation.repository
 
-import org.assertj.core.api.Assertions.*
-import org.junit.jupiter.api.BeforeAll
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
@@ -17,8 +16,6 @@ import programmers.team6.domain.admin.repository.DeptRepository
 import programmers.team6.domain.member.entity.Member
 import programmers.team6.domain.member.enums.Role
 import programmers.team6.domain.member.repository.MemberRepository
-import programmers.team6.domain.vacation.dto.response.ApprovalFirstStepSelectResponse
-import programmers.team6.domain.vacation.dto.response.ApprovalSecondStepSelectResponse
 import programmers.team6.domain.vacation.entity.ApprovalStep
 import programmers.team6.domain.vacation.entity.VacationRequest
 import programmers.team6.domain.vacation.enums.ApprovalStatus
@@ -26,7 +23,6 @@ import programmers.team6.domain.vacation.enums.VacationRequestStatus
 import java.time.LocalDateTime
 
 @DataJpaTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class ApprovalStepRepositoryTests {
 
@@ -57,7 +53,7 @@ class ApprovalStepRepositoryTests {
      * 상태 : 승인 2, 반려 1, 대기 1
      * 날짜 : 8월 3, 9월 1
      */
-    @BeforeAll
+    @BeforeEach
     fun setUp() {
         val savePosition01 = codeRepository.save(Code("POSITION", "01", "사원"))
         val savePosition04 = codeRepository.save(Code("POSITION", "04", "부장"))

@@ -15,13 +15,13 @@ import programmers.team6.global.exception.code.BadRequestErrorCode
 import programmers.team6.global.exception.code.ConflictErrorCode
 import programmers.team6.global.exception.customException.BadRequestException
 import programmers.team6.global.exception.customException.ConflictException
-import java.util.*
 
 @Service
 class VacationInfoService(
     private val vacationInfoRepository: VacationInfoRepository,
     private val vacationGrantRuleFinder: VacationGrantRuleFinder,
     private val vacationInfoLogPublisher: VacationInfoLogPublisher
+
 ) {
 
     @Transactional
@@ -31,7 +31,7 @@ class VacationInfoService(
     }
 
     private fun findVacationInfos(ids: List<Int>): VacationInfos {
-        val vacationInfos: List<VacationInfo> = vacationInfoRepository.findAllByVacationIdIn(ids)
+        val vacationInfos = vacationInfoRepository.findAllByVacationIdIn(ids)
         return VacationInfos(vacationInfos)
     }
 
@@ -39,24 +39,20 @@ class VacationInfoService(
         request: VacationInfoUpdateTotalCountRequestsList,
         vacationInfos: VacationInfos
     ) {
-        for (vacations in request.requests) {
-            updateTotalCount(vacationInfos.getByMemberId(vacations.memberId), vacations)
+        for (vacations in request.requests!!) {
+            updateTotalCount(vacationInfos.getByMemberId(vacations.memberId!!), vacations)
         }
     }
 
     private fun updateTotalCount(infos: List<VacationInfo>, requests: VacationInfoUpdateTotalCountRequests) {
         for (info in infos) {
-            val target: VacationInfoUpdateTotalCountRequest? = requests.getTarget(info.vacationType)
-            if (target == null) {
-                continue
-            }
-            val request = target
-            val vacationGrantRule: VacationGrantRule = vacationGrantRuleFinder.find(info.vacationType)
+            val request = requests.getTarget(info.vacationType) ?: continue
+            val vacationGrantRule = vacationGrantRuleFinder.find(info.vacationType)
 
             validUpdate(info, vacationGrantRule, request)
 
             val log = info.updateTotalCount(request.totalCount)
-            vacationInfoLogPublisher!!.publish(log)
+            vacationInfoLogPublisher.publish(log)
         }
     }
 

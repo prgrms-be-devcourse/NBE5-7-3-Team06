@@ -18,7 +18,7 @@ open class VacationInfoLogReader(private val repository: VacationInfoLogReposito
     }
 
     private fun toLastedMap(logs: List<VacationInfoLog>): Map<Long, VacationInfoLog> {
-        return logs.groupBy { it.getMemberId() }
+        return logs.groupBy { it.memberId }
             .mapValues { (_, logs) -> logs.reduce { acc, log -> lastedLog(acc, log) } }
     }
 
