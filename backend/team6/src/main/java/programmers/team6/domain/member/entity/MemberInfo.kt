@@ -5,7 +5,7 @@ import programmers.team6.global.entity.BaseEntity
 
 @Entity
 @Table(
-    uniqueConstraints = [UniqueConstraint(name = "uk_member_email",columnNames = ["members"])]
+    uniqueConstraints = [UniqueConstraint(name = "uk_member_email",columnNames = ["email"])]
 )
 class MemberInfo (
 
