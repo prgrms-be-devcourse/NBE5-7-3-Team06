@@ -13,7 +13,6 @@ import programmers.team6.domain.admin.repository.CodeRepository
 import programmers.team6.domain.admin.repository.DeptRepository
 import programmers.team6.domain.member.entity.Member
 import programmers.team6.domain.member.enums.Role
-import programmers.team6.support.PositionMother
 import java.time.LocalDateTime
 
 @DataJpaTest

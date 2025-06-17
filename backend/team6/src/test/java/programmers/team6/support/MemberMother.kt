@@ -5,7 +5,6 @@ import programmers.team6.domain.member.entity.Member
 import programmers.team6.domain.member.entity.MemberInfo
 import programmers.team6.domain.member.enums.Role
 import programmers.team6.mock.MemberStub
-import programmers.team6.support.PositionMother.employee
 import java.time.LocalDateTime
 
 object MemberMother {

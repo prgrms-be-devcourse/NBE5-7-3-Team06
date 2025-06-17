@@ -67,30 +67,6 @@ public class VacationInfo extends BaseEntity {
 		return this.useCount + count <= this.totalCount;
 	}
 
-	public int getVacationId() {
-		return vacationId;
-	}
-
-	public double getTotalCount() {
-		return totalCount;
-	}
-
-	public double getUseCount() {
-		return useCount;
-	}
-
-	public String getVacationType() {
-		return vacationType;
-	}
-
-	public Long getMemberId() {
-		return memberId;
-	}
-
-	public int getVersion() {
-		return version;
-	}
-
 	@CheckReturnValue
 	private VacationInfoLog update(double totalCount, double useCount) {
 		if (useCount > totalCount) {
@@ -128,4 +104,5 @@ public class VacationInfo extends BaseEntity {
 	public int getVersion() {
 		return version;
 	}
+
 }

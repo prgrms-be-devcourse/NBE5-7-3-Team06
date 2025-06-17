@@ -19,7 +19,7 @@ open class Member(
 
     @field:JoinColumn(name = "dept_id")
     @field:ManyToOne(fetch = FetchType.LAZY)
-    val dept: Dept?,
+    val dept: Dept,
 
     @field:JoinColumn(name = "position_id")
     @field:ManyToOne(fetch = FetchType.LAZY)
@@ -62,6 +62,6 @@ open class Member(
     }
 
     val isHrMember: Boolean
-        get() = this.dept != null && dept!!.isHrDept
-
+        get() = dept.isHrDept
+    
 }

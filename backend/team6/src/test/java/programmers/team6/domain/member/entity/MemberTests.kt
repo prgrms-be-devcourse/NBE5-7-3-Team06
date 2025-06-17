@@ -72,7 +72,7 @@ internal class MemberTests {
     @DisplayName("멤버 엔티티의 부서가 null이면 false를  반환한다.")
     fun is_hr_member_dept_null_false() {
 
-        val member = createMember(dept = null)
+        val member = createMember(dept = defaultDept())
 
         Assertions.assertThat(member.isHrMember).isFalse()
     }
@@ -86,7 +86,7 @@ internal class MemberTests {
 
     private fun createMember(
         name: String = "member1",
-        dept: Dept? = defaultDept(),
+        dept: Dept = defaultDept(),
         position: Code = defaultPosition(),
         joinDate: LocalDateTime = defaultJoinDate(),
         role: Role = Role.USER

@@ -14,7 +14,6 @@ import programmers.team6.domain.member.entity.Member
 import programmers.team6.domain.member.entity.MemberInfo
 import programmers.team6.domain.member.enums.Role
 import programmers.team6.domain.member.repository.MemberRepository
-import programmers.team6.support.PositionMother
 import java.time.LocalDateTime
 
 @DataJpaTest
