@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
+import org.springframework.test.context.ActiveProfiles
 import programmers.team6.domain.admin.dto.request.CodeCreateRequest
 import programmers.team6.domain.admin.entity.Code
 import programmers.team6.domain.admin.repository.AdminVacationRequestSearchTestDataFactory
@@ -28,6 +29,7 @@ import java.util.*
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import(CodeService::class)
+@ActiveProfiles("test")
 internal class CodeServiceIntegrationTest {
     @Autowired
     lateinit var codeRepository: CodeRepository

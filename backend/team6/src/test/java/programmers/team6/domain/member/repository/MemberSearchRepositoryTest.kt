@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
+import org.springframework.test.context.ActiveProfiles
 import programmers.team6.domain.admin.entity.Dept
 import programmers.team6.domain.admin.repository.CodeRepository
 import programmers.team6.domain.admin.repository.DeptRepository
@@ -19,6 +20,7 @@ import java.time.LocalDateTime
 @DataJpaTest
 @Import(MemberSearchRepository::class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@ActiveProfiles("test")
 internal class MemberSearchRepositoryTest @Autowired constructor(
     private val memberRepository: MemberRepository,
     private val deptRepository: DeptRepository,

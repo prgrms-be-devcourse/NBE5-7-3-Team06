@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.Import
+import org.springframework.test.context.ActiveProfiles
 import programmers.team6.domain.admin.entity.Code
 import programmers.team6.domain.admin.entity.Dept
 import programmers.team6.domain.admin.repository.CodeRepository
@@ -40,6 +41,7 @@ import java.time.LocalDateTime
     DeptService::class,
     VacationRequestSearchRepository::class
 )
+@ActiveProfiles("test")
 class VacationServiceIntegrationTest {
 
     @Autowired
