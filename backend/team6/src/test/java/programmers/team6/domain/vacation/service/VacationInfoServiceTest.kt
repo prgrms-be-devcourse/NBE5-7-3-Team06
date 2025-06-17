@@ -1,13 +1,12 @@
 package programmers.team6.domain.vacation.service
 
-import jakarta.validation.Valid
 import io.mockk.every
-import io.mockk.justRun
-import io.mockk.mockk
-import io.mockk.verify
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import io.mockk.justRun
+import io.mockk.verify
+import jakarta.validation.Valid
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -99,7 +98,7 @@ internal class VacationInfoServiceTest {
             // when
             service.updateFrom(
                 VacationInfoUpdateTotalCountRequestsList(
-                            listOf(memberRequest)
+                    listOf(memberRequest)
                 )
             )
 
@@ -130,7 +129,7 @@ internal class VacationInfoServiceTest {
             // when
             service.updateFrom(
                 VacationInfoUpdateTotalCountRequestsList(
-                    listOf(memberRequest1,memberRequest2)
+                    listOf(memberRequest1, memberRequest2)
                 )
             )
 
@@ -163,7 +162,7 @@ internal class VacationInfoServiceTest {
             Assertions.assertThatThrownBy {
                 service.updateFrom(
                     VacationInfoUpdateTotalCountRequestsList(
-                        listOf(memberRequest1,memberRequest2)
+                        listOf(memberRequest1, memberRequest2)
                     )
                 )
             }
