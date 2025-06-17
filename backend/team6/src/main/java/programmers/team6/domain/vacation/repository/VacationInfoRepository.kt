@@ -22,7 +22,7 @@ interface VacationInfoRepository : JpaRepository<VacationInfo, Int> {
 		
 		"""
     )
-    fun findActualRemainingVacationDays(memberId: Long, vacationType: String): Optional<Double>
+    fun findActualRemainingVacationDays(memberId: Long, vacationType: String): Double?
 
     @Query(
         """

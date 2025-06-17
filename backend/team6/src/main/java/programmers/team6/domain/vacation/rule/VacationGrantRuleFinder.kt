@@ -5,6 +5,8 @@ import programmers.team6.domain.member.entity.Member
 import programmers.team6.domain.vacation.entity.VacationInfo
 import programmers.team6.domain.vacation.entity.VacationInfoLog
 import programmers.team6.domain.vacation.enums.VacationCode
+import programmers.team6.global.exception.code.NotFoundErrorCode
+import programmers.team6.global.exception.customException.NotFoundException
 import java.time.LocalDate
 
 
@@ -15,7 +17,7 @@ private const val DEFAULT_INIT_SERVICE_YEARS = 1
 open class VacationGrantRuleFinder {
 
     fun find(type: String): VacationGrantRule {
-        val vacationCode = VacationCode.findByCode(type).orElseThrow()
+        val vacationCode = VacationCode.findByCode(type) ?: throw NotFoundException(NotFoundErrorCode.NOT_FOUND_CODE)
         return find(vacationCode)
     }
 

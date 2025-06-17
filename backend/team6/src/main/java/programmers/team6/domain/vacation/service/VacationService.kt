@@ -3,6 +3,7 @@ package programmers.team6.domain.vacation.service
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import programmers.team6.domain.admin.repository.CodeRepository
@@ -55,12 +56,7 @@ class VacationService(
     // 휴가 신청
     fun requestVacation(memberId: Long, requestDto: VacationCreateRequestDto): VacationCreateResponseDto {
         // 신청자 정보 조회
-        val memberOptional = memberRepository.findByIdWithDeptAndLeader(memberId)
-        val member = if (memberOptional?.isPresent == true) {
-            memberOptional.get()
-        } else {
-            throw RuntimeException("멤버 정보를 찾을 수 없습니다.")
-        }
+        val member = memberRepository.findByIdWithDeptAndLeader(memberId) ?:  throw RuntimeException("멤버 정보를 찾을 수 없습니다.")
 
         // 시작일(from)과 종료일(to) 설정 (진행중이거나 승인된 휴가 기간내에 신청 불가능하게)
         if (vacationRequestRepository.countInRangeFromBetweenToBy(
@@ -79,16 +75,12 @@ class VacationService(
             requestDto.vacationType
         )
 
-        val actualRemainCountOptional = vacationInfoRepository
-            .findActualRemainingVacationDays(memberId, getVacationInfoType(requestDto.vacationType))
-        val actualRemainCount = if (actualRemainCountOptional?.isPresent == true) {
-            actualRemainCountOptional.get()
-        } else {
-            throw NotFoundException(NotFoundErrorCode.NOT_FOUND_VACATION_INFO)
-        }
+        val actualRemainCount = vacationInfoRepository
+            .findActualRemainingVacationDays(memberId, getVacationInfoType(requestDto.vacationType)) ?: throw NotFoundException(NotFoundErrorCode.NOT_FOUND_VACATION_INFO)
+
 
         // 잔여 일수 초과 검증
-        if (actualRemainCount != null && actualRemainCount < requestDays) {
+        if (actualRemainCount < requestDays) {
             throw BadRequestException(BadRequestErrorCode.BAD_REQUEST_INSUFFICIENT_VACATION_DAYS)
         }
 
@@ -187,12 +179,7 @@ class VacationService(
         getMemberById(memberId)
 
         // 휴가 신청 조회
-        val vacationRequestOptional = vacationRequestRepository.findById(requestId)
-        val vacationRequest = if (vacationRequestOptional.isPresent) {
-            vacationRequestOptional.get()
-        } else {
-            throw RuntimeException("휴가 신청 정보를 찾을 수 없습니다.")
-        }
+        val vacationRequest = vacationRequestRepository.findByIdOrNull(requestId) ?: throw RuntimeException("휴가 신청 정보를 찾을 수 없습니다.")
 
         // 시작일(from)과 종료일(to) 설정 (진행중이거나 승인된 휴가 기간내에 신청 불가능하게)
         if (vacationRequestRepository.countInRangeFromBetweenToByExcludeRequestId(
@@ -247,12 +234,7 @@ class VacationService(
         getMemberById(memberId)
 
         // 휴가 신청 조회
-        val vacationRequestOptional = vacationRequestRepository.findById(requestId)
-        val vacationRequest = if (vacationRequestOptional.isPresent) {
-            vacationRequestOptional.get()
-        } else {
-            throw RuntimeException("휴가 신청 정보를 찾을 수 없습니다.")
-        }
+        val vacationRequest = vacationRequestRepository.findByIdOrNull(requestId) ?: throw RuntimeException("휴가 신청 정보를 찾을 수 없습니다.")
 
         // 휴가 신청 취소
         vacationRequest.validateAndCancel(memberId)
@@ -286,12 +268,7 @@ class VacationService(
 
     // 멤버 ID로 멤버를 조회, 멤버가 존재하지 않으면 예외 발생
     private fun getMemberById(memberId: Long): Member {
-        val memberOptional = memberRepository.findById(memberId)
-        return if (memberOptional.isPresent) {
-            memberOptional.get()
-        } else {
-            throw RuntimeException("멤버 정보를 찾을 수 없습니다.")
-        }
+        return memberRepository.findByIdOrNull(memberId) ?: throw RuntimeException("멤버 정보를 찾을 수 없습니다.")
     }
 
     // 반차 코드(05)를 01로 변환
