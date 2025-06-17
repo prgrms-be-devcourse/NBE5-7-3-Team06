@@ -191,7 +191,9 @@ internal class JwtTokenProviderTests {
     fun validate_not_blackListed_failure() {
         val expiredToken = "refreshToken"
 
-        Mockito.`when`(jwtService.isBlackListed(expiredToken)).thenReturn(true)
+        every {
+            jwtService.isBlackListed(expiredToken)
+        } returns true
 
         Assertions.assertThatThrownBy {
             jwtTokenProvider.validateNotBlackListed(expiredToken)
@@ -240,13 +242,11 @@ internal class JwtTokenProviderTests {
     @Test
     @DisplayName("request 에서 token 추출하기 - 성공")
     fun extract_token_success() {
-        val request = Mockito.mock(
-            HttpServletRequest::class.java
-        )
+        val request =  mockk<HttpServletRequest>()
         val token = "this.is.token"
         val header = "Bearer $token"
 
-        Mockito.`when`(request.getHeader("Authorization")).thenReturn(header)
+        every { request.getHeader("Authorization") } returns header
 
         val extractedToken = jwtTokenProvider.extractToken(request)
 
@@ -256,13 +256,11 @@ internal class JwtTokenProviderTests {
     @Test
     @DisplayName("request 에서 token 추출하기 - 실패하면 null 반환")
     fun extract_token_failure() {
-        val request = Mockito.mock(
-            HttpServletRequest::class.java
-        )
+        val request =  mockk<HttpServletRequest>()
         val token = "this.is.token"
         val wrongHeader = "wrong$token"
 
-        Mockito.`when`(request.getHeader("Authorization")).thenReturn(wrongHeader)
+        every { request.getHeader("Authorization") } returns wrongHeader
 
         val extractedToken = jwtTokenProvider.extractToken(request)
 

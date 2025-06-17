@@ -5,17 +5,12 @@ import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import programmers.team6.domain.admin.dto.response.ApprovalStepDetailUpdateResponse
 import programmers.team6.domain.admin.dto.response.VacationRequestDetailReadResponse
-import programmers.team6.domain.vacation.enums.ApprovalStatus
-import programmers.team6.domain.vacation.enums.VacationRequestStatus
 import programmers.team6.global.exception.code.NotFoundErrorCode
 import programmers.team6.global.exception.customException.ForbiddenException
 import programmers.team6.global.exception.customException.NotFoundException
 import programmers.team6.mock.VacationRequestReaderFake
 import programmers.team6.support.VacationMother
-import java.time.LocalDateTime
-import java.util.List
 
 /**
  * 성공 테스트에 기존의 오브젝트 마더 패턴을 적용하려했지만 merge과정의 conflict를 우려해서 우선 Low하게 테스트 진행,
