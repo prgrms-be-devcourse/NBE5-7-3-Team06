@@ -63,4 +63,5 @@ open class Member(
 
     val isHrMember: Boolean
         get() = dept.isHrDept
+    
 }

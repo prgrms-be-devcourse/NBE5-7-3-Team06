@@ -57,7 +57,7 @@ internal class MemberApprovalServiceTests {
     @ParameterizedTest
     @EnumSource(mode = EnumSource.Mode.EXCLUDE, names = ["PENDING"])
     @DisplayName("회원 승인 시 Role PENDING이 아니면 BadRequestException 예외가 발생")
-    fun approveMember_notPending_throwsBadRequestException(role: Role?) {
+    fun approveMember_notPending_throwsBadRequestException(role: Role) {
         // given
         val id = 1L
         val member = MemberMother.withIdAndRole(id, role)
@@ -73,7 +73,7 @@ internal class MemberApprovalServiceTests {
     @ParameterizedTest
     @EnumSource(mode = EnumSource.Mode.EXCLUDE, names = ["PENDING"])
     @DisplayName("회원 반려 시 Role PENDING이 아니면 BadRequestException 예외가 발생")
-    fun deleteMember_notPending_throwsBadRequestException(role: Role?) {
+    fun deleteMember_notPending_throwsBadRequestException(role: Role) {
         // given
         val id = 1L
         val member = MemberMother.withIdAndRole(id, role)
