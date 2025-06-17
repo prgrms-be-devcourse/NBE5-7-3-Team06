@@ -22,11 +22,11 @@ object VacationStatisticsMapper {
         logs: VacationInfoLogs, year: Int
     ): VacationMonthlyStatisticsResponse {
         val targeted = vacationRequests.targetRequests(member.id!!)
-        val vacationInfo = logs.findVacationInfo(member.id)
+        val vacationInfo = logs.findVacationInfo(member.id!!)
         return VacationMonthlyStatisticsResponse(
             member.id!!,
             member.name,
-            vacationInfo.totalCount,
+            vacationInfo!!.totalCount,
             vacationInfo.useCount,
             vacationInfo.remainingCount(),
             targeted.count(year, 1),

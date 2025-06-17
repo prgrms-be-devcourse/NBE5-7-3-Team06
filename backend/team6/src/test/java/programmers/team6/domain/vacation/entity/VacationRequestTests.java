@@ -377,7 +377,7 @@ class VacationRequestTests {
 			LocalDateTime.now(),
 			LocalDateTime.now(),
 			"reason",
-			TestVacationType.HALP.toCode(),
+			TestVacationType.HALF.toCode(),
 			VacationRequestStatus.IN_PROGRESS,
 			1
 		);

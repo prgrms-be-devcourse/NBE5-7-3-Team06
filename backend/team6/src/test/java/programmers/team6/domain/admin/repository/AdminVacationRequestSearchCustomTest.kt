@@ -1,10 +1,11 @@
 package programmers.team6.domain.admin.repository
 
-import org.assertj.core.api.Assertions
-import org.junit.jupiter.api.BeforeAll
+import io.kotest.matchers.collections.shouldHaveSize
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -32,7 +33,6 @@ import programmers.team6.domain.admin.repository.TestVacationRequestSearchCondit
 import programmers.team6.domain.admin.repository.TestVacationRequestSearchConditionFactory.createByDateRange
 import programmers.team6.domain.member.entity.Member
 import programmers.team6.domain.member.repository.MemberRepository
-import programmers.team6.domain.vacation.entity.ApprovalStep_.vacationRequest
 import programmers.team6.domain.vacation.enums.ApprovalStatus
 import programmers.team6.domain.vacation.enums.VacationRequestStatus
 import programmers.team6.domain.vacation.repository.ApprovalStepRepository
@@ -47,7 +47,6 @@ import java.util.stream.Stream
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import(AdminVacationRequestSearchCustom::class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class AdminVacationRequestSearchCustomTest {
     @Autowired
     lateinit var adminVacationRequestSearchCustom: AdminVacationRequestSearchCustom
@@ -76,8 +75,11 @@ internal class AdminVacationRequestSearchCustomTest {
     lateinit var firstApprovers: List<Member>
     lateinit var secondApprover: Member
 
-    @BeforeAll
+    var beforeCnt = 0
+
+    @BeforeEach
     fun setUpOnce() {
+        beforeCnt += vacationRequestRepository.count().toInt()
         setupCodes()
         setupDepartments()
         setupMembers()
@@ -199,8 +201,7 @@ internal class AdminVacationRequestSearchCustomTest {
         val result: Page<VacationRequestSearchResponse> = adminVacationRequestSearchCustom.search(
             defaultSearchCondition, pageable
         )
-        Assertions.assertThat(result).hasSize(TOTAL_VACATION_REQUESTS_CNT)
-        Assertions.assertThat(vacationRequestRepository.count()).isEqualTo(TOTAL_VACATION_REQUESTS_CNT.toLong())
+        assertThat(result).hasSize(beforeCnt + TOTAL_VACATION_REQUESTS_CNT)
     }
 
     @ParameterizedTest
@@ -213,7 +214,27 @@ internal class AdminVacationRequestSearchCustomTest {
         val searchResult: Page<VacationRequestSearchResponse> = adminVacationRequestSearchCustom.search(
             searchCondition, pageable
         )
-        Assertions.assertThat(searchResult).hasSize(expectedResult)
+        assertThat(searchResult).hasSize(expectedResult)
+    }
+
+    @Test
+    @DisplayName("codeId 검색시, 해당 vacation request들 조회")
+    fun should_successSearchVacationRequests_when_givenCodeId() {
+        // given
+        val positionCodeId = positionCodes.first().id!!
+        val vacationTypeCodeId = vacationTypeCodes.first().id!!
+
+        println("gwj $positionCodeId $vacationTypeCodeId")
+        for (request in vacationRequestRepository.findAll()) {
+            println("${request.id} ${request.member.position.id} ${request.type.id}")
+        }
+        // when & then
+        val resultByPositionCodeId = adminVacationRequestSearchCustom.search(createByApplicant(positionCodeId, null), pageable)
+        val resultByVacationTypeCodeId = adminVacationRequestSearchCustom.search(createByApplicant(null,vacationTypeCodeId), pageable)
+
+        resultByPositionCodeId shouldHaveSize YEAR_DURATION * END_OF_MONTH * VACATION_REQUEST_CNT_PER_MONTH
+        resultByVacationTypeCodeId shouldHaveSize YEAR_DURATION * END_OF_MONTH * VACATION_REQUEST_CNT_PER_MONTH
+
     }
 
 
@@ -222,52 +243,8 @@ internal class AdminVacationRequestSearchCustomTest {
     @DisplayName("잘못된 검색 조건일 때 예외가 발생한다")
     fun should_fail_when_givenInvalidData(testCondition: () -> AdminVacationSearchCondition) {
         // when & then
-        Assertions.assertThatThrownBy { testCondition.invoke() }
+        assertThatThrownBy { testCondition.invoke() }
             .isInstanceOf(BadRequestException::class.java)
-    }
-
-    fun validDataProvider(): Stream<Arguments> {
-        return listOf(
-            Arguments.of(
-                createByDateRange(LocalDate.of(START_YEAR, 1, 1), LocalDate.of(START_YEAR, 1, 31)),
-                VACATION_REQUESTER_CNT * VACATION_REQUEST_CNT_PER_MONTH
-            ),  // 시작 년도 전체 검색
-            Arguments.of(
-                createByDateRange(LocalDate.of(START_YEAR, 1, 1), LocalDate.of(START_YEAR, 12, 31)),
-                VACATION_REQUESTER_CNT * END_OF_MONTH * VACATION_REQUEST_CNT_PER_MONTH
-            ),  // 시작 년도 상반기 검색
-            Arguments.of(
-                createByDateRange(START_YEAR, Quarter.H1),
-                VACATION_REQUESTER_CNT * (END_OF_MONTH / 2)
-            ),  // 신청자 A 검색
-            Arguments.of(
-                createByApplicant("A", null),
-                YEAR_DURATION * END_OF_MONTH * VACATION_REQUEST_CNT_PER_MONTH
-            ),  // 부서0 검색
-            Arguments.of(
-                createByApplicant(null, "부서0"),
-                YEAR_DURATION * END_OF_MONTH * VACATION_REQUEST_CNT_PER_MONTH
-            ),  // 직급0(직급 코드) codeId 검색
-            Arguments.of(
-                createByApplicant(positionCodes.first().id, null),
-                YEAR_DURATION * END_OF_MONTH * VACATION_REQUEST_CNT_PER_MONTH
-            ),  // 휴가0(휴가 종류 코드) codeId 검색
-            Arguments.of(
-                createByApplicant(null, vacationTypeCodes.first().id),
-                YEAR_DURATION * END_OF_MONTH * VACATION_REQUEST_CNT_PER_MONTH
-            )
-        ).stream()
-    }
-
-    fun invalidDataProvider(): Stream<Arguments> {
-        return listOf(
-            Arguments.of( // 시작일 누락
-                { createByDateRange(null, LocalDate.of(START_YEAR, 1, 31)) }
-            ),
-            Arguments.of(
-                { createByDateRange(LocalDate.of(START_YEAR, 1, 1), null) }
-            )
-        ).stream()
     }
 
     companion object {
@@ -304,5 +281,43 @@ internal class AdminVacationRequestSearchCustomTest {
         private const val PREFIX_VACATION_TYPE = "휴가"
         private const val PREFIX_DEPT = "부서"
         private const val PREFIX_POSITION = "직급"
+
+        @JvmStatic
+        fun validDataProvider(): Stream<Arguments> {
+            return listOf(
+                Arguments.of(
+                    createByDateRange(LocalDate.of(START_YEAR, 1, 1), LocalDate.of(START_YEAR, 1, 31)),
+                    VACATION_REQUESTER_CNT * VACATION_REQUEST_CNT_PER_MONTH
+                ),  // 시작 년도 전체 검색
+                Arguments.of(
+                    createByDateRange(LocalDate.of(START_YEAR, 1, 1), LocalDate.of(START_YEAR, 12, 31)),
+                    VACATION_REQUESTER_CNT * END_OF_MONTH * VACATION_REQUEST_CNT_PER_MONTH
+                ),  // 시작 년도 상반기 검색
+                Arguments.of(
+                    createByDateRange(START_YEAR, Quarter.H1),
+                    VACATION_REQUESTER_CNT * (END_OF_MONTH / 2)
+                ),  // 신청자 A 검색
+                Arguments.of(
+                    createByApplicant("A", null),
+                    YEAR_DURATION * END_OF_MONTH * VACATION_REQUEST_CNT_PER_MONTH
+                ),  // 부서0 검색
+                Arguments.of(
+                    createByApplicant(null, "부서0"),
+                    YEAR_DURATION * END_OF_MONTH * VACATION_REQUEST_CNT_PER_MONTH
+                ),
+            ).stream()
+        }
+
+        @JvmStatic
+        fun invalidDataProvider(): Stream<Arguments> {
+            return listOf(
+                Arguments.of( // 시작일 누락
+                    { createByDateRange(null, LocalDate.of(START_YEAR, 1, 31)) }
+                ),
+                Arguments.of(
+                    { createByDateRange(LocalDate.of(START_YEAR, 1, 1), null) }
+                )
+            ).stream()
+        }
     }
 }

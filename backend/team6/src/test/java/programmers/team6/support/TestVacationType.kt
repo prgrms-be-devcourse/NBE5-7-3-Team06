@@ -29,7 +29,7 @@ enum class TestVacationType {
             )
         }
     },
-    HALP {
+    HALF {
         override fun toCode(): Code {
             return Code(GroupCode.VACATION_TYPE.code, "05", "반차")
         }
