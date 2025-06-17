@@ -21,9 +21,9 @@ interface ApprovalStepRepository : JpaRepository<ApprovalStep, Long> {
     fun findFirstStepsByVacationRequestIds(@Param("requestIds") requestIds: List<Long>): List<ApprovalStep>
 
     @Query(
-        value = ("select new programmers.team6.domain.admin.dto.response.ApprovalStepDetailUpdateResponse(m.name,asp.reason,asp.approvalStatus) from ApprovalStep asp "
+        "select new programmers.team6.domain.admin.dto.response.ApprovalStepDetailUpdateResponse(m.name,asp.reason,asp.approvalStatus) from ApprovalStep asp "
                 + "join VacationRequest vr on asp.vacationRequest=vr join asp.member m "
-                + "where vr.id = :vacationId order by asp.step")
+                + "where vr.id = :vacationId order by asp.step"
     )
     fun findApprovalStepDetailById(@Param("vacationId") vacationId: Long): List<ApprovalStepDetailUpdateResponse>
 
