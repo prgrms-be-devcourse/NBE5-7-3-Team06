@@ -3,21 +3,16 @@ package programmers.team6.domain.admin.dto.request
 import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.PositiveOrZero
-import java.util.*
 
 data class VacationInfoUpdateTotalCountRequests(
-    val memberId: @NotNull @PositiveOrZero Long?,
-    val vacations: @NotNull @NotEmpty MutableList<VacationInfoUpdateTotalCountRequest>?
+    @field:NotNull @field:PositiveOrZero
+    val memberId: Long,
+    @field:NotNull @field:NotEmpty
+    val vacations: List<VacationInfoUpdateTotalCountRequest>
 ) {
     val ids: List<Int>
-        get() = vacations!!.stream().map(VacationInfoUpdateTotalCountRequest::id).toList()
+        get() = vacations.stream().map(VacationInfoUpdateTotalCountRequest::id).toList()
 
-    fun getTarget(type: String?): Optional<VacationInfoUpdateTotalCountRequest> {
-        for (vacation in vacations!!) {
-            if (vacation.isSameType(type)) {
-                return Optional.of(vacation)
-            }
-        }
-        return Optional.empty()
-    }
+    fun getTarget(type: String): VacationInfoUpdateTotalCountRequest? = vacations.firstOrNull { it.isSameType(type) }
+
 }
