@@ -170,11 +170,7 @@ export default function MemberApprovalList() {
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{member.name}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{member.positionName}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{member.deptName}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {member.birth &&
-                                                `${member.birth.substring(0, 2)}/${member.birth.substring(2, 4)}/${member.birth.substring(4, 6)}`
-                                            }
-                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{member.birth}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{member.email}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <button
