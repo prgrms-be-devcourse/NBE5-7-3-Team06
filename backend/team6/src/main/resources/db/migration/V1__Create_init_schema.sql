@@ -94,6 +94,8 @@ alter table dept
     add constraint UKilmyvjd7nxkwxbuv9qkxjc3sp unique (dept_leader_id);
 alter table members
     add constraint UK9yurcta1ncy7u5847sjqgw15 unique (member_info_id);
+alter table member_info
+    add constraint uk_member_email unique (email);
 alter table approval_step
     add constraint FKaqeemrh1cjiox9nwqxk38yqo1
         foreign key (member_id)

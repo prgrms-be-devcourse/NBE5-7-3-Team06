@@ -4,6 +4,9 @@ import jakarta.persistence.*
 import programmers.team6.global.entity.BaseEntity
 
 @Entity
+@Table(
+    uniqueConstraints = [UniqueConstraint(name = "uk_member_email",columnNames = ["members"])]
+)
 class MemberInfo (
 
     @field:Column(nullable = false)
