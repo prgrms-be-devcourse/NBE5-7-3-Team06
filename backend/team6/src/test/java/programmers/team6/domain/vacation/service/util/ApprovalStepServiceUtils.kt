@@ -9,14 +9,13 @@ import java.time.LocalDateTime
 
 object ApprovalStepServiceUtils {
     fun genVacationRequest(member: Member): VacationRequest {
-        return VacationRequest.builder()
-            .member(member)
-            .from(LocalDateTime.of(2025, 8, 1, 9, 0))
-            .to(LocalDateTime.of(2025, 8, 3, 18, 0))
-            .reason("사정이 있습니다.")
-            .type(VacationTypeMother.Annual())
-            .status(null)
-            .build()
+        return VacationRequest(
+            from = LocalDateTime.of(2025, 8, 1, 9, 0),
+            to = LocalDateTime.of(2025, 8, 3, 18, 0),
+            member = member,
+            type = VacationTypeMother.Annual(),
+            reason = "사정이 있습니다."
+        )
     }
 
     fun genFirstStep(id: Long, approver: Member, vacationRequest: VacationRequest): ApprovalStep {
