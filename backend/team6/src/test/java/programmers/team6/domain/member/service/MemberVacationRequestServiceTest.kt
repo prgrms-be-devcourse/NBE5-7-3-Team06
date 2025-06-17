@@ -1,123 +1,141 @@
-package programmers.team6.domain.member.service;
+package programmers.team6.domain.member.service
 
-import static org.assertj.core.api.Assertions.*;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
-import programmers.team6.domain.admin.dto.response.ApprovalStepDetailUpdateResponse;
-import programmers.team6.domain.admin.dto.response.VacationRequestDetailReadResponse;
-import programmers.team6.domain.vacation.entity.ApprovalStep;
-import programmers.team6.domain.vacation.enums.ApprovalStatus;
-import programmers.team6.domain.vacation.enums.VacationRequestStatus;
-import programmers.team6.global.exception.code.NotFoundErrorCode;
-import programmers.team6.global.exception.customException.ForbiddenException;
-import programmers.team6.global.exception.customException.NotFoundException;
-import programmers.team6.mock.VacationRequestReaderFake;
+import io.mockk.mockk
+import org.assertj.core.api.Assertions
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import programmers.team6.domain.admin.dto.response.ApprovalStepDetailUpdateResponse
+import programmers.team6.domain.admin.dto.response.VacationRequestDetailReadResponse
+import programmers.team6.domain.vacation.enums.ApprovalStatus
+import programmers.team6.domain.vacation.enums.VacationRequestStatus
+import programmers.team6.global.exception.code.NotFoundErrorCode
+import programmers.team6.global.exception.customException.ForbiddenException
+import programmers.team6.global.exception.customException.NotFoundException
+import programmers.team6.mock.VacationRequestReaderFake
+import programmers.team6.support.VacationMother
+import java.time.LocalDateTime
+import java.util.List
 
 /**
  * 성공 테스트에 기존의 오브젝트 마더 패턴을 적용하려했지만 merge과정의 conflict를 우려해서 우선 Low하게 테스트 진행,
  * 이후 마이그레이션 이후에 테스트 수정 필요
  * @author gunwoong
  */
-class MemberVacationRequestServiceTest {
-	private VacationRequestReaderFake vacationRequestReaderFake;
+internal class MemberVacationRequestServiceTest {
 
-	@BeforeEach
-	void setUP() {
-		vacationRequestReaderFake = new VacationRequestReaderFake();
-	}
+    private var readerFake: VacationRequestReaderFake = mockk<VacationRequestReaderFake>()
 
-	@Test
-	@DisplayName("휴가계 id와 유저 id 제공시, 휴가계 디테일 반환")
-	void should_selectVacationRequestDetailById_when_givenVacationRequestIdAndMemberId() {
-		// given & when
-		Long vacationRequestId = 0L;
-		Long memberId = 0L;
-		LocalDateTime from = LocalDateTime.now();
-		LocalDateTime to = from.plusDays(1);
-		String name = "testName";
-		String deptName = "testDeptName";
-		String posiiton = "testPosition";
-		String reason = "testReason";
-		String vacationType = "vacationType";
-		VacationRequestStatus status = VacationRequestStatus.IN_PROGRESS;
+    @BeforeEach
+    fun setUp() {
+        readerFake = VacationRequestReaderFake()
+    }
 
-		// when
-		vacationRequestReaderFake.putVacationRequestDetail(vacationRequestId,
-			new VacationRequestDetailReadResponse(vacationRequestId, from, to, memberId, name, deptName, posiiton,
-				reason, vacationType, status,Collections.emptyList()));
+    @Test
+    @DisplayName("휴가계 id와 유저 id 제공시, 휴가계 디테일 반환")
+    fun should_selectVacationRequestDetailById_when_givenVacationRequestIdAndMemberId() {
 
-		vacationRequestReaderFake.putApprovalStep(vacationRequestId,
-			List.of(new ApprovalStepDetailUpdateResponse("name", "reason", ApprovalStatus.PENDING)));
-		MemberVacationRequestService memberVacationRequestService = new MemberVacationRequestService(
-			vacationRequestReaderFake);
+        val defaultVacationDetail = VacationMother.defaultVacationDetail()
 
-		// then
-		VacationRequestDetailReadResponse result = memberVacationRequestService.selectVacationRequestDetailById(
-			vacationRequestId, memberId);
-		assertThat(result).extracting(VacationRequestDetailReadResponse::getId, VacationRequestDetailReadResponse::getFrom,
-				VacationRequestDetailReadResponse::getTo, VacationRequestDetailReadResponse::getMemberId,
-				VacationRequestDetailReadResponse::getName, VacationRequestDetailReadResponse::getDeptName,
-				VacationRequestDetailReadResponse::getPosition, VacationRequestDetailReadResponse::getReason,
-				VacationRequestDetailReadResponse::getVacationType, VacationRequestDetailReadResponse::getVacationRequestStatus)
-			.containsExactly(memberId, from, to, memberId, name, deptName, posiiton, reason, vacationType, status);
-		assertThat(result.getApprovalStepDetailUpdateResponses()).hasSize(1);
-	}
+        val vacationRequestId = defaultVacationDetail.id
 
-	@Test
-	@DisplayName("존재하지 않는 VacationRequestId 제공시, NotFoundException 발생")
-	void should_throwForbiddenException_when_givenNotExistVacationRequestId() {
-		// given & when
-		MemberVacationRequestService memberVacationRequestService = new MemberVacationRequestService(
-			vacationRequestReaderFake);
+        val memberId = defaultVacationDetail.memberId
 
-		// then
-		assertThatThrownBy(() -> memberVacationRequestService.selectVacationRequestDetailById(0L, 0L)).isInstanceOf(
-			NotFoundException.class).hasMessage(NotFoundErrorCode.NOT_FOUND_VACATION_REQUEST.getMessage());
-	}
+        // when
+        readerFake.putVacationRequestDetail(
+            vacationRequestId, defaultVacationDetail
+        )
 
-	@Test
-	@DisplayName("찾으려는 VacationRequest의 ApprovalSteps가 존재하지 않을 경우, NotFoundException 발생")
-	void should_throwNotFoundException_when_vacationRequestHasEmptyApprovalSteps() {
-		// given & when
-		vacationRequestReaderFake.putVacationRequestDetail(0L,
-			new VacationRequestDetailReadResponse(0L, LocalDateTime.now(), LocalDateTime.now().plusDays(1), 0l, "", "", "", "", "", VacationRequestStatus.IN_PROGRESS,
-				Collections.emptyList()));
+        val defaultApprovalStep = VacationMother.defaultApprovalStep()
 
-		MemberVacationRequestService memberVacationRequestService = new MemberVacationRequestService(
-			vacationRequestReaderFake);
+        readerFake.putApprovalStep(vacationRequestId, listOf(defaultApprovalStep))
 
-		// then
-		assertThatThrownBy(() -> memberVacationRequestService.selectVacationRequestDetailById(0L, 0L)).isInstanceOf(
-			NotFoundException.class).hasMessage(NotFoundErrorCode.NOT_FOUND_APPROVAL_STEP.getMessage());
-	}
+        val memberVacationRequestService = MemberVacationRequestService(readerFake)
 
-	@Test
-	@DisplayName("입력된 memberId와 조회된 memberId가 다를 경우, ForbiddenException 발생")
-	void should_throwForbiddenException_when_givenNotEqualMemberId() {
-		Long givenMemberId = 0L;
-		Long findMemberId = 1L;
-		vacationRequestReaderFake.putVacationRequestDetail(0L,
-			new VacationRequestDetailReadResponse(0L, LocalDateTime.now(), LocalDateTime.now().plusDays(1),
-				findMemberId, "", "", "", "", "", VacationRequestStatus.IN_PROGRESS,
-				List.of(new ApprovalStepDetailUpdateResponse("a", "b", ApprovalStatus.PENDING))));
+        // then
+        val result = memberVacationRequestService.selectVacationRequestDetailById(vacationRequestId, memberId)
 
-		vacationRequestReaderFake.putApprovalStep(0L, List.of(new ApprovalStepDetailUpdateResponse(null, null, null)));
+        Assertions.assertThat(result).extracting(
+            VacationRequestDetailReadResponse::id,
+            VacationRequestDetailReadResponse::from,
+            VacationRequestDetailReadResponse::to,
+            VacationRequestDetailReadResponse::memberId,
+            VacationRequestDetailReadResponse::name,
+            VacationRequestDetailReadResponse::deptName,
+            VacationRequestDetailReadResponse::position,
+            VacationRequestDetailReadResponse::reason,
+            VacationRequestDetailReadResponse::vacationType,
+            VacationRequestDetailReadResponse::vacationRequestStatus
+        ).containsExactly(vacationRequestId,
+            defaultVacationDetail.from,
+            defaultVacationDetail.to,
+            memberId,
+            defaultVacationDetail.name,
+            defaultVacationDetail.deptName,
+            defaultVacationDetail.position,
+            defaultVacationDetail.reason,
+            defaultVacationDetail.vacationType,
+            defaultVacationDetail.vacationRequestStatus)
 
-		MemberVacationRequestService memberVacationRequestService = new MemberVacationRequestService(
-			vacationRequestReaderFake);
+        Assertions.assertThat(result.approvalStepDetailUpdateResponses).hasSize(1)
+    }
 
-		// then
-		assertThatThrownBy(
-			() -> memberVacationRequestService.selectVacationRequestDetailById(0L, givenMemberId)).isInstanceOf(
-			ForbiddenException.class);
-	}
+    @Test
+    @DisplayName("존재하지 않는 VacationRequestId 제공시, NotFoundException 발생")
+    fun should_throwForbiddenException_when_givenNotExistVacationRequestId() {
+        // given & when
+        val memberVacationRequestService = MemberVacationRequestService(readerFake)
 
+        // then
+        Assertions.assertThatThrownBy {
+            memberVacationRequestService.selectVacationRequestDetailById(0L, 0L)
+        }.isInstanceOf(NotFoundException::class.java)
+            .hasMessage(NotFoundErrorCode.NOT_FOUND_VACATION_REQUEST.message)
+    }
+
+    @Test
+    @DisplayName("찾으려는 VacationRequest의 ApprovalSteps가 존재하지 않을 경우, NotFoundException 발생")
+    fun should_throwNotFoundException_when_vacationRequestHasEmptyApprovalSteps() {
+        // given & when
+
+        val defaultVacationDetail = VacationMother.defaultVacationDetail()
+
+        val vacationRequestId = defaultVacationDetail.id
+
+        readerFake.putVacationRequestDetail(vacationRequestId, defaultVacationDetail)
+
+        val memberVacationRequestService = MemberVacationRequestService(readerFake)
+
+        // then
+        Assertions.assertThatThrownBy {
+            memberVacationRequestService.selectVacationRequestDetailById(
+                vacationRequestId,
+                defaultVacationDetail.memberId
+            )
+        }.isInstanceOf(NotFoundException::class.java)
+            .hasMessage(NotFoundErrorCode.NOT_FOUND_APPROVAL_STEP.message)
+    }
+
+    @Test
+    @DisplayName("입력된 memberId와 조회된 memberId가 다를 경우, ForbiddenException 발생")
+    fun should_throwForbiddenException_when_givenNotEqualMemberId() {
+        val findMemberId = 1L
+
+        val givenVacation = VacationMother.defaultVacationDetail()
+        val findVacation = VacationMother.defaultVacationDetail(findMemberId)
+
+        readerFake.putVacationRequestDetail(givenVacation.memberId, findVacation)
+
+        readerFake.putApprovalStep(givenVacation.id, listOf(VacationMother.defaultApprovalStep()))
+
+        val memberVacationRequestService = MemberVacationRequestService(readerFake)
+
+        // then
+        Assertions.assertThatThrownBy {
+            memberVacationRequestService.selectVacationRequestDetailById(
+                givenVacation.id,
+                givenVacation.memberId
+            )
+        }.isInstanceOf(ForbiddenException::class.java)
+    }
 }
