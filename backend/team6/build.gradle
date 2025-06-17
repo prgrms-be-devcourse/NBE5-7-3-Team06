@@ -70,7 +70,7 @@ dependencies {
 
 //    annotationProcessor("org.hibernate.orm:hibernate-jpamodelgen:6.4.4.Final")
     kapt("org.hibernate.orm:hibernate-jpamodelgen:6.4.4.Final")
-
+    implementation "org.flywaydb:flyway-mysql:11.9.1"
 }
 
 allOpen {
