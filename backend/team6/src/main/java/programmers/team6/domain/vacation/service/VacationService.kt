@@ -47,7 +47,7 @@ class VacationService(
         val vacationInfo = vacationInfoRepository.findByMemberIdAndVacationType(
             memberId,
             VacationCode.ANNUAL.code
-        ).orElse(null) ?: throw RuntimeException("휴가 정보를 찾을 수 없습니다.")
+        ) ?: throw RuntimeException("휴가 정보를 찾을 수 없습니다.")
 
         return vacationMapper.toVacationInfoSelectResponseDto(vacationInfo)
     }
@@ -85,12 +85,9 @@ class VacationService(
         }
 
         // 부서장 조회 (결재자)
-        val dept = member.dept
-        val approver = dept.deptLeader
 
         // 휴가 유형 코드 조회
-        val vacationType = codeRepository.findByGroupCodeAndCode("VACATION_TYPE", requestDto.vacationType)
-            .orElse(null) ?: throw RuntimeException("잘못된 휴가 유형입니다.")
+        val vacationType = codeRepository.findByGroupCodeAndCode("VACATION_TYPE", requestDto.vacationType) ?: throw RuntimeException("잘못된 휴가 유형입니다.")
 
         // 휴가 요청 상태 코드 (기본 대기 상태)
         val status = VacationRequestStatus.IN_PROGRESS
@@ -100,6 +97,9 @@ class VacationService(
 
         // 저장
         vacationRequestRepository.save(vacationRequest)
+
+        val dept = member.dept
+        val approver = dept.deptLeader ?: throw RuntimeException("회사의 리더를 찾을 수 없습니다.")
 
         // 결재 단계 생성
         approvalStepService.saveApprovalStep(approver, vacationRequest)
@@ -201,7 +201,7 @@ class VacationService(
                 memberId,
                 getVacationInfoType(requestDto.vacationType),
                 requestId
-            ).orElse(null) ?: throw NotFoundException(NotFoundErrorCode.NOT_FOUND_VACATION_INFO)
+            ) ?: throw NotFoundException(NotFoundErrorCode.NOT_FOUND_VACATION_INFO)
 
         // 잔여 일수 초과 검증
         if (actualRemainCount < requestDays) {
@@ -209,15 +209,13 @@ class VacationService(
         }
 
         // 휴가 유형 코드 조회
-        val vacationType = codeRepository.findByGroupCodeAndCode("VACATION_TYPE", requestDto.vacationType)
-            .orElse(null) ?: throw RuntimeException("잘못된 휴가 유형입니다.")
+        val vacationType = codeRepository.findByGroupCodeAndCode("VACATION_TYPE", requestDto.vacationType) ?: throw RuntimeException("잘못된 휴가 유형입니다.")
 
         // 수정 권한 검증 및 수정 처리
         vacationRequest.updateByMember(memberId, requestDto.from, requestDto.to, requestDto.reason, vacationType)
 
         // 결재자 정보 조회
-        val approvalStep = approvalStepRepository.findFirstByVacationRequestOrderByStepAsc(vacationRequest)
-            .orElse(null) ?: throw RuntimeException("결재 단계 정보를 찾을 수 없습니다.")
+        val approvalStep = approvalStepRepository.findFirstByVacationRequestOrderByStepAsc(vacationRequest) ?: throw RuntimeException("결재 단계 정보를 찾을 수 없습니다.")
 
         // 응답 DTO 생성
         return vacationMapper.toVacationUpdateResponseDto(
