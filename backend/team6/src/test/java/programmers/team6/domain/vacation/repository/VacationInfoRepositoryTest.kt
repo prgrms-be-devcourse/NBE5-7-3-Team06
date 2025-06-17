@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.Import
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
 import programmers.team6.domain.vacation.entity.VacationInfo
 import programmers.team6.domain.vacation.repository.factory.TestMemberFactory
@@ -16,6 +17,7 @@ import java.time.LocalDate
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Transactional
 @Import(value = [TestMemberFactory::class])
+@ActiveProfiles("test")
 internal class VacationInfoRepositoryTest @Autowired constructor(
 
     private val vacationInfoRepository: VacationInfoRepository,

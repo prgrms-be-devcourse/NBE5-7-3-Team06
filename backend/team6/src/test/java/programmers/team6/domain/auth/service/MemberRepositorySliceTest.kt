@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.test.context.ActiveProfiles
 import programmers.team6.domain.admin.entity.Dept
 import programmers.team6.domain.admin.repository.CodeRepository
 import programmers.team6.domain.admin.repository.DeptRepository
@@ -17,6 +18,7 @@ import programmers.team6.domain.member.repository.MemberRepository
 import programmers.team6.support.PositionMother
 import java.time.LocalDateTime
 
+@ActiveProfiles("test")
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Transactional

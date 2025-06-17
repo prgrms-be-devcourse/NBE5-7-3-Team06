@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Import
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
+import org.springframework.test.context.ActiveProfiles
 import programmers.team6.domain.admin.dto.response.AdminVacationSearchCondition
 import programmers.team6.domain.admin.dto.response.AdminVacationSearchCondition.Companion.DEFAULT_APPLICANT
 import programmers.team6.domain.admin.dto.response.AdminVacationSearchCondition.Companion.DEFAULT_DATE_RANGE
@@ -45,6 +46,7 @@ import java.util.*
 import java.util.stream.Stream
 
 @DataJpaTest
+@ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import(AdminVacationRequestSearchCustom::class)
 internal class AdminVacationRequestSearchCustomTest {
