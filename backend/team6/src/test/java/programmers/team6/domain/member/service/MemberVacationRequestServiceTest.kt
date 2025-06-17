@@ -5,6 +5,7 @@ import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito.mock
 import programmers.team6.domain.admin.dto.response.VacationRequestDetailReadResponse
 import programmers.team6.global.exception.code.NotFoundErrorCode
 import programmers.team6.global.exception.customException.ForbiddenException
@@ -23,7 +24,7 @@ internal class MemberVacationRequestServiceTest {
 
     @BeforeEach
     fun setUp() {
-        readerFake = VacationRequestReaderFake()
+        readerFake = VacationRequestReaderFake(mockk(),mockk())
     }
 
     @Test
@@ -43,7 +44,7 @@ internal class MemberVacationRequestServiceTest {
 
         val defaultApprovalStep = VacationMother.defaultApprovalStep()
 
-        readerFake.putApprovalStep(vacationRequestId, listOf(defaultApprovalStep))
+        readerFake.putApprovalStep(vacationRequestId, mutableListOf(defaultApprovalStep))
 
         val memberVacationRequestService = MemberVacationRequestService(readerFake)
 
@@ -121,7 +122,7 @@ internal class MemberVacationRequestServiceTest {
 
         readerFake.putVacationRequestDetail(givenVacation.memberId, findVacation)
 
-        readerFake.putApprovalStep(givenVacation.id, listOf(VacationMother.defaultApprovalStep()))
+        readerFake.putApprovalStep(givenVacation.id, mutableListOf(VacationMother.defaultApprovalStep()))
 
         val memberVacationRequestService = MemberVacationRequestService(readerFake)
 

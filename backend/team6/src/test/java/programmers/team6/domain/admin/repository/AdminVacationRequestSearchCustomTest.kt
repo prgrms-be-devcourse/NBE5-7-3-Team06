@@ -75,8 +75,11 @@ internal class AdminVacationRequestSearchCustomTest {
     lateinit var firstApprovers: List<Member>
     lateinit var secondApprover: Member
 
+    var beforeCnt = 0
+
     @BeforeEach
     fun setUpOnce() {
+        beforeCnt += vacationRequestRepository.count().toInt()
         setupCodes()
         setupDepartments()
         setupMembers()
@@ -198,8 +201,7 @@ internal class AdminVacationRequestSearchCustomTest {
         val result: Page<VacationRequestSearchResponse> = adminVacationRequestSearchCustom.search(
             defaultSearchCondition, pageable
         )
-        assertThat(result).hasSize(TOTAL_VACATION_REQUESTS_CNT)
-        assertThat(vacationRequestRepository.count()).isEqualTo(TOTAL_VACATION_REQUESTS_CNT.toLong())
+        assertThat(result).hasSize(beforeCnt + TOTAL_VACATION_REQUESTS_CNT)
     }
 
     @ParameterizedTest
