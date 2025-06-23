@@ -35,9 +35,9 @@ INSERT IGNORE INTO member_info (birth, email, password,created_at,updated_at) VA
 
 -- 일반 멤버들 삽입
 INSERT IGNORE INTO members (name, dept_id, position_id, join_date, role, member_info_id,created_at,updated_at) VALUES
-                                                                                                                   ('김부장', 1, (SELECT code_id FROM code WHERE group_code = 'POSITION' AND code = '04'), '2023-05-15 00:00:00', 'USER', 2,SYSDATE(),SYSDATE()),
-                                                                                                                   ('이부장', 2, (SELECT code_id FROM code WHERE group_code = 'POSITION' AND code = '04'), '2023-05-15 00:00:00', 'USER', 3,SYSDATE(),SYSDATE()),
-                                                                                                                   ('박부장', 3, (SELECT code_id FROM code WHERE group_code = 'POSITION' AND code = '04'), '2023-05-15 00:00:00', 'USER', 4,SYSDATE(),SYSDATE());
+                                                                                                                   ('김부장', 1, (SELECT code_id FROM code WHERE group_code = 'POSITION' AND code = '04'), '2023-05-15 00:00:00', 'PENDING', 2,SYSDATE(),SYSDATE()),
+                                                                                                                   ('이부장', 2, (SELECT code_id FROM code WHERE group_code = 'POSITION' AND code = '04'), '2023-05-15 00:00:00', 'PENDING', 3,SYSDATE(),SYSDATE()),
+                                                                                                                   ('박부장', 3, (SELECT code_id FROM code WHERE group_code = 'POSITION' AND code = '04'), '2023-05-15 00:00:00', 'PENDING', 4,SYSDATE(),SYSDATE());
 
 -- 부서 리더 설정
 UPDATE dept SET dept_leader_id = 2 WHERE dept_leader_id IS NULL AND dept_id = 1 ;
